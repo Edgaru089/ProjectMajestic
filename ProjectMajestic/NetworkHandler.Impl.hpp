@@ -151,6 +151,17 @@ void NetworkHandler::_messageLoopThread() {
 			pack >> cnt.x >> cnt.y;
 			terrainManager.setChunkCount(cnt);
 		}
+		IF_COMMAND("GETPLAYER") {
+			PACKET_COMMAND(ret, "PLAYER");
+			if (localPlayer != nullptr)
+				ret << localPlayer->getUuid() << localPlayer->getPlayerName();
+			else
+				ret << Uuid::nil() << ""s;
+			CHECKED_SEND(ret);
+		}
+		IF_COMMAND("PLAYER") {
+			pack >> peer.peerUuid >> peer.peerPlayername;
+		}
 		IF_COMMAND("GETSPAWN") {
 			PACKET_COMMAND(ret, "SPAWN");
 			terrainManager.lock();

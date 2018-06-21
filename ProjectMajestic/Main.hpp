@@ -22,6 +22,7 @@
 #include "LogSystem.hpp"
 #include "Uuid.hpp"
 #include "Lockable.hpp"
+#include "ThreadPool.hpp"
 
 #define USING_NAMESPACE \
 using namespace std;\
@@ -149,6 +150,11 @@ Rect<RectType> operator * (Rect<RectType> rect, ValType val) {
 
 double rand01() {
 	return (double)rand() / (double)RAND_MAX;
+}
+
+// [x, y]
+int rand(int x, int y) {
+	return x + rand01()*(y - x);
 }
 
 // x % y

@@ -246,6 +246,7 @@
     <ClInclude Include="TestEntity.Impl.hpp" />
     <ClInclude Include="TestScene.hpp" />
     <ClInclude Include="TextureManager.hpp" />
+    <ClInclude Include="ThreadPool.hpp" />
     <ClInclude Include="Torch.hpp" />
     <ClInclude Include="Torch.Impl.hpp" />
     <ClInclude Include="Uuid.hpp" />

@@ -26,6 +26,8 @@ public:
 
 private:
 
+	Clock particleClock;
+
 	bool& inWall() { return getData("in_wall").getDataBool(); };
 
 	Vector2d pos0;

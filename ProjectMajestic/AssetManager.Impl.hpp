@@ -25,6 +25,7 @@ bool AssetManager::loadListFile(string filename) {
 		}
 		else if (type == '$') { // Asset line
 			string id, file;
+			IntRect rect(0, 0, 0, 0);
 			size_t i = 1;
 
 			// Find first non-blank character
@@ -42,21 +43,67 @@ bool AssetManager::loadListFile(string filename) {
 				i++;
 
 			// Read the filename
-			while (i < str.size() && !isspace(str[i])) {
+			while (i < str.size() && str[i] != '[' && !isspace(str[i])) {
 				file += str[i];
 				i++;
 			}
 
-			mlog << "               Loaded " << assetType << " asset: " << id << "@" << file << dlog;
+			// Find texure rect info if possible
+			while (i < str.size() && str[i] != '[')
+				i++;
+			// Has texture rect infomation - read it
+			if (i < str.size() && str[i] == '[') {
+				string left, top, width, height;
+				// Every value is not negative
+				// Read left
+				while (!isdigit(str[i]))
+					i++;
+				while (isdigit(str[i])) {
+					left += str[i];
+					i++;
+				}
+				//Read top
+				while (!isdigit(str[i]))
+					i++;
+				while (isdigit(str[i])) {
+					top += str[i];
+					i++;
+				}
+				//Read width
+				while (!isdigit(str[i]))
+					i++;
+				while (isdigit(str[i])) {
+					width += str[i];
+					i++;
+				}
+				//Read height
+				while (!isdigit(str[i]))
+					i++;
+				while (isdigit(str[i])) {
+					height += str[i];
+					i++;
+				}
+				rect = IntRect(StringParser::toInt(left), StringParser::toInt(top),
+					StringParser::toInt(width), StringParser::toInt(height));
+			}
 
-			assets.insert_or_assign(id, Asset(id, file, assetType));
+			LogMessage m;
+			m << "               Loaded " << assetType << " asset: " << id << "@" << file;
+			if (rect != IntRect(0, 0, 0, 0))
+				m << StringParser::toStringFormatted(" Off[%d, %d] %dx%d]", rect.left, rect.top, rect.width, rect.height);
+			m.logout(dlog);
+
+			assets.insert_or_assign(id, Asset(id, file, assetType, rect));
 		}
 	}
 
 	// Load Texture Assets
 	for (auto& i : assets) {
 		if (i.second.type == "TEXTURE")
-			textureManager.addImage(i.second.strid, i.second.filename);
+			if (i.second.textureRect == IntRect(0, 0, 0, 0))
+				textureManager.addImage(i.second.strid, i.second.filename);
+			else
+				textureManager.addImage(i.second.strid, i.second.filename, i.second.textureRect);
 	}
 
 	return true;

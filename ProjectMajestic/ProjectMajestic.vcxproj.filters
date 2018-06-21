@@ -365,6 +365,9 @@
     <ClInclude Include="Ladder.hpp">
       <Filter>Game\Items&amp;Blocks\Blocks</Filter>
     </ClInclude>
+    <ClInclude Include="ThreadPool.hpp">
+      <Filter>Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImGui\imgui.cpp">

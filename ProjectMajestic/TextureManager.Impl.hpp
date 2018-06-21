@@ -15,6 +15,17 @@ void TextureManager::addImage(string id, string filename) {
 
 
 ////////////////////////////////////////
+void TextureManager::addImage(string id, string filename, IntRect textureRect) {
+	Image tmp; // TODO FIXME Speed this up!
+	tmp.loadFromFile(filename);
+	images[id].create(textureRect.width, textureRect.height);
+	for (int i = 0; i < textureRect.width; i++)
+		for (int j = 0; j < textureRect.height; j++)
+			images[id].setPixel(i, j, tmp.getPixel(i + textureRect.left, j + textureRect.top));
+}
+
+
+////////////////////////////////////////
 void TextureManager::bindTexture() {
 	mlog << "[TextureManager] Binding texture..." << dlog;
 

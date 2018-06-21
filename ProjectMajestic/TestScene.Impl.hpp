@@ -165,10 +165,10 @@ void TestScene::onRender(RenderWindow & win) {
 	}
 	terrainMaskSize = totalTriangles.getVertexCount()
 		- terrainListSize;
-	particleSystem.getRenderList(totalTriangles); particleListSize = totalTriangles.getVertexCount()
-		- terrainListSize - terrainMaskSize;
 	entityManager.getRenderList(totalTriangles); entityListSize = totalTriangles.getVertexCount()
-		- terrainListSize - terrainMaskSize - particleListSize;
+		- terrainListSize - terrainMaskSize;
+	particleSystem.getRenderList(totalTriangles); particleListSize = totalTriangles.getVertexCount()
+		- terrainListSize - terrainMaskSize - entityListSize;
 	totalVertSize = totalTriangles.getVertexCount();
 
 	win.draw(totalTriangles, textureManager.getBindingTexture());
@@ -293,6 +293,17 @@ void TestScene::updateLogic(RenderWindow & win) {
 			localPlayer = new PlayerEntity();
 			entityManager.insert(localPlayer, TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win))));
 		}
+		else {
+			particleSystem.emitSmoke(TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win))));
+			/*for (int i = 1; i <= 1000; i++) {
+				// Tile Drop
+				ItemEntity* e = new ItemEntity("block_stone");
+				// Give a random velocity
+				e->accelerateVector(1.0, 180 + rand() % 180);
+
+				entityManager.insert(e, Vector2d(TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win)))) + Vector2d(0.5, 0.8));
+			}*/
+		}
 
 	// Keyboard controls
 	if (!imgui::GetIO().WantCaptureKeyboard &&
@@ -362,6 +373,7 @@ void TestScene::runImGui() {
 	static float value = renderIO.gameScaleFactor;
 	imgui::SliderFloat("GameScaleFactor", &value, 24, 64);
 	renderIO.gameScaleFactor = value;
+	imgui::Image(*textureManager.getBindingTexture());
 	imgui::End();
 
 	imgui::ShowDemoWindow();

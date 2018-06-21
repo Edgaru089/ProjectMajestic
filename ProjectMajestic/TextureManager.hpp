@@ -27,11 +27,12 @@ struct TextureInfo {
 class TextureManager {
 public:
 
-	const unsigned int maxImageWidth = 1024;
+	const unsigned int maxImageWidth = 256;
 
 	// Image is copied
 	void addImage(string id, Image& image);
 	void addImage(string id, string filename);
+	void addImage(string id, string filename, IntRect textureRect);
 
 	void bindTexture();
 

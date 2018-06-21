@@ -6,6 +6,7 @@
 #include "PlayerEntity.hpp"
 #include "EntityManager.hpp"
 #include "ItemEntity.hpp"
+#include "ParticleSystem.hpp"
 
 
 ////////////////////////////////////////
@@ -84,6 +85,10 @@ void ArrowEntity::_updateLogic() {
 	}
 	else {
 		// TODO Particles when arrow is flying
+		if (particleClock.getElapsedTime() >= milliseconds(25)) {
+			particleClock.restart();
+			particleSystem.emitArrowGlow(getPosition());
+		}
 	}
 }
 
