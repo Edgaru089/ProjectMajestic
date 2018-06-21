@@ -138,29 +138,14 @@ void PartlcleSystem::emitSmoke(Vector2d position, int count) {
 }
 
 
-// Arrow Glow Particle class
-// Derived from Particle
-////////////////////////////////////////
-class ArrowGlowParticle :public Particle {
-public:
-	ArrowGlowParticle(TextureInfo texture, double sizeDivisor, Time liveTime, Vector2d onScreenSize, double gravity)
-		:Particle(texture, sizeDivisor, liveTime, onScreenSize, gravity) {}
-	TextureInfo getTextureInfo() override {
-		return textureManager.getTextureInfo(StringParser::toStringFormatted("particle_arrow_glow_%d",
-			min(8, max(1, (int)(10.0f * (liveClock.getElapsedTime() / liveTime - 1.0f))))));
-	}
-};
-
-
 ////////////////////////////////////////
 void PartlcleSystem::emitArrowGlow(Vector2d position) {
-	emit<ArrowGlowParticle>(position, TextureInfo(),
+	emit(position, textureManager.getTextureInfo("particle_arrow_glow_8"),
 		1.0, 0.0, 1, milliseconds(250), milliseconds(250), Vector2d(0.3, 0.3), 0.0);
 }
 
 
 ////////////////////////////////////////
-template<typename ParticleClass>
 void PartlcleSystem::emit(Vector2d position, TextureInfo texture, double sizeDivisor, double speed, int count, Time liveTimeBegin, Time liveTimeEnd, Vector2d size, double gravity, bool isForced) {
 	if (!isForced || role == Server) { // Networked
 		networkServer.notifyParitlcEmit(ParticleEmitTrace(position, texture.id, sizeDivisor,
@@ -175,7 +160,7 @@ void PartlcleSystem::emit(Vector2d position, TextureInfo texture, double sizeDiv
 			Time live = liveTimeBegin + microseconds((liveTimeEnd - liveTimeBegin).asMicroseconds()*rand01());
 			double angle = 360.0*rand01();
 
-			ParticleClass p(texture, sizeDivisor, live, size, gravity);
+			Particle p(texture, sizeDivisor, live, size, gravity);
 			p.setPosition(position);
 			p.accelerateVector(speed * 1.2 * rand01(), angle);
 
@@ -186,7 +171,6 @@ void PartlcleSystem::emit(Vector2d position, TextureInfo texture, double sizeDiv
 
 
 ////////////////////////////////////////
-template<typename ParticleClass>
 void PartlcleSystem::emit(DoubleRect range, TextureInfo texture, double sizeDivisor, double speed, int count, Time liveTimeBegin, Time liveTimeEnd, Vector2d size, double gravity, bool isForced) {
 	if (!isForced || role == Server) { // Networked
 		networkServer.notifyParitlcEmit(ParticleEmitTrace(range, texture.id, sizeDivisor,
@@ -205,7 +189,7 @@ void PartlcleSystem::emit(DoubleRect range, TextureInfo texture, double sizeDivi
 			pos.x = range.left + range.width*rand01();
 			pos.y = range.top + range.height*rand01();
 
-			ParticleClass p(texture, sizeDivisor, live, size, gravity);
+			Particle p(texture, sizeDivisor, live, size, gravity);
 			p.setPosition(pos);
 			p.accelerateVector(speed * 1.2 * rand01(), angle);
 
@@ -216,7 +200,6 @@ void PartlcleSystem::emit(DoubleRect range, TextureInfo texture, double sizeDivi
 
 
 ////////////////////////////////////////
-template<typename ParticleClass>
 void PartlcleSystem::emit(Vector2d position, TextureInfo texture, double sizeDivisor, double speed, int count, double angleBegin, double angleEnd, Time liveTimeBegin, Time liveTimeEnd, Vector2d size, double gravity, bool isForced) {
 	if (!isForced || role == Server) { // Networked
 		networkClient.notifyParticleEmit(ParticleEmitTrace(position, texture.id, sizeDivisor, speed, count,
@@ -233,7 +216,7 @@ void PartlcleSystem::emit(Vector2d position, TextureInfo texture, double sizeDiv
 			Time live = liveTimeBegin + microseconds((liveTimeEnd - liveTimeBegin).asMicroseconds()*rand01());
 			double angle = angleBegin + (angleEnd - angleBegin)*rand01();
 
-			ParticleClass p(texture, sizeDivisor, live, size, gravity);
+			Particle p(texture, sizeDivisor, live, size, gravity);
 			p.setPosition(position);
 			p.accelerateVector(speed * 1.2 * rand01(), angle);
 
@@ -244,7 +227,6 @@ void PartlcleSystem::emit(Vector2d position, TextureInfo texture, double sizeDiv
 
 
 ////////////////////////////////////////
-template<typename ParticleClass>
 void PartlcleSystem::emit(DoubleRect range, TextureInfo texture, double sizeDivisor, double speed, int count, double angleBegin, double angleEnd, Time liveTimeBegin, Time liveTimeEnd, Vector2d size, double gravity, bool isForced) {
 	if (!isForced || role == Server) { // Networked
 		networkServer.notifyParitlcEmit(ParticleEmitTrace(range, texture.id, sizeDivisor, speed, count,
@@ -265,7 +247,7 @@ void PartlcleSystem::emit(DoubleRect range, TextureInfo texture, double sizeDivi
 			pos.x = range.left + range.width*rand01();
 			pos.y = range.top + range.height*rand01();
 
-			ParticleClass p(texture, sizeDivisor, live, size, gravity);
+			Particle p(texture, sizeDivisor, live, size, gravity);
 			p.setPosition(pos);
 			p.accelerateVector(speed * 1.2 * rand01(), angle);
 

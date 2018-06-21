@@ -10,7 +10,7 @@ public:
 	Particle(TextureInfo texture, double sizeDivisor, Time liveTime, Vector2d onScreenSize = Vector2d(0.2, 0.2), double gravity = 2.8);
 
 	const string getEntityId() override { return "particle"; }
-	virtual TextureInfo getTextureInfo() override { return TextureInfo(wholeText.texture, textureSubRect, wholeText.id); }
+	TextureInfo getTextureInfo() override { return TextureInfo(wholeText.texture, textureSubRect, wholeText.id); }
 
 	const double getFrictionDeaclc() override { return 5.0; }
 	const double getGravityAclc() override { return gravity; }
@@ -105,7 +105,6 @@ public:
 	// If <isForced> is set to true, this emittion is presented on the client,
 	// oterwise it is sent to the server.
 	// On a server, an emittion is always presented and sent to the clients.
-	template<typename ParticleClass = Particle>
 	void emit(Vector2d position, TextureInfo texture, double sizeDivisor, double speed, int count, Time liveTimeBegin, Time liveTimeEnd, Vector2d size = Vector2d(0.2, 0.2), double gravity = 2.8, bool isForced = false);
 
 	// Emit <Count> particles with the texture <Texture> with a size of the entire
@@ -114,7 +113,6 @@ public:
 	// If <isForced> is set to true, this emittion is presented on the client,
 	// oterwise it is sent to the server.
 	// On a server, an emittion is always presented and sent to the clients.
-	template<typename ParticleClass = Particle>
 	void emit(DoubleRect range, TextureInfo texture, double sizeDivisor, double speed, int count, Time liveTimeBegin, Time liveTimeEnd, Vector2d size = Vector2d(0.2, 0.2), double gravity = 2.8, bool isForced = false);
 
 	// Emit <Count> particles with the texture <Texture> with a size of the entire
@@ -124,7 +122,6 @@ public:
 	// If <isForced> is set to true, this emittion is presented on the client,
 	// oterwise it is sent to the server.
 	// On a server, an emittion is always presented and sent to the clients.
-	template<typename ParticleClass = Particle>
 	void emit(Vector2d position, TextureInfo texture, double sizeDivisor, double speed, int count, double angleBegin, double angleEnd, Time liveTimeBegin, Time liveTimeEnd, Vector2d size = Vector2d(0.2, 0.2), double gravity = 2.8, bool isForced = false);
 
 	// Emit <Count> particles with the texture <Texture> with a size of the entire
@@ -134,7 +131,6 @@ public:
 	// If <isForced> is set to true, this emittion is presented on the client,
 	// oterwise it is sent to the server.
 	// On a server, an emittion is always presented and sent to the clients.
-	template<typename ParticleClass = Particle>
 	void emit(DoubleRect range, TextureInfo texture, double sizeDivisor, double speed, int count, double angleBegin, double angleEnd, Time liveTimeBegin, Time liveTimeEnd, Vector2d size = Vector2d(0.2, 0.2), double gravity = 2.8, bool isForced = false);
 
 public:
