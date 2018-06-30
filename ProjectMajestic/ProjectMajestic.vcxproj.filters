@@ -85,6 +85,9 @@
     <Filter Include="Game\Player\Character">
       <UniqueIdentifier>{94be16c9-c4b8-442c-a66b-a349f2253187}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Items&amp;Blocks\Item\Magic">
+      <UniqueIdentifier>{cd73745f-b0ad-4a92-99cd-8e93273440e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imconfig.h">
@@ -395,6 +398,12 @@
     </ClInclude>
     <ClInclude Include="Th10-Char.h">
       <Filter>Game\Player\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="MagicItem.hpp">
+      <Filter>Game\Items&amp;Blocks\Item\Magic</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniHakkero.hpp">
+      <Filter>Game\Items&amp;Blocks\Item\Magic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

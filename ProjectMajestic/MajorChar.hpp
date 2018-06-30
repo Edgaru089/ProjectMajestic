@@ -1,23 +1,25 @@
-ï»¿#pragma once
+#pragma once
 
 #include "PlayerCharacter.hpp"
 
-// ä¸»è§’ç»„
+// Ö÷½Ç×é
 namespace Major {
 
-	// çµæ¢¦
+	// ÁéÃÎ
 	class HakureiReimu :public PlayerCharacter {
 	public:
+		const string getCharacterId() override { return "hakurei_reimu"; }
 		HakureiReimu() :PlayerCharacter() {
-			pref.Phantom = 1.0;       // çº¯äººçµ
+			pref.Phantom = 1.0;       // ´¿ÈËÁé
 			pref.PhantomHuman = 1.0;
 			majors.push_back(PurePhantomHuman);
 		}
 	};
 
-	// é­”ç†æ²™
+	// Ä§ÀíÉ³
 	class KirisameMarisa :public PlayerCharacter {
 	public:
+		const string getCharacterId() override { return "kirisame_marisa"; }
 		KirisameMarisa() :PlayerCharacter() {
 			pref.Element = 0.8;
 			pref.Phantom = 0.6;

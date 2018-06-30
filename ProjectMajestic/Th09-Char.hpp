@@ -1,17 +1,17 @@
-ï»¿#pragma once
+#pragma once
 
 #include "PlayerCharacter.hpp"
 
-// åœ¨ TH09 ä¸œæ–¹èŠ±æ˜ å¡š ä¸­ç™»åœºçš„äººç‰©
+// ÔÚ TH09 ¶«·½»¨Ó³‰V ÖĞµÇ³¡µÄÈËÎï
 namespace Th09 {
 
-	// é¢¨è¦‹ å¹½é¦™
+	// ïLÒŠ ÓÄÏã
 	class KazamiYuuka :public PlayerCharacter {
 	public:
 		KazamiYuuka() :PlayerCharacter() {
-			pref.Element = 1.0;       // å¹»æƒ³ä¹¡æœ€å¼ºä¹‹ä¸€ï¼Ÿ
+			pref.Element = 1.0;       // »ÃÏëÏç×îÇ¿Ö®Ò»£¿
 			pref.Phantom = 1.0;
-			pref.ElementWood = 1.0;   // ç©å¼„èŠ±è‰
+			pref.ElementWood = 1.0;   // ÍæÅª»¨²İ
 			pref.PhantomYoukai = 1.0;
 			majors.push_back(ElementWood);
 			majors.push_back(PhantomYoukai);

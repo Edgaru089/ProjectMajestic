@@ -1,7 +1,46 @@
-ï»¿#pragma once
+#pragma once
 
 #include "Main.hpp"
 #include "PlayerEntity.hpp"
+
+
+struct MagicPreference {
+	MagicPreference() {}
+	MagicPreference(double Element, double Phantom, double ElementMetal, double ElementWood, double ElementWater, double ElementFire, double ElementSoil, double ElementSun, double ElementMoon, double PhantomHuman, double PhantomYoukai, double PhantomDivine) :
+		Element(Element), Phantom(Phantom), ElementMetal(ElementMetal), ElementWood(ElementWood), ElementWater(ElementWater), ElementFire(ElementFire), ElementSoil(ElementSoil), ElementSun(ElementSun), ElementMoon(ElementMoon), PhantomHuman(PhantomHuman), PhantomYoukai(PhantomYoukai), PhantomDivine(PhantomDivine) {}
+
+	// All prefence factors are ranged in [0, 1]
+	double Element;  // Æßê×
+	double Phantom;  // ÈıÁé
+
+	double ElementMetal; // ½ğê×
+	double ElementWood;  // Ä¾ê×
+	double ElementWater; // Ë®ê×
+	double ElementFire;  // »ğê×
+	double ElementSoil;  // ÍÁê×
+	double ElementSun;   // ÈÕê×
+	double ElementMoon;  // ÔÂê×
+
+	double PhantomHuman;  // ÈËÁé
+	double PhantomYoukai; // ÑıÁé
+	double PhantomDivine; // ÉñÁé
+
+	bool isControllable(const MagicPreference& controller) const {
+		if (controller.Element >= Element &&
+			controller.Phantom >= Element &&
+			controller.ElementMetal >= ElementMetal &&
+			controller.ElementWood >= ElementWood &&
+			controller.ElementWater >= ElementWater &&
+			controller.ElementFire >= ElementFire &&
+			controller.ElementSoil >= ElementSoil &&
+			controller.PhantomHuman >= PhantomHuman &&
+			controller.PhantomYoukai >= PhantomYoukai &&
+			controller.PhantomDivine >= PhantomDivine)
+			return true;
+		else
+			return false;
+	}
+};
 
 
 class PlayerCharacter {
@@ -10,46 +49,24 @@ public:
 	PlayerCharacter() :pref(.0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0) {}
 
 	enum MagicFactor {
-		ElementMetal,  // é‡‘æ›œ
-		ElementWood,   // æœ¨æ›œ
-		ElementWater,  // æ°´æ›œ
-		ElementFire,   // ç«æ›œ
-		ElementSoil,   // åœŸæ›œ
-		ElementSun,    // æ—¥æ›œ
-		ElementMoon,   // æœˆæ›œ
-		PhantomHuman,  // äººçµ
-		PhantomYoukai, // å¦–çµ
-		PhantomDivine, // ç¥çµ
+		ElementMetal,  // ½ğê×
+		ElementWood,   // Ä¾ê×
+		ElementWater,  // Ë®ê×
+		ElementFire,   // »ğê×
+		ElementSoil,   // ÍÁê×
+		ElementSun,    // ÈÕê×
+		ElementMoon,   // ÔÂê×
+		PhantomHuman,  // ÈËÁé
+		PhantomYoukai, // ÑıÁé
+		PhantomDivine, // ÉñÁé
 
-		// ä»¥ä¸‹äº”ç§ä¸­æœ€å¤šåªèƒ½é€‰æœ‰ä¸€ç§ä¸”å¿…é¡»æ”¾åœ¨ç¬¬ä¸€ä¸ª
-		// çº¯çµå±æ€§ä¸èƒ½å’Œå…¶ä»–ä»»ä½•å±æ€§å¹¶å­˜ï¼ˆçº¯æœˆæ›œå¯ä»¥ï¼‰
-		SevenElements,     // ä¸ƒæ›œ
-		PureElementMoon,   // çº¯æœˆæ›œï¼ˆç”¨äºæœˆéƒ½äººç‰©ï¼‰
-		PurePhantomHuman,  // çº¯äººçµ
-		PurePhantomYoukai, // çº¯å¦–çµ
-		PurePhantomDivine  // çº¯ç¥çµ
-	};
-
-	struct MagicPreference {
-		MagicPreference() {}
-		MagicPreference(double Element, double Phantom, double ElementMetal, double ElementWood, double ElementWater, double ElementFire, double ElementSoil, double ElementSun, double ElementMoon, double PhantomHuman, double PhantomYoukai, double PhantomDivine) :
-			Element(Element), Phantom(Phantom), ElementMetal(ElementMetal), ElementWood(ElementWood), ElementWater(ElementWater), ElementFire(ElementFire), ElementSoil(ElementSoil), ElementSun(ElementSun), ElementMoon(ElementMoon), PhantomHuman(PhantomHuman), PhantomYoukai(PhantomYoukai), PhantomDivine(PhantomDivine) {}
-
-		// All prefence factors are ranged in [0, 1]
-		double Element;  // ä¸ƒæ›œ
-		double Phantom;  // ä¸‰çµ
-
-		double ElementMetal; // é‡‘æ›œ
-		double ElementWood;  // æœ¨æ›œ
-		double ElementWater; // æ°´æ›œ
-		double ElementFire;  // ç«æ›œ
-		double ElementSoil;  // åœŸæ›œ
-		double ElementSun;   // æ—¥æ›œ
-		double ElementMoon;
-
-		double PhantomHuman;  // äººçµ
-		double PhantomYoukai; // å¦–çµ
-		double PhantomDivine; // ç¥çµ
+		// ÒÔÏÂÎåÖÖÖĞ×î¶àÖ»ÄÜÑ¡ÓĞÒ»ÖÖÇÒ±ØĞë·ÅÔÚµÚÒ»¸ö
+		// ´¿ÁéÊôĞÔ²»ÄÜºÍÆäËûÈÎºÎÊôĞÔ²¢´æ£¨´¿ÔÂê×¿ÉÒÔ£©
+		SevenElements,     // Æßê×
+		PureElementMoon,   // ´¿ÔÂê×£¨ÓÃÓÚÔÂ¶¼ÈËÎï£©
+		PurePhantomHuman,  // ´¿ÈËÁé
+		PurePhantomYoukai, // ´¿ÑıÁé
+		PurePhantomDivine  // ´¿ÉñÁé
 	};
 
 	virtual const string getCharacterId() = 0;
@@ -63,3 +80,6 @@ protected:
 	vector<MagicFactor> majors;
 
 };
+
+
+PlayerCharacter* localCharacter;

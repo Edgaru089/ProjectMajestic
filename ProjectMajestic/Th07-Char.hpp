@@ -1,38 +1,38 @@
-ï»¿#pragma once
+#pragma once
 
 #include "PlayerCharacter.hpp"
 
-// åœ¨ TH07 ä¸œæ–¹å¦–å¦–æ¢¦ ä¸­ç™»åœºçš„äººç‰©
+// ÔÚ TH07 ¶«·½ÑıÑıÃÎ ÖĞµÇ³¡µÄÈËÎï
 namespace Th07 {
 
-	// çˆ±ä¸½ä¸ 
+	// °®ÀöË¿ 
 	class AliceMargatroid :public PlayerCharacter {
 	public:
 		AliceMargatroid() :PlayerCharacter() {
-			pref.Element = 0.7;       // ä¸ƒæ›œå±æ€§æ¯”å¸•çªéƒ½ä½ä¸€äº›ï¼ˆçˆ±ä¸½ä¸çš„ç¬¦å¡å¸•çªéšä¾¿ç”¨ï¼Ÿï¼ŸåŒä¸ƒç»„é¢„å®šï¼Ÿï¼Ÿä¸ªäººä¸ç«™åŒä¸ƒå•Šï¼‰
-			pref.Phantom = 0.4;       // ä¸ä¸ä¸ä¸å¦–çµå±æ€§é«˜ä¸€äº›
+			pref.Element = 0.7;       // Æßê×ÊôĞÔ±ÈÅÁç÷¶¼µÍÒ»Ğ©£¨°®ÀöË¿µÄ·û¿¨ÅÁç÷Ëæ±ãÓÃ£¿£¿Ë«Æß×éÔ¤¶¨£¿£¿¸öÈË²»Õ¾Ë«Æß°¡£©
+			pref.Phantom = 0.4;       // ²»²»²»²»ÑıÁéÊôĞÔ¸ßÒ»Ğ©
 			pref.ElementMetal = 0.7;
 			pref.ElementWood = 0.7;
 			pref.ElementWater = 0.7;
-			pref.ElementFire = 0.65;  // ç¡®ä¿é˜¿ç©ºçš„ç¬¦å¡ï¼ˆç«0.8ï¼Œæ—¥1.0ï¼‰ä¸èƒ½ç”¨
+			pref.ElementFire = 0.65;  // È·±£°¢¿ÕµÄ·û¿¨£¨»ğ0.8£¬ÈÕ1.0£©²»ÄÜÓÃ
 			pref.ElementSoil = 0.7;
-			pref.ElementSun = 0.6;    // ç¡®ä¿é˜¿ç©ºçš„ç¬¦å¡ï¼ˆç«0.8ï¼Œæ—¥1.0ï¼‰ä¸èƒ½ç”¨
-			pref.ElementMoon = 0.6;   // æœˆéƒ½è§’è‰²æœˆå±æ€§æ™®éé«˜äº0.7
-			pref.PhantomYoukai = 0.4; // æ¯•ç«Ÿæ˜¯é­”æ³•ä½¿
+			pref.ElementSun = 0.6;    // È·±£°¢¿ÕµÄ·û¿¨£¨»ğ0.8£¬ÈÕ1.0£©²»ÄÜÓÃ
+			pref.ElementMoon = 0.6;   // ÔÂ¶¼½ÇÉ«ÔÂÊôĞÔÆÕ±é¸ßÓÚ0.7
+			pref.PhantomYoukai = 0.4; // ±Ï¾¹ÊÇÄ§·¨Ê¹
 
-			majors.push_back(SevenElements); // ä¸ƒè‰²çš„äººå¶ä½¿
-			majors.push_back(PhantomYoukai); // é­”æ³•ä½¿æ˜¯å¦–æ€ª
+			majors.push_back(SevenElements); // ÆßÉ«µÄÈËÅ¼Ê¹
+			majors.push_back(PhantomYoukai); // Ä§·¨Ê¹ÊÇÑı¹Ö
 		}
 	};
 
-	// å¦–æ¢¦
+	// ÑıÃÎ
 	class KonpakuYoumu :public PlayerCharacter {
 	public:
 		KonpakuYoumu() :PlayerCharacter() {
 			pref.Element = 0.5;
 			pref.Phantom = 0.6;
-			pref.ElementMetal = 0.5;  // ç™½æ¥¼å‰‘æ¥¼è§‚å‰‘->é‡‘å±æ€§ï¼Ÿ
-			pref.PhantomHuman = 0.4;  // åŠäººåŠçµ
+			pref.ElementMetal = 0.5;  // °×Â¥½£Â¥¹Û½£->½ğÊôĞÔ£¿
+			pref.PhantomHuman = 0.4;  // °ëÈË°ëÁé
 			pref.PhantomYoukai = 0.4;
 			majors.push_back(ElementMetal);
 			majors.push_back(PhantomHuman);
@@ -40,7 +40,7 @@ namespace Th07 {
 		}
 	};
 
-	// å¹½å¹½å­
+	// ÓÄÓÄ×Ó
 	class SaigyoujiYuyuko :public PlayerCharacter {
 	public:
 		SaigyoujiYuyuko() :PlayerCharacter() {
@@ -50,7 +50,7 @@ namespace Th07 {
 		}
 	};
 
-	// å…«äº‘ç´«
+	// °ËÔÆ×Ï
 	class YakumoYukari :public PlayerCharacter {
 	public:
 		YakumoYukari() :PlayerCharacter() {

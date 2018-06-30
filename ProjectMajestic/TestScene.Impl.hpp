@@ -13,6 +13,9 @@
 #include "EntityAllocator.hpp"
 #include "InGameUI.hpp"
 #include "PlayerInventory.hpp"
+#include "PlayerCharacter.hpp"
+#include "MajorChar.hpp"
+#include "MagicItem.hpp"
 
 
 ////////////////////////////////////////
@@ -86,6 +89,7 @@ void TestScene::start(RenderWindow & win) {
 	entityManager.insert(localPlayer, Vector2d(prov.getSpawnPoints()[0]) + Vector2d(0.5, 1 - 1e-7));
 
 	role = Server;
+	localCharacter = new Major::KirisameMarisa;
 }
 
 
@@ -124,46 +128,7 @@ void TestScene::onRender(RenderWindow & win) {
 
 	totalTriangles.setPrimitiveType(PrimitiveType::Triangles);
 	terrainManager.getRenderList(totalTriangles); terrainListSize = totalTriangles.getVertexCount();
-	terrainManager.getLightMask(totalTriangles);
-	// Append extra triangles covering the outside if required
-	// Left (and two corners on the left)
-	Vector2d rightBottomT = Vector2d(terrainManager.getChunkCount()) * 16.0 * renderIO.gameScaleFactor;
-	if (renderIO.viewRect.left < 0) {
-		totalTriangles.append(Vertex(Vector2f(0, renderIO.viewRect.top), Color(0, 0, 0, 192))); // Right-Top
-		totalTriangles.append(Vertex(Vector2f(renderIO.viewRect.left, renderIO.viewRect.top), Color(0, 0, 0, 192))); // Left-Top
-		totalTriangles.append(Vertex(Vector2f(0, renderIO.viewRect.top + renderIO.viewRect.height), Color(0, 0, 0, 192))); // Right-Bottom
-		totalTriangles.append(Vertex(Vector2f(renderIO.viewRect.left, renderIO.viewRect.top), Color(0, 0, 0, 192))); // Left-Top
-		totalTriangles.append(Vertex(Vector2f(0, renderIO.viewRect.top + renderIO.viewRect.height), Color(0, 0, 0, 192))); // Right-Bottom
-		totalTriangles.append(Vertex(Vector2f(renderIO.viewRect.left, renderIO.viewRect.top + renderIO.viewRect.height), Color(0, 0, 0, 192))); // Left-Bottom
-	}
-	// Right (and two corners on the right)
-	if (renderIO.viewRect.left + renderIO.viewRect.width > rightBottomT.x) {
-		totalTriangles.append(Vertex(Vector2f(renderIO.viewRect.left + renderIO.viewRect.width, renderIO.viewRect.top), Color(0, 0, 0, 192))); // Right-Top
-		totalTriangles.append(Vertex(Vector2f(rightBottomT.x, renderIO.viewRect.top), Color(0, 0, 0, 192))); // Left-Top
-		totalTriangles.append(Vertex(Vector2f(renderIO.viewRect.left + renderIO.viewRect.width, renderIO.viewRect.top + renderIO.viewRect.height), Color(0, 0, 0, 192))); // Right-Bottom
-		totalTriangles.append(Vertex(Vector2f(rightBottomT.x, renderIO.viewRect.top), Color(0, 0, 0, 192))); // Left-Top
-		totalTriangles.append(Vertex(Vector2f(renderIO.viewRect.left + renderIO.viewRect.width, renderIO.viewRect.top + renderIO.viewRect.height), Color(0, 0, 0, 192))); // Right-Bottom
-		totalTriangles.append(Vertex(Vector2f(rightBottomT.x, renderIO.viewRect.top + renderIO.viewRect.height), Color(0, 0, 0, 192))); // Left-Bottom
-	}
-	// Top
-	if (renderIO.viewRect.top < 0) {
-		totalTriangles.append(Vertex(Vector2f(min(renderIO.viewRect.left + renderIO.viewRect.width, rightBottomT.x), renderIO.viewRect.top), Color(0, 0, 0, 192))); // Right-Top
-		totalTriangles.append(Vertex(Vector2f(max(renderIO.viewRect.left, 0), renderIO.viewRect.top), Color(0, 0, 0, 192))); // Left-Top
-		totalTriangles.append(Vertex(Vector2f(min(renderIO.viewRect.left + renderIO.viewRect.width, rightBottomT.x), 0), Color(0, 0, 0, 192))); // Right-Bottom
-		totalTriangles.append(Vertex(Vector2f(max(renderIO.viewRect.left, 0), renderIO.viewRect.top), Color(0, 0, 0, 192))); // Left-Top
-		totalTriangles.append(Vertex(Vector2f(min(renderIO.viewRect.left + renderIO.viewRect.width, rightBottomT.x), 0), Color(0, 0, 0, 192))); // Right-Bottom
-		totalTriangles.append(Vertex(Vector2f(max(renderIO.viewRect.left, 0), 0), Color(0, 0, 0, 192))); // Left-Bottom
-	}
-	// Bottom
-	if (renderIO.viewRect.top + renderIO.viewRect.height > rightBottomT.y) {
-		totalTriangles.append(Vertex(Vector2f(min(renderIO.viewRect.left + renderIO.viewRect.width, rightBottomT.x), rightBottomT.y), Color(0, 0, 0, 192))); // Right-Top
-		totalTriangles.append(Vertex(Vector2f(max(renderIO.viewRect.left, 0), rightBottomT.y), Color(0, 0, 0, 192))); // Left-Top
-		totalTriangles.append(Vertex(Vector2f(min(renderIO.viewRect.left + renderIO.viewRect.width, rightBottomT.x), renderIO.viewRect.top + renderIO.viewRect.height), Color(0, 0, 0, 192))); // Right-Bottom
-		totalTriangles.append(Vertex(Vector2f(max(renderIO.viewRect.left, 0), rightBottomT.y), Color(0, 0, 0, 192))); // Left-Top
-		totalTriangles.append(Vertex(Vector2f(min(renderIO.viewRect.left + renderIO.viewRect.width, rightBottomT.x), renderIO.viewRect.top + renderIO.viewRect.height), Color(0, 0, 0, 192))); // Right-Bottom
-		totalTriangles.append(Vertex(Vector2f(max(renderIO.viewRect.left, 0), renderIO.viewRect.top + renderIO.viewRect.height), Color(0, 0, 0, 192))); // Left-Bottom
-	}
-	terrainMaskSize = totalTriangles.getVertexCount()
+	terrainManager.getLightMask(totalTriangles); terrainMaskSize = totalTriangles.getVertexCount()
 		- terrainListSize;
 	entityManager.getRenderList(totalTriangles); entityListSize = totalTriangles.getVertexCount()
 		- terrainListSize - terrainMaskSize;
@@ -305,44 +270,44 @@ void TestScene::updateLogic(RenderWindow & win) {
 			}*/
 		}
 
-	// Keyboard controls
-	if (!imgui::GetIO().WantCaptureKeyboard &&
-		(logicIO.keyboardState[Keyboard::A] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustPressed))
-		localPlayer->moveLeft(true);
-	if (logicIO.keyboardState[Keyboard::A] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustReleased)
-		localPlayer->moveLeft(false);
-	if (!imgui::GetIO().WantCaptureKeyboard &&
-		(logicIO.keyboardState[Keyboard::D] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Right] == LogicIO::JustPressed))
-		localPlayer->moveRight(true);
-	if (logicIO.keyboardState[Keyboard::D] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Right] == LogicIO::JustReleased)
-		localPlayer->moveRight(false);
-	if (!imgui::GetIO().WantCaptureKeyboard &&
-		(Keyboard::isKeyPressed(Keyboard::W) || Keyboard::isKeyPressed(Keyboard::Up)))
-		localPlayer->ascendLadder(true);
-	if (logicIO.keyboardState[Keyboard::W] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Up] == LogicIO::JustReleased)
-		localPlayer->ascendLadder(false);
-	if (!imgui::GetIO().WantCaptureKeyboard &&
-		(Keyboard::isKeyPressed(Keyboard::S) || Keyboard::isKeyPressed(Keyboard::Down)))
-		localPlayer->decendLadder(true);
-	if (logicIO.keyboardState[Keyboard::S] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Down] == LogicIO::JustReleased)
-		localPlayer->decendLadder(false);
-	if (!imgui::GetIO().WantCaptureKeyboard &&
-		(logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustPressed))
-		localPlayer->crouch(true);
-	if (logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustReleased)
-		localPlayer->crouch(false);
-	if (Keyboard::isKeyPressed(Keyboard::Space))
-		localPlayer->jump();
+		// Keyboard controls
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			(logicIO.keyboardState[Keyboard::A] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustPressed))
+			localPlayer->moveLeft(true);
+		if (logicIO.keyboardState[Keyboard::A] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustReleased)
+			localPlayer->moveLeft(false);
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			(logicIO.keyboardState[Keyboard::D] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Right] == LogicIO::JustPressed))
+			localPlayer->moveRight(true);
+		if (logicIO.keyboardState[Keyboard::D] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Right] == LogicIO::JustReleased)
+			localPlayer->moveRight(false);
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			(Keyboard::isKeyPressed(Keyboard::W) || Keyboard::isKeyPressed(Keyboard::Up)))
+			localPlayer->ascendLadder(true);
+		if (logicIO.keyboardState[Keyboard::W] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Up] == LogicIO::JustReleased)
+			localPlayer->ascendLadder(false);
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			(Keyboard::isKeyPressed(Keyboard::S) || Keyboard::isKeyPressed(Keyboard::Down)))
+			localPlayer->decendLadder(true);
+		if (logicIO.keyboardState[Keyboard::S] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Down] == LogicIO::JustReleased)
+			localPlayer->decendLadder(false);
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			(logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustPressed))
+			localPlayer->crouch(true);
+		if (logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustReleased)
+			localPlayer->crouch(false);
+		if (Keyboard::isKeyPressed(Keyboard::Space))
+			localPlayer->jump();
 
-	terrainManager.updateLogic();
-	particleSystem.updateLogic();
-	entityManager.updateLogic();
-	uiManager.updateLogic();
+		terrainManager.updateLogic();
+		particleSystem.updateLogic();
+		entityManager.updateLogic();
+		uiManager.updateLogic();
 
-	if (logicIO.keyboardState[Keyboard::E] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard)
-		uiManager.changeUI(new PlayerInventoryUI);
-	if (logicIO.keyboardState[Keyboard::Escape] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard)
-		uiManager.changeUI(new PlayerInventoryUI);
+		if (logicIO.keyboardState[Keyboard::E] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard)
+			uiManager.changeUI(new PlayerInventoryUI);
+		if (logicIO.keyboardState[Keyboard::Escape] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard)
+			uiManager.changeUI(new PlayerInventoryUI);
 }
 
 
@@ -530,6 +495,25 @@ void TestScene::runImGui() {
 	uiManager.runImGui();
 
 	playerInventory.runImGui();
+
+
+	// Player Character Dashboard at the bottom-left
+	// TODO Refactor pending
+	imgui::SetNextWindowPos(
+		ImVec2(-1, imgui::GetIO().DisplaySize.y + 1),
+		ImGuiCond_Always,
+		ImVec2(0.0f, 1.0f));
+	imgui::Begin("Player Character", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
+	imgui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(3.0f, 1.0f));
+	imgui::Text("Character Id: %s", localCharacter->getCharacterId().c_str());
+	imgui::PushStyleColor(ImGuiCol_PlotHistogram, Color(255, 255, 255));
+	imgui::ProgressBar(localCharacter->getMagicPreference().Element, ImVec2(350, 15), nullptr); imgui::SameLine(); imgui::Text("%.1f Element", localCharacter->getMagicPreference().Element);
+	imgui::ProgressBar(localCharacter->getMagicPreference().Phantom, ImVec2(350, 15), nullptr); imgui::SameLine(); imgui::Text("%.1f Phantom", localCharacter->getMagicPreference().Phantom);
+	imgui::PopStyleColor();
+	imgui::Separator();
+
+	imgui::PopStyleVar();
+	imgui::End();
 }
 
 

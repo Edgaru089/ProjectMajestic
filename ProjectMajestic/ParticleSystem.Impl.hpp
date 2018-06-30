@@ -140,7 +140,7 @@ void PartlcleSystem::emitSmoke(Vector2d position, int count) {
 
 ////////////////////////////////////////
 void PartlcleSystem::emitArrowGlow(Vector2d position) {
-	emit(position, textureManager.getTextureInfo("particle_arrow_glow_8"),
+	emit(position, textureManager.getTextureInfo("particle_arrow_glow"),
 		1.0, 0.0, 1, milliseconds(250), milliseconds(250), Vector2d(0.3, 0.3), 0.0);
 }
 

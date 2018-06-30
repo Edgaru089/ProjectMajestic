@@ -1,11 +1,11 @@
-ï»¿#pragma once
+#pragma once
 
 #include "PlayerCharacter.hpp"
 
-// åœ¨ TH06 ä¸œæ–¹çº¢é­”ä¹¡ ä¸­ç™»åœºçš„äººç‰©
+// ÔÚ TH06 ¶«·½ºìÄ§Ïç ÖĞµÇ³¡µÄÈËÎï
 namespace Th06 {
 
-	// å¸•ç§‹è‰
+	// ÅÁÇïÀò
 	class PatchouliKnowldege :public PlayerCharacter {
 	public:
 		PatchouliKnowldege() :PlayerCharacter() {
@@ -14,32 +14,32 @@ namespace Th06 {
 			pref.ElementMetal = 0.8;
 			pref.ElementWood = 0.8;
 			pref.ElementWater = 0.8;
-			pref.ElementFire = 0.75;  // ç¡®ä¿é˜¿ç©ºçš„ç¬¦å¡ï¼ˆç«0.8ï¼Œæ—¥1.0ï¼‰ä¸èƒ½ç”¨
+			pref.ElementFire = 0.75;  // È·±£°¢¿ÕµÄ·û¿¨£¨»ğ0.8£¬ÈÕ1.0£©²»ÄÜÓÃ
 			pref.ElementSoil = 0.8;
-			pref.ElementSun = 0.65;   // ç¡®ä¿é˜¿ç©ºçš„ç¬¦å¡ï¼ˆç«0.8ï¼Œæ—¥1.0ï¼‰ä¸èƒ½ç”¨
-			pref.ElementMoon = 0.6;   // æœˆéƒ½è§’è‰²æœˆå±æ€§æ™®éé«˜äº0.7
-			pref.PhantomYoukai = 0.3; // æ¯•ç«Ÿæ˜¯é­”æ³•ä½¿
+			pref.ElementSun = 0.65;   // È·±£°¢¿ÕµÄ·û¿¨£¨»ğ0.8£¬ÈÕ1.0£©²»ÄÜÓÃ
+			pref.ElementMoon = 0.6;   // ÔÂ¶¼½ÇÉ«ÔÂÊôĞÔÆÕ±é¸ßÓÚ0.7
+			pref.PhantomYoukai = 0.3; // ±Ï¾¹ÊÇÄ§·¨Ê¹
 
-			majors.push_back(SevenElements); // ä¸ƒæ›œçš„é­”æ³•ä½¿
-			majors.push_back(PhantomYoukai); // é­”æ³•ä½¿æ˜¯å¦–æ€ª
+			majors.push_back(SevenElements); // Æßê×µÄÄ§·¨Ê¹
+			majors.push_back(PhantomYoukai); // Ä§·¨Ê¹ÊÇÑı¹Ö
 		}
 	};
 
-	// å’²å¤œ
+	// †DÒ¹
 	class IzayoiSakuya :public PlayerCharacter {
 	public:
 		IzayoiSakuya() :PlayerCharacter() {
 			pref.Element = 0.4;
 			pref.Phantom = 0.6;
-			pref.ElementMoon = 0.4;   // ï¼ˆæœˆï¼‰æœˆè®¡æ—¶ï¼Ÿ
-			pref.PhantomHuman = 0.6;  // äººç±»ï¼ˆå’²å¤œçš„ç¬¦å¡æœˆ0.4äºº0.6ï¼Œæœˆéƒ½ä¸­æœˆå…”æœˆæ›œå¦–çµï¼Œæœˆéƒ½äººçº¯æœˆçµï¼‰
+			pref.ElementMoon = 0.4;   // £¨ÔÂ£©ÔÂ¼ÆÊ±£¿
+			pref.PhantomHuman = 0.6;  // ÈËÀà£¨†DÒ¹µÄ·û¿¨ÔÂ0.4ÈË0.6£¬ÔÂ¶¼ÖĞÔÂÍÃÔÂê×ÑıÁé£¬ÔÂ¶¼ÈË´¿ÔÂÁé£©
 
 			majors.push_back(ElementMoon);
 			majors.push_back(PhantomHuman);
 		}
 	};
 
-	// è•¾ç±³
+	// ÀÙÃ×
 	class RemiliaScarlet :public PlayerCharacter {
 	public:
 		RemiliaScarlet() :PlayerCharacter() {
@@ -53,7 +53,7 @@ namespace Th06 {
 		}
 	};
 
-	// èŠ™å…°
+	// Ü½À¼
 	class FlandreScarlet :public PlayerCharacter {
 	public:
 		FlandreScarlet() :PlayerCharacter() {

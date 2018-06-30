@@ -1,11 +1,11 @@
-ï»¿#pragma once
+#pragma once
 
 #include "PlayerCharacter.hpp"
 
-// åœ¨ TH08 ä¸œæ–¹æ°¸å¤œæŠ„ ä¸­ç™»åœºçš„äººç‰©
+// ÔÚ TH08 ¶«·½ÓÀÒ¹³­ ÖĞµÇ³¡µÄÈËÎï
 namespace Th08 {
 
-	// éˆ´ä»™ã€€å„ªæ›‡è¯é™¢ã€€ã‚¤ãƒŠãƒ
+	// âÏÉ¡¡ƒ•ÒÈAÔº¡¡¥¤¥Ê¥Ğ
 	class ReisenUdongeinInaba :public PlayerCharacter {
 	public:
 		ReisenUdongeinInaba() :PlayerCharacter() {
@@ -18,12 +18,12 @@ namespace Th08 {
 		}
 	};
 
-	// å…«æ„ã€€æ°¸ç³
+	// °ËÒâ¡¡ÓÀÁÕ
 	class YagokoroEirin :public PlayerCharacter {
 	public:
 		YagokoroEirin() :PlayerCharacter() {
-			pref.Element = 1.0;  // è¿™é‡Œä¸»è¦æ˜¯å› ä¸ºå…«æ„æ€å…¼çš„åŸå‹
-			pref.Phantom = 1.0;  // å’Œè¦å’Œè¾‰å¤œåŒºåˆ†è€ŒåŠ ä¸Šäº†ç¥çµå±æ€§
+			pref.Element = 1.0;  // ÕâÀïÖ÷ÒªÊÇÒòÎª°ËÒâË¼¼æµÄÔ­ĞÍ
+			pref.Phantom = 1.0;  // ºÍÒªºÍ»ÔÒ¹Çø·Ö¶ø¼ÓÉÏÁËÉñÁéÊôĞÔ
 			pref.ElementMoon = 1.0;
 			pref.Phantom = 1.0;
 			majors.push_back(PureElementMoon);
@@ -31,11 +31,11 @@ namespace Th08 {
 		}
 	};
 
-	// è“¬è±å±±ã€€è¼å¤œ
+	// ÅîÀ³É½¡¡İxÒ¹
 	class HouraisanKaguya :public PlayerCharacter {
 	public:
 		HouraisanKaguya() :PlayerCharacter() {
-			pref.Element = 1.0;      // è¾‰å¤œçš„ç¬¦å¡æ°¸ç³å…¨éƒ½èƒ½ç”¨ï¼Œåè¿‡æ¥å°±ä¸è¡Œ
+			pref.Element = 1.0;      // »ÔÒ¹µÄ·û¿¨ÓÀÁÕÈ«¶¼ÄÜÓÃ£¬·´¹ıÀ´¾Í²»ĞĞ
 			pref.ElementMoon = 1.0;
 			majors.push_back(PureElementMoon);
 		}

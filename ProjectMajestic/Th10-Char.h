@@ -1,10 +1,10 @@
-ï»¿#pragma once
+#pragma once
 
 #include "PlayerCharacter.hpp"
 
-// åœ¨ TH10 ä¸œæ–¹é£ç¥å½• ä¸­ç™»åœºçš„äººç‰©
+// ÔÚ TH10 ¶«·½·çÉñÂ¼ ÖĞµÇ³¡µÄÈËÎï
 namespace Th10 {
 
-	// æ²³åŸã«ã¨ã‚Š
+	// ºÓ³Ç¤Ë¤È¤ê
 
 }
