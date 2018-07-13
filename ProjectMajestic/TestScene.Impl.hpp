@@ -72,15 +72,15 @@ void TestScene::preWindowInitalaize() {
 ////////////////////////////////////////
 void TestScene::start(RenderWindow & win) {
 	imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("font_minecraft").c_str(),
-		16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
+											 16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
 	imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("courier_new").c_str(),
-		13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
+											 13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
 	imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("courier_new_bold").c_str(),
-		13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
-	//imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("source_han_sans").c_str(),
-		//16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
-	//imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("font_msyh").c_str(),
-		//16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
+											 13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
+										 //imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("source_han_sans").c_str(),
+											 //16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
+										 //imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("font_msyh").c_str(),
+											 //16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
 	imgui::SFML::UpdateFontTexture();
 
 	prov.setup(Vector2u(3, 2), 5);
@@ -112,8 +112,8 @@ void TestScene::onRender(RenderWindow & win) {
 	sp.setScale(renderIO.gameScaleFactor / background.getSize().x * 1.5, renderIO.gameScaleFactor / background.getSize().y * 1.5);
 	sp.setTextureRect(IntRect(0, 0, (win.getView().getSize().x + 2 * renderIO.gameScaleFactor * 1.5) / sp.getScale().x,
 		(win.getView().getSize().y + 2 * renderIO.gameScaleFactor * 1.5) / sp.getScale().y));
-	sp.setPosition(modDouble(renderIO.gameScenePosOffset.x, renderIO.gameScaleFactor * 1.5) - renderIO.gameScaleFactor * 1.5,
-		modDouble(renderIO.gameScenePosOffset.y, renderIO.gameScaleFactor * 1.5) - renderIO.gameScaleFactor * 1.5);
+	sp.setPosition(fmod(renderIO.gameScenePosOffset.x, renderIO.gameScaleFactor * 1.5) - renderIO.gameScaleFactor * 1.5,
+				   fmod(renderIO.gameScenePosOffset.y, renderIO.gameScaleFactor * 1.5) - renderIO.gameScaleFactor * 1.5);
 	win.draw(sp);
 
 	renderIO.viewRect = FloatRect(-renderIO.gameScenePosOffset.x, -renderIO.gameScenePosOffset.y, win.getSize().x, win.getSize().y);
@@ -346,7 +346,7 @@ void TestScene::runImGui() {
 	ENTER_IMGUI_DEBUG;
 
 	imgui::Text("%s %s / Version %d.%d.%d %s / Compile Time %s",
-		projectCode.c_str(), projectSuffix.c_str(), majorVersion, minorVersion, patchVersion, releaseStage.c_str(), compileTime.c_str());
+				projectCode.c_str(), projectSuffix.c_str(), majorVersion, minorVersion, patchVersion, releaseStage.c_str(), compileTime.c_str());
 #ifdef USE_ASYNC_RENDERING
 	imgui::Text("State: Async-Rendering, TPS: %d, EPS: %d, FPS: %d", logicTickPerSecond, eventTickPerSecond, framePerSecond);
 #else
@@ -435,15 +435,15 @@ void TestScene::runImGui() {
 	}
 
 	imgui::Text("TerrainRender:  %d verts (%d tri)",
-		terrainListSize, terrainListSize / 3);
+				terrainListSize, terrainListSize / 3);
 	imgui::Text("TerrainLight:   %d verts (%d tri)",
-		terrainMaskSize, terrainMaskSize / 3);
+				terrainMaskSize, terrainMaskSize / 3);
 	imgui::Text("ParticleRender: %d verts (%d tri)",
-		particleListSize, particleListSize / 3);
+				particleListSize, particleListSize / 3);
 	imgui::Text("EntityRender:   %d verts (%d tri)",
-		entityListSize, entityListSize / 3);
+				entityListSize, entityListSize / 3);
 	imgui::Text("Total:          %d verts (%d tri)",
-		totalVertSize, totalVertSize / 3);
+				totalVertSize, totalVertSize / 3);
 
 	LEAVE_IMGUI_DEBUG;
 
@@ -499,16 +499,15 @@ void TestScene::runImGui() {
 
 	// Player Character Dashboard at the bottom-left
 	// TODO Refactor pending
-	imgui::SetNextWindowPos(
-		ImVec2(-1, imgui::GetIO().DisplaySize.y + 1),
-		ImGuiCond_Always,
-		ImVec2(0.0f, 1.0f));
+	imgui::SetNextWindowPos(ImVec2(-1, imgui::GetIO().DisplaySize.y + 1),
+							ImGuiCond_Always,
+							ImVec2(0.0f, 1.0f));
 	imgui::Begin("Player Character", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
 	imgui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(3.0f, 1.0f));
 	imgui::Text("Character Id: %s", localCharacter->getCharacterId().c_str());
 	imgui::PushStyleColor(ImGuiCol_PlotHistogram, Color(255, 255, 255));
-	imgui::ProgressBar(localCharacter->getMagicPreference().Element, ImVec2(350, 15), nullptr); imgui::SameLine(); imgui::Text("%.1f Element", localCharacter->getMagicPreference().Element);
-	imgui::ProgressBar(localCharacter->getMagicPreference().Phantom, ImVec2(350, 15), nullptr); imgui::SameLine(); imgui::Text("%.1f Phantom", localCharacter->getMagicPreference().Phantom);
+	imgui::ProgressBar(localCharacter->getMagicPreference().Element, ImVec2(200, 15), nullptr); imgui::SameLine(); imgui::Text("%.1f Element", localCharacter->getMagicPreference().Element);
+	imgui::ProgressBar(localCharacter->getMagicPreference().Phantom, ImVec2(200, 15), nullptr); imgui::SameLine(); imgui::Text("%.1f Phantom", localCharacter->getMagicPreference().Phantom);
 	imgui::PopStyleColor();
 	imgui::Separator();
 

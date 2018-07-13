@@ -47,6 +47,7 @@ class PlayerCharacter {
 public:
 
 	PlayerCharacter() :pref(.0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0, .0) {}
+	virtual ~PlayerCharacter() {}
 
 	enum MagicFactor {
 		ElementMetal,  // ½ðê×

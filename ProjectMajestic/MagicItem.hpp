@@ -8,16 +8,15 @@
 class MagicItem :public Item, public PlayerCharacter {
 public:
 
+	// Set up magic options just like a character
+	MagicItem(Dataset& data) :Item(data) { }
+	virtual ~MagicItem() {}
+
 	const string getCharacterId() override { return "magicitem_"s + getItemId(); }
 	int getMaxItemsPerSlotCount() override { return 1; }
 	PlayerCharacter& getUserCharactor() { return *localCharacter; /* TODO Stop using local variable (Network) */ }
 
 	bool isControllable(PlayerCharacter& controller = *localCharacter) { return pref.isControllable(controller.getMagicPreference()); }
-
-	// Set up magic options just like a character
-	virtual void _setupMagicPreference() = 0;
-
-
 
 
 	// Inherited from Item

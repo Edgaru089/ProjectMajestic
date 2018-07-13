@@ -19,6 +19,8 @@ PlayerInventory::PlayerInventory() {
 	slots[0][2].setData("count", 1);
 	slots[0][3].setData("item_name", "block_ladder"s);
 	slots[0][3].setData("count", 5);
+	slots[0][4].setData("item_name", "item_mini_hakkero"s);
+	slots[0][4].setData("count", 1);
 }
 
 
@@ -33,7 +35,7 @@ void PlayerInventory::runImGui() {
 		ImGuiCond_Always,
 		ImVec2(0.5f, 1.0f));
 	imgui::Begin("BottomInventory", nullptr,
-		ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings);
+				 ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings);
 	for (int j = 0; j < 9; j++) {
 		if (j != 0)
 			imgui::SameLine(0, 3);
@@ -76,7 +78,7 @@ void PlayerInventory::runImGui() {
 		ImVec2(0.5f, 1.0f));
 	imgui::SetNextWindowSize(ImVec2(size.x, 0.0f), ImGuiCond_Always);
 	imgui::Begin("BottomInventoryExtend", nullptr,
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
+				 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
 
 	imgui::Text(slots[0][cursorId]["item_name"].getDataString().c_str());
 

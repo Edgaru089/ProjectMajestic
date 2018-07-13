@@ -6,10 +6,7 @@
 // ¥ß¥Ë°ËØÔÂ¯ / ÃÔÄã°ËØÔÂ¯
 class MiniHakkero :public MagicItem {
 public:
-
-	const string getItemId() override { return "mini_hakkero"; }
-
-	void _setupMagicPreference() override {
+	MiniHakkero(Dataset& data) :MagicItem(data) {
 		pref.Element = 0.8;
 		pref.Phantom = 0.6;
 		pref.ElementFire = 0.8;
@@ -17,6 +14,8 @@ public:
 		majors.push_back(ElementFire);
 		majors.push_back(PhantomHuman);
 	}
+
+	const string getItemId() override { return "mini_hakkero"; }
 
 	void _sendMagic() override {
 		// TODO Magic

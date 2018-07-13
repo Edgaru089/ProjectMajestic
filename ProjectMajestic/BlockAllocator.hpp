@@ -6,6 +6,7 @@ class Block;
 
 class BlockAllocator {
 public:
+	virtual ~BlockAllocator() {}
 	void initalaize();
 	Block* allocate(string id);
 private:

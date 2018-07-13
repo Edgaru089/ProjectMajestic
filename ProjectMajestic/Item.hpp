@@ -11,6 +11,7 @@ class Item {
 public:
 
 	Item(Dataset& slot) :slotDataset(slot) {}
+	virtual ~Item() {}
 
 	virtual const string getItemId() = 0;
 	virtual TextureInfo getTextureInfo() { return textureManager.getTextureInfo("item_" + getItemId()); }
