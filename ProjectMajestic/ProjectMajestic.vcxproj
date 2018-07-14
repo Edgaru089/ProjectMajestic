@@ -175,8 +175,6 @@
     <ClInclude Include="BlockAllocator.Impl.hpp" />
     <ClInclude Include="BowItem.hpp" />
     <ClInclude Include="BowItem.Impl.hpp" />
-    <ClInclude Include="MagicItem.hpp" />
-    <ClInclude Include="MajorChar.hpp" />
     <ClInclude Include="Chest.hpp" />
     <ClInclude Include="Chest.Impl.hpp" />
     <ClInclude Include="ChestInventory.hpp" />
@@ -219,7 +217,6 @@
     <ClInclude Include="LogBlock.hpp" />
     <ClInclude Include="LogSystem.hpp" />
     <ClInclude Include="Main.hpp" />
-    <ClInclude Include="MiniHakkero.hpp" />
     <ClInclude Include="Mob.hpp" />
     <ClInclude Include="NetworkClient.hpp" />
     <ClInclude Include="NetworkClient.Impl.hpp" />
@@ -232,11 +229,9 @@
     <ClInclude Include="OptionFileAdv.hpp" />
     <ClInclude Include="ParticleSystem.hpp" />
     <ClInclude Include="ParticleSystem.Impl.hpp" />
-    <ClInclude Include="Th06-Char.hpp" />
     <ClInclude Include="PerlinNoise.hpp" />
     <ClInclude Include="PerlinNoise.Impl.hpp" />
     <ClInclude Include="Planks.hpp" />
-    <ClInclude Include="PlayerCharacter.hpp" />
     <ClInclude Include="PlayerEntity.hpp" />
     <ClInclude Include="PlayerEntity.Impl.hpp" />
     <ClInclude Include="PlayerInventory.hpp" />
@@ -251,10 +246,6 @@
     <ClInclude Include="TestEntity.Impl.hpp" />
     <ClInclude Include="TestScene.hpp" />
     <ClInclude Include="TextureManager.hpp" />
-    <ClInclude Include="Th07-Char.hpp" />
-    <ClInclude Include="Th08-Char.hpp" />
-    <ClInclude Include="Th09-Char.hpp" />
-    <ClInclude Include="Th10-Char.h" />
     <ClInclude Include="ThreadPool.hpp" />
     <ClInclude Include="Torch.hpp" />
     <ClInclude Include="Torch.Impl.hpp" />

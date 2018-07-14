@@ -19,8 +19,6 @@ PlayerInventory::PlayerInventory() {
 	slots[0][2].setData("count", 1);
 	slots[0][3].setData("item_name", "block_ladder"s);
 	slots[0][3].setData("count", 5);
-	slots[0][4].setData("item_name", "item_mini_hakkero"s);
-	slots[0][4].setData("count", 1);
 }
 
 

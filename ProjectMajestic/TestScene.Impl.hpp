@@ -13,9 +13,6 @@
 #include "EntityAllocator.hpp"
 #include "InGameUI.hpp"
 #include "PlayerInventory.hpp"
-#include "PlayerCharacter.hpp"
-#include "MajorChar.hpp"
-#include "MagicItem.hpp"
 
 
 ////////////////////////////////////////
@@ -89,7 +86,6 @@ void TestScene::start(RenderWindow & win) {
 	entityManager.insert(localPlayer, Vector2d(prov.getSpawnPoints()[0]) + Vector2d(0.5, 1 - 1e-7));
 
 	role = Server;
-	localCharacter = new Major::KirisameMarisa;
 }
 
 
@@ -495,21 +491,6 @@ void TestScene::runImGui() {
 	uiManager.runImGui();
 
 	playerInventory.runImGui();
-
-
-	// Player Character Dashboard at the bottom-left
-	// TODO Refactor pending
-	imgui::SetNextWindowPos(ImVec2(-1, imgui::GetIO().DisplaySize.y + 1),
-							ImGuiCond_Always,
-							ImVec2(0.0f, 1.0f));
-	imgui::Begin("Player Character", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
-	imgui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(3.0f, 1.0f));
-	imgui::Text("Character Id: %s", localCharacter->getCharacterId().c_str());
-	imgui::PushStyleColor(ImGuiCol_PlotHistogram, Color(255, 255, 255));
-	imgui::ProgressBar(localCharacter->getMagicPreference().Element, ImVec2(200, 15), nullptr); imgui::SameLine(); imgui::Text("%.1f Element", localCharacter->getMagicPreference().Element);
-	imgui::ProgressBar(localCharacter->getMagicPreference().Phantom, ImVec2(200, 15), nullptr); imgui::SameLine(); imgui::Text("%.1f Phantom", localCharacter->getMagicPreference().Phantom);
-	imgui::PopStyleColor();
-	imgui::Separator();
 
 	imgui::PopStyleVar();
 	imgui::End();
