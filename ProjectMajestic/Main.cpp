@@ -20,6 +20,7 @@ using namespace std;
 
 void threadRendering() {
 	static Clock imguiDeltaClock;
+	ImGui::SFML::Update(win, imguiDeltaClock.restart());
 	win.setActive(true);
 	while (isReady) {
 		if (!win.isOpen()) {
@@ -36,13 +37,12 @@ void threadRendering() {
 		app->onRender(win);
 		logicDataLock.unlock();
 
-		ImGui::SFML::Update(win, imguiDeltaClock.restart());
-
 		app->runImGui();
 
 		logicDataLock.lock();
 		win.setView(View(FloatRect(0, 0, win.getSize().x, win.getSize().y)));
 		ImGui::SFML::Render(win);
+		ImGui::SFML::Update(win, imguiDeltaClock.restart());
 		logicDataLock.unlock();
 
 		win.display();

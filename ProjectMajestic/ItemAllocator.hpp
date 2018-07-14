@@ -7,6 +7,7 @@ class Dataset;
 
 class ItemAllocator {
 public:
+	virtual ~ItemAllocator() {}
 	void initalaize();
 	Item* allocate(string id, Dataset& slot);
 private:

@@ -34,7 +34,6 @@ public:
 
 private:
 
-	Uuid mouseLightId;
 	Vector2i mouseWorldCoord;
 
 	Texture background;

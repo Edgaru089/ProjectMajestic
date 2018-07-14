@@ -72,6 +72,7 @@ int logicTickPerSecond, logicTickCounter, framePerSecond, frameCounter, eventTic
 Clock logicTickCounterClock, frameCounterClock, eventTickCounterClock;
 Clock programRunTimeClock;  //Nerer resets; started as time (for this process) begins
 atomic_bool isReady;
+mt19937 random((random_device())());
 
 Clock desktopUpdate;
 
@@ -149,7 +150,7 @@ Rect<RectType> operator * (Rect<RectType> rect, ValType val) {
 }
 
 double rand01() {
-	return (double)rand() / (double)RAND_MAX;
+	return uniform_real_distribution<double>(0.0, 1.0)(random);
 }
 
 // [x, y]
@@ -157,11 +158,6 @@ int rand(int x, int y) {
 	return x + rand01()*(y - x);
 }
 
-// x % y
-double modDouble(double x, double y) {
-	int f = x / y;
-	return x - f * y;
-}
 
 template<typename Type1, typename Type2>
 Type2 min(const Type1& x, const Type2& y) { if (x < y)return x; else return y; }

@@ -69,15 +69,15 @@ void TestScene::preWindowInitalaize() {
 ////////////////////////////////////////
 void TestScene::start(RenderWindow & win) {
 	imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("font_minecraft").c_str(),
-		16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
+											 16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
 	imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("courier_new").c_str(),
-		13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
+											 13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
 	imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("courier_new_bold").c_str(),
-		13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
-	//imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("source_han_sans").c_str(),
-		//16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
-	//imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("font_msyh").c_str(),
-		//16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
+											 13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
+										 //imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("source_han_sans").c_str(),
+											 //16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
+										 //imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("font_msyh").c_str(),
+											 //16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
 	imgui::SFML::UpdateFontTexture();
 
 	prov.setup(Vector2u(3, 2), 5);
@@ -108,8 +108,8 @@ void TestScene::onRender(RenderWindow & win) {
 	sp.setScale(renderIO.gameScaleFactor / background.getSize().x * 1.5, renderIO.gameScaleFactor / background.getSize().y * 1.5);
 	sp.setTextureRect(IntRect(0, 0, (win.getView().getSize().x + 2 * renderIO.gameScaleFactor * 1.5) / sp.getScale().x,
 		(win.getView().getSize().y + 2 * renderIO.gameScaleFactor * 1.5) / sp.getScale().y));
-	sp.setPosition(modDouble(renderIO.gameScenePosOffset.x, renderIO.gameScaleFactor * 1.5) - renderIO.gameScaleFactor * 1.5,
-		modDouble(renderIO.gameScenePosOffset.y, renderIO.gameScaleFactor * 1.5) - renderIO.gameScaleFactor * 1.5);
+	sp.setPosition(fmod(renderIO.gameScenePosOffset.x, renderIO.gameScaleFactor * 1.5) - renderIO.gameScaleFactor * 1.5,
+				   fmod(renderIO.gameScenePosOffset.y, renderIO.gameScaleFactor * 1.5) - renderIO.gameScaleFactor * 1.5);
 	win.draw(sp);
 
 	renderIO.viewRect = FloatRect(-renderIO.gameScenePosOffset.x, -renderIO.gameScenePosOffset.y, win.getSize().x, win.getSize().y);
@@ -124,46 +124,7 @@ void TestScene::onRender(RenderWindow & win) {
 
 	totalTriangles.setPrimitiveType(PrimitiveType::Triangles);
 	terrainManager.getRenderList(totalTriangles); terrainListSize = totalTriangles.getVertexCount();
-	terrainManager.getLightMask(totalTriangles);
-	// Append extra triangles covering the outside if required
-	// Left (and two corners on the left)
-	Vector2d rightBottomT = Vector2d(terrainManager.getChunkCount()) * 16.0 * renderIO.gameScaleFactor;
-	if (renderIO.viewRect.left < 0) {
-		totalTriangles.append(Vertex(Vector2f(0, renderIO.viewRect.top), Color(0, 0, 0, 192))); // Right-Top
-		totalTriangles.append(Vertex(Vector2f(renderIO.viewRect.left, renderIO.viewRect.top), Color(0, 0, 0, 192))); // Left-Top
-		totalTriangles.append(Vertex(Vector2f(0, renderIO.viewRect.top + renderIO.viewRect.height), Color(0, 0, 0, 192))); // Right-Bottom
-		totalTriangles.append(Vertex(Vector2f(renderIO.viewRect.left, renderIO.viewRect.top), Color(0, 0, 0, 192))); // Left-Top
-		totalTriangles.append(Vertex(Vector2f(0, renderIO.viewRect.top + renderIO.viewRect.height), Color(0, 0, 0, 192))); // Right-Bottom
-		totalTriangles.append(Vertex(Vector2f(renderIO.viewRect.left, renderIO.viewRect.top + renderIO.viewRect.height), Color(0, 0, 0, 192))); // Left-Bottom
-	}
-	// Right (and two corners on the right)
-	if (renderIO.viewRect.left + renderIO.viewRect.width > rightBottomT.x) {
-		totalTriangles.append(Vertex(Vector2f(renderIO.viewRect.left + renderIO.viewRect.width, renderIO.viewRect.top), Color(0, 0, 0, 192))); // Right-Top
-		totalTriangles.append(Vertex(Vector2f(rightBottomT.x, renderIO.viewRect.top), Color(0, 0, 0, 192))); // Left-Top
-		totalTriangles.append(Vertex(Vector2f(renderIO.viewRect.left + renderIO.viewRect.width, renderIO.viewRect.top + renderIO.viewRect.height), Color(0, 0, 0, 192))); // Right-Bottom
-		totalTriangles.append(Vertex(Vector2f(rightBottomT.x, renderIO.viewRect.top), Color(0, 0, 0, 192))); // Left-Top
-		totalTriangles.append(Vertex(Vector2f(renderIO.viewRect.left + renderIO.viewRect.width, renderIO.viewRect.top + renderIO.viewRect.height), Color(0, 0, 0, 192))); // Right-Bottom
-		totalTriangles.append(Vertex(Vector2f(rightBottomT.x, renderIO.viewRect.top + renderIO.viewRect.height), Color(0, 0, 0, 192))); // Left-Bottom
-	}
-	// Top
-	if (renderIO.viewRect.top < 0) {
-		totalTriangles.append(Vertex(Vector2f(min(renderIO.viewRect.left + renderIO.viewRect.width, rightBottomT.x), renderIO.viewRect.top), Color(0, 0, 0, 192))); // Right-Top
-		totalTriangles.append(Vertex(Vector2f(max(renderIO.viewRect.left, 0), renderIO.viewRect.top), Color(0, 0, 0, 192))); // Left-Top
-		totalTriangles.append(Vertex(Vector2f(min(renderIO.viewRect.left + renderIO.viewRect.width, rightBottomT.x), 0), Color(0, 0, 0, 192))); // Right-Bottom
-		totalTriangles.append(Vertex(Vector2f(max(renderIO.viewRect.left, 0), renderIO.viewRect.top), Color(0, 0, 0, 192))); // Left-Top
-		totalTriangles.append(Vertex(Vector2f(min(renderIO.viewRect.left + renderIO.viewRect.width, rightBottomT.x), 0), Color(0, 0, 0, 192))); // Right-Bottom
-		totalTriangles.append(Vertex(Vector2f(max(renderIO.viewRect.left, 0), 0), Color(0, 0, 0, 192))); // Left-Bottom
-	}
-	// Bottom
-	if (renderIO.viewRect.top + renderIO.viewRect.height > rightBottomT.y) {
-		totalTriangles.append(Vertex(Vector2f(min(renderIO.viewRect.left + renderIO.viewRect.width, rightBottomT.x), rightBottomT.y), Color(0, 0, 0, 192))); // Right-Top
-		totalTriangles.append(Vertex(Vector2f(max(renderIO.viewRect.left, 0), rightBottomT.y), Color(0, 0, 0, 192))); // Left-Top
-		totalTriangles.append(Vertex(Vector2f(min(renderIO.viewRect.left + renderIO.viewRect.width, rightBottomT.x), renderIO.viewRect.top + renderIO.viewRect.height), Color(0, 0, 0, 192))); // Right-Bottom
-		totalTriangles.append(Vertex(Vector2f(max(renderIO.viewRect.left, 0), rightBottomT.y), Color(0, 0, 0, 192))); // Left-Top
-		totalTriangles.append(Vertex(Vector2f(min(renderIO.viewRect.left + renderIO.viewRect.width, rightBottomT.x), renderIO.viewRect.top + renderIO.viewRect.height), Color(0, 0, 0, 192))); // Right-Bottom
-		totalTriangles.append(Vertex(Vector2f(max(renderIO.viewRect.left, 0), renderIO.viewRect.top + renderIO.viewRect.height), Color(0, 0, 0, 192))); // Left-Bottom
-	}
-	terrainMaskSize = totalTriangles.getVertexCount()
+	terrainManager.getLightMask(totalTriangles); terrainMaskSize = totalTriangles.getVertexCount()
 		- terrainListSize;
 	entityManager.getRenderList(totalTriangles); entityListSize = totalTriangles.getVertexCount()
 		- terrainListSize - terrainMaskSize;
@@ -305,44 +266,44 @@ void TestScene::updateLogic(RenderWindow & win) {
 			}*/
 		}
 
-	// Keyboard controls
-	if (!imgui::GetIO().WantCaptureKeyboard &&
-		(logicIO.keyboardState[Keyboard::A] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustPressed))
-		localPlayer->moveLeft(true);
-	if (logicIO.keyboardState[Keyboard::A] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustReleased)
-		localPlayer->moveLeft(false);
-	if (!imgui::GetIO().WantCaptureKeyboard &&
-		(logicIO.keyboardState[Keyboard::D] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Right] == LogicIO::JustPressed))
-		localPlayer->moveRight(true);
-	if (logicIO.keyboardState[Keyboard::D] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Right] == LogicIO::JustReleased)
-		localPlayer->moveRight(false);
-	if (!imgui::GetIO().WantCaptureKeyboard &&
-		(Keyboard::isKeyPressed(Keyboard::W) || Keyboard::isKeyPressed(Keyboard::Up)))
-		localPlayer->ascendLadder(true);
-	if (logicIO.keyboardState[Keyboard::W] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Up] == LogicIO::JustReleased)
-		localPlayer->ascendLadder(false);
-	if (!imgui::GetIO().WantCaptureKeyboard &&
-		(Keyboard::isKeyPressed(Keyboard::S) || Keyboard::isKeyPressed(Keyboard::Down)))
-		localPlayer->decendLadder(true);
-	if (logicIO.keyboardState[Keyboard::S] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Down] == LogicIO::JustReleased)
-		localPlayer->decendLadder(false);
-	if (!imgui::GetIO().WantCaptureKeyboard &&
-		(logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustPressed))
-		localPlayer->crouch(true);
-	if (logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustReleased)
-		localPlayer->crouch(false);
-	if (Keyboard::isKeyPressed(Keyboard::Space))
-		localPlayer->jump();
+		// Keyboard controls
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			(logicIO.keyboardState[Keyboard::A] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustPressed))
+			localPlayer->moveLeft(true);
+		if (logicIO.keyboardState[Keyboard::A] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustReleased)
+			localPlayer->moveLeft(false);
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			(logicIO.keyboardState[Keyboard::D] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Right] == LogicIO::JustPressed))
+			localPlayer->moveRight(true);
+		if (logicIO.keyboardState[Keyboard::D] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Right] == LogicIO::JustReleased)
+			localPlayer->moveRight(false);
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			(Keyboard::isKeyPressed(Keyboard::W) || Keyboard::isKeyPressed(Keyboard::Up)))
+			localPlayer->ascendLadder(true);
+		if (logicIO.keyboardState[Keyboard::W] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Up] == LogicIO::JustReleased)
+			localPlayer->ascendLadder(false);
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			(Keyboard::isKeyPressed(Keyboard::S) || Keyboard::isKeyPressed(Keyboard::Down)))
+			localPlayer->decendLadder(true);
+		if (logicIO.keyboardState[Keyboard::S] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Down] == LogicIO::JustReleased)
+			localPlayer->decendLadder(false);
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			(logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustPressed))
+			localPlayer->crouch(true);
+		if (logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustReleased)
+			localPlayer->crouch(false);
+		if (Keyboard::isKeyPressed(Keyboard::Space))
+			localPlayer->jump();
 
-	terrainManager.updateLogic();
-	particleSystem.updateLogic();
-	entityManager.updateLogic();
-	uiManager.updateLogic();
+		terrainManager.updateLogic();
+		particleSystem.updateLogic();
+		entityManager.updateLogic();
+		uiManager.updateLogic();
 
-	if (logicIO.keyboardState[Keyboard::E] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard)
-		uiManager.changeUI(new PlayerInventoryUI);
-	if (logicIO.keyboardState[Keyboard::Escape] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard)
-		uiManager.changeUI(new PlayerInventoryUI);
+		if (logicIO.keyboardState[Keyboard::E] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard)
+			uiManager.changeUI(new PlayerInventoryUI);
+		if (logicIO.keyboardState[Keyboard::Escape] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard)
+			uiManager.changeUI(new PlayerInventoryUI);
 }
 
 
@@ -381,7 +342,7 @@ void TestScene::runImGui() {
 	ENTER_IMGUI_DEBUG;
 
 	imgui::Text("%s %s / Version %d.%d.%d %s / Compile Time %s",
-		projectCode.c_str(), projectSuffix.c_str(), majorVersion, minorVersion, patchVersion, releaseStage.c_str(), compileTime.c_str());
+				projectCode.c_str(), projectSuffix.c_str(), majorVersion, minorVersion, patchVersion, releaseStage.c_str(), compileTime.c_str());
 #ifdef USE_ASYNC_RENDERING
 	imgui::Text("State: Async-Rendering, TPS: %d, EPS: %d, FPS: %d", logicTickPerSecond, eventTickPerSecond, framePerSecond);
 #else
@@ -470,15 +431,15 @@ void TestScene::runImGui() {
 	}
 
 	imgui::Text("TerrainRender:  %d verts (%d tri)",
-		terrainListSize, terrainListSize / 3);
+				terrainListSize, terrainListSize / 3);
 	imgui::Text("TerrainLight:   %d verts (%d tri)",
-		terrainMaskSize, terrainMaskSize / 3);
+				terrainMaskSize, terrainMaskSize / 3);
 	imgui::Text("ParticleRender: %d verts (%d tri)",
-		particleListSize, particleListSize / 3);
+				particleListSize, particleListSize / 3);
 	imgui::Text("EntityRender:   %d verts (%d tri)",
-		entityListSize, entityListSize / 3);
+				entityListSize, entityListSize / 3);
 	imgui::Text("Total:          %d verts (%d tri)",
-		totalVertSize, totalVertSize / 3);
+				totalVertSize, totalVertSize / 3);
 
 	LEAVE_IMGUI_DEBUG;
 
@@ -530,6 +491,9 @@ void TestScene::runImGui() {
 	uiManager.runImGui();
 
 	playerInventory.runImGui();
+
+	imgui::PopStyleVar();
+	imgui::End();
 }
 
 

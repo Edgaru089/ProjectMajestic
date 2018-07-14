@@ -3,11 +3,13 @@
 #include <cstdlib>
 #include <string>
 #include <random>
-#include "StringParser.hpp"
+#include <istream>
+#include <ostream>
 
 using namespace std;
 
 mt19937 uuid_random_engine;
+uniform_int_distribution<unsigned int> uuid_distribution(0, UINT_MAX);
 
 class Uuid {
 public:
@@ -18,18 +20,18 @@ public:
 	static Uuid get() {
 		Uuid id;
 
-		unsigned int x = uuid_random_engine();
+		unsigned int x = uuid_distribution(uuid_random_engine);
 		id.sc1 = x;
 
-		x = uuid_random_engine();
+		x = uuid_distribution(uuid_random_engine);
 		id.sc2 = x & 0xFFFFu;                 //  Lower 16 bits (2 bytes)
 		id.sc3 = x & (x & 0xFFFF0000u) >> 16; // Higher 16 bits (2 bytes)
 
-		x = uuid_random_engine();
+		x = uuid_distribution(uuid_random_engine);
 		id.sc4 = x & 0xFFFFu;                   //  Lower 16 bits (2 bytes)
 		id.sc5_high2 = (x & 0xFFFF0000u) >> 16; // Higher 16 bits (2 bytes)
 
-		x = uuid_random_engine();
+		x = uuid_distribution(uuid_random_engine);
 		id.sc5_low4 = x;
 
 		// Set the version bit (xxxxxxxx-xxxx-4xxx-axxx-xxxxxxxxxxxx)

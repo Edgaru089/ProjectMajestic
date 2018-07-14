@@ -273,6 +273,6 @@ void Entity::updateLogic() {
 			angle += 180;
 	}
 
-	if (role == Server || getEntityId() == "player")
+	if (role == Server /* || getEntityId() == "player" */)
 		_updateLogic();
 }
