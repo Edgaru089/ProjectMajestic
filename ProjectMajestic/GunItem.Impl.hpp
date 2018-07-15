@@ -5,18 +5,24 @@
 
 
 ////////////////////////////////////////
+void GunItem::_onShoot() {
+	BulletEntity::shoot(bulletDamage());
+}
+
+
+////////////////////////////////////////
 void GunItem::updateLogic() {
 	if (isShooting()) {
 		int curtime = programRunTimeClock.getElapsedTime().asMilliseconds();
 		if (curtime - lastShootTimeMill() > shootInterval().asMilliseconds()) {
 			lastShootTimeMill() = curtime;
 			if (roundsLeft() > 0) {
-				BulletEntity::shoot(bulletDamage());
 				roundsLeft()--;
+				_onShoot();
 			}
 		}
 	}
-	if (!isReloading()) {
+	if (!isReloading() && hasFocus()) {
 		if (logicIO.keyboardState[Keyboard::R] == LogicIO::JustPressed) {
 			bool ok = false;
 			for (int i = 0; i < 4; i++)
@@ -36,7 +42,7 @@ void GunItem::updateLogic() {
 			}
 		}
 	}
-	else {
+	if (isReloading()) {
 		if (programRunTimeClock.getElapsedTime().asMilliseconds() - startReloadTimeMill() >= reloadTime().asMilliseconds()) {
 			startReloadTimeMill() = 0;
 			roundsLeft() = roundsPerMagazine();

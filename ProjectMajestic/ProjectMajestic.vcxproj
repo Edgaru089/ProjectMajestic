@@ -246,6 +246,11 @@
     <ClInclude Include="PlayerEntity.Impl.hpp" />
     <ClInclude Include="PlayerInventory.hpp" />
     <ClInclude Include="PlayerInventory.Impl.hpp" />
+    <ClInclude Include="RpgAmmoItem.hpp" />
+    <ClInclude Include="RpgEntity.hpp" />
+    <ClInclude Include="RpgEntity.Impl.hpp" />
+    <ClInclude Include="RpgLauncherItem.hpp" />
+    <ClInclude Include="RpgLauncherItem.Impl.hpp" />
     <ClInclude Include="Scene.hpp" />
     <ClInclude Include="Stone.hpp" />
     <ClInclude Include="StringParser.hpp" />

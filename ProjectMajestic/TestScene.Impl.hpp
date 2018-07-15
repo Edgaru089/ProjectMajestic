@@ -268,12 +268,15 @@ void TestScene::updateLogic(RenderWindow & win) {
 			if (testEntity == Uuid()) {
 				TestEntity* te = new TestEntity;
 				te->setHealth(te->getMaxHealth());
-				testEntity = entityManager.insert(te,
-												  TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win))));
+				testEntity = entityManager.insert(te, TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win))));
 			}
-			else
-				entityManager.explode(TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win))),
-									  12.0, false);
+			else {
+				TestEntity* te = new TestEntity;
+				te->setHealth(te->getMaxHealth());
+				entityManager.insert(te, TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win))));
+			}
+				//entityManager.explode(TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win))),
+				//					  12.0, false);
 			//particleSystem.emitSmoke(TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win))));
 			//for (int i = 1; i <= 1000; i++) {
 			//	// Tile Drop

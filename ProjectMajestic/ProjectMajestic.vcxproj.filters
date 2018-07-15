@@ -399,6 +399,21 @@
     <ClInclude Include="GunItem.Impl.hpp">
       <Filter>Game\Items&amp;Blocks\Item\Base</Filter>
     </ClInclude>
+    <ClInclude Include="RpgLauncherItem.hpp">
+      <Filter>Game\Items&amp;Blocks\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="RpgAmmoItem.hpp">
+      <Filter>Game\Items&amp;Blocks\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="RpgLauncherItem.Impl.hpp">
+      <Filter>Game\Items&amp;Blocks\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="RpgEntity.hpp">
+      <Filter>Game\Entities\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="RpgEntity.Impl.hpp">
+      <Filter>Game\Entities\Entities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImGui\imgui.cpp">

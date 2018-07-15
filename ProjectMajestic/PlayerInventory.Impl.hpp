@@ -13,18 +13,28 @@ PlayerInventory::PlayerInventory() {
 	_emptyDatasetSlot(slotCursor);
 	slots[0][0].setData("item_name", "item_bow"s);
 	slots[0][0].setData("count", 1);
-	slots[0][1].setData("item_name", "block_chest"s);
+	slots[0][1].setData("item_name", "item_minigun"s);
 	slots[0][1].setData("count", 1);
-	slots[0][2].setData("item_name", "block_torch"s);
+	slots[0][2].setData("item_name", "item_rpg_launcher"s);
 	slots[0][2].setData("count", 1);
-	slots[0][3].setData("item_name", "block_ladder"s);
-	slots[0][3].setData("count", 5);
-	slots[0][4].setData("item_name", "item_minigun"s);
-	slots[0][4].setData("count", 1);
-	slots[0][5].setData("item_name", "item_minigun_ammo"s);
+	slots[0][3].setData("item_name", "item_grenade"s);
+	slots[0][3].setData("count", 8);
+	slots[0][4].setData("item_name", "item_grenade"s);
+	slots[0][4].setData("count", 8);
+	slots[0][5].setData("item_name", "item_grenade"s);
 	slots[0][5].setData("count", 8);
-	slots[0][6].setData("item_name", "item_grenade"s);
-	slots[0][6].setData("count", 4);
+	slots[0][6].setData("item_name", "block_torch"s);
+	slots[0][6].setData("count", 1);
+	slots[0][7].setData("item_name", "block_ladder"s);
+	slots[0][7].setData("count", 5);
+	slots[1][0].setData("item_name", "item_minigun_ammo"s);
+	slots[1][0].setData("count", 8);
+	slots[1][1].setData("item_name", "item_rpg_ammo"s);
+	slots[1][1].setData("count", 16);
+	slots[1][2].setData("item_name", "item_rpg_ammo"s);
+	slots[1][2].setData("count", 16);
+	slots[1][3].setData("item_name", "item_arrow"s);
+	slots[1][3].setData("count", 64);
 }
 
 
@@ -35,7 +45,7 @@ void PlayerInventory::updateLogic() {
 			if (slots[i][j]["item_name"].getDataString() == "")
 				continue;
 			const string& name = slots[i][j]["item_name"];
-			Item* item = itemAllocator.allocate(name.substr(5), slots[i][j]);
+			Item* item = itemAllocator.allocate(name.substr(5), slots[i][j], i == 0 && j == cursorId);
 			if (item != nullptr) {
 				item->updateLogic();
 				delete item;
@@ -66,7 +76,9 @@ void PlayerInventory::runImGui() {
 
 		TextureInfo info;
 		if (slots[0][j]["item_name"].getDataString().substr(0, 5) == "item_")
-			info = itemAllocator.allocate(slots[0][j]["item_name"].getDataString().substr(5), slots[0][j])->getTextureInfo();
+			info = itemAllocator.allocate(slots[0][j]["item_name"].getDataString().substr(5),
+										  slots[0][j],
+										  j == cursorId)->getTextureInfo();
 		else
 			info = textureManager.getTextureInfo(slots[0][j]["item_name"].getDataString());
 		if (!info.vaild)
@@ -103,7 +115,7 @@ void PlayerInventory::runImGui() {
 	const string& name = slots[0][cursorId]["item_name"].getDataString();
 	imgui::Text(name.c_str());
 	if (name != "") {
-		Item* item = itemAllocator.allocate(name.substr(5), slots[0][cursorId]);
+		Item* item = itemAllocator.allocate(name.substr(5), slots[0][cursorId], true);
 		if (item != nullptr) {
 			item->_pushExtraImguiItemsToDashboard();
 			delete item;

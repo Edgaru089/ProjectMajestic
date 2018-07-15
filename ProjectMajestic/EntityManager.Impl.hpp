@@ -41,16 +41,16 @@ void EntityManager::updateLogic() {
 ////////////////////////////////////////
 void EntityManager::explode(Vector2d position, double force, bool damageTerrain) {
 	// Particles
-	particleSystem.emitSmoke(position, force, -4.0, pow(0.7, force), 0.0, 360.0, 8 * force);
-	particleSystem.emitSmoke(position, 1.5*force, -4.0, pow(0.7, force), 0.0, 360.0, 0.8 * force);
+	particleSystem.emitSmoke(position, 1.2 * force, -4.0, 0.002, 0.0, 360.0, 7 * force);
+	particleSystem.emitSmoke(position, 1.7 * force, -4.0, 0.002, 0.0, 360.0, 0.5 * force);
 
 	// Damage
 	for (auto& i : entities) {
 		Mob* m = dynamic_cast<Mob*>(i.second);
 		if (m != nullptr) {
 			// Use the center point for distance calculations
-			double dist = getDis(m->getPosition() + Vector2d(.0, -m->getSize().y / 2), position);
-			double damage = force - dist * dist / 1.2;
+			double dist = getDis(m->getCenterPos(), position);
+			double damage = force - dist * dist * 1.1;
 			if (damage > 0)
 				m->harm(damage, position, damage / 5.0);
 		}

@@ -52,9 +52,9 @@ void TextureManager::bindTexture() {
 		sizeY = max(sizeY, (int)(offY + i.second.getSize().y));
 		maxHeight = max(maxHeight, (int)(i.second.getSize().y));
 
-		mlog << "                 Texture Id: " << i.first << ", Pos(" <<
-			offX << ", " << offY << "), Size: (" << i.second.getSize().x << ", " <<
-			i.second.getSize().y << ")" << dlog;
+		//mlog << "                 Texture Id: " << i.first << ", Pos(" <<
+		//	offX << ", " << offY << "), Size: (" << i.second.getSize().x << ", " <<
+		//	i.second.getSize().y << ")" << dlog;
 
 		offX += i.second.getSize().x;
 	}

@@ -9,7 +9,7 @@ class ItemAllocator {
 public:
 	virtual ~ItemAllocator() {}
 	void initalaize();
-	Item* allocate(string id, Dataset& slot);
+	Item* allocate(string id, Dataset& slot, bool hasFocus = false);
 private:
 	map<string, function<Item*(Dataset&)>> allocs;
 };

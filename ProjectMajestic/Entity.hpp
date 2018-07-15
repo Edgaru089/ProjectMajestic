@@ -37,6 +37,7 @@ public:
 
 	void setPosition(Vector2d pos) { posX = pos.x; posY = pos.y; }
 	Vector2d getPosition() { return Vector2d(posX, posY); }
+	Vector2d getCenterPos() { return getPosition() + Vector2d(.0, -getSize().y / 2.0); }
 
 	// Velocity: blocks per second
 	void setVelocity(Vector2d vec) { vecX = vec.x; vecY = vec.y; }

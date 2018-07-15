@@ -32,6 +32,8 @@
 #include "PerlinNoise.Impl.hpp"
 #include "PlayerEntity.Impl.hpp"
 #include "PlayerInventory.Impl.hpp"
+#include "RpgEntity.Impl.hpp"
+#include "RpgLauncherItem.Impl.hpp"
 #include "TerrainManager.Impl.hpp"
 #include "TerrainProvider.Impl.hpp"
 #include "TestScene.Impl.hpp"

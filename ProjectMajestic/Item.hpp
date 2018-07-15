@@ -10,7 +10,7 @@ class PlayerEntity;
 class Item {
 public:
 
-	Item(Dataset& slot) :slotDataset(slot) {}
+	Item(Dataset& slot) :slotDataset(slot), focus(false) {}
 	virtual ~Item() {}
 
 	virtual const string getItemId() = 0;
@@ -18,6 +18,9 @@ public:
 	virtual int getMaxItemsPerSlotCount() { return maxItemsPerSlot; }
 
 	virtual void updateLogic() {}
+
+	void setFocus(bool focus) { this->focus = focus; }
+	bool hasFocus() { return focus; }
 
 	// Tool atturibs
 	// Returns the damage caused when used as a weapon
@@ -43,6 +46,7 @@ public:
 
 private:
 
+	bool focus;
 
 };
 

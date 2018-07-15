@@ -135,6 +135,7 @@ void PartlcleSystem::emitSmoke(Vector2d position,
 		swap(liveTimeBegin, liveTimeEnd);
 	if (angleBegin > angleEnd)
 		swap(angleBegin, angleEnd);
+	position += Vector2d(.0, size.y / 2.0);
 	for (int i = 0; i < count; i++) {
 		TextureInfo texture = textureManager.getTextureInfo(StringParser::toStringFormatted(
 			"particle_smoke_%d",
@@ -170,6 +171,7 @@ void PartlcleSystem::emit(Vector2d position, TextureInfo texture, double sizeDiv
 	if (isForced || role == Server) { // Present locally
 		if (liveTimeBegin > liveTimeEnd)
 			swap(liveTimeBegin, liveTimeEnd);
+		position += Vector2d(.0, size.y / 2.0);
 		for (int i = 0; i < count; i++) {
 			Time live = liveTimeBegin + microseconds((liveTimeEnd - liveTimeBegin).asMicroseconds()*rand01());
 			double angle = 360.0*rand01();
@@ -202,6 +204,7 @@ void PartlcleSystem::emit(DoubleRect range, TextureInfo texture, double sizeDivi
 
 			pos.x = range.left + range.width*rand01();
 			pos.y = range.top + range.height*rand01();
+			pos += Vector2d(.0, size.y / 2.0);
 
 			Particle p(texture, sizeDivisor, live, size, gravity);
 			p.setPosition(pos);
@@ -226,6 +229,7 @@ void PartlcleSystem::emit(Vector2d position, TextureInfo texture, double sizeDiv
 			swap(liveTimeBegin, liveTimeEnd);
 		if (angleBegin > angleEnd)
 			swap(angleBegin, angleEnd);
+		position += Vector2d(.0, size.y / 2.0);
 		for (int i = 0; i < count; i++) {
 			Time live = liveTimeBegin + microseconds((liveTimeEnd - liveTimeBegin).asMicroseconds()*rand01());
 			double angle = angleBegin + (angleEnd - angleBegin)*rand01();
@@ -260,6 +264,7 @@ void PartlcleSystem::emit(DoubleRect range, TextureInfo texture, double sizeDivi
 
 			pos.x = range.left + range.width*rand01();
 			pos.y = range.top + range.height*rand01();
+			pos += Vector2d(.0, size.y / 2.0);
 
 			Particle p(texture, sizeDivisor, live, size, gravity);
 			p.setPosition(pos);

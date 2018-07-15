@@ -19,6 +19,8 @@ public:
 	virtual int roundsPerMagazine() = 0;
 	virtual string magazineItemName() = 0; // "item_xxx"
 
+	virtual void _onShoot();
+
 	int getMaxItemsPerSlotCount() override { return 1; }
 
 	void updateLogic() override;
@@ -28,7 +30,7 @@ public:
 
 	void _pushExtraImguiItemsToDashboard() override;
 
-private:
+protected:
 
 	int& lastShootTimeMill() { return slotDataset["last_shoot_time"].getDataInt(); }
 	bool isShooting() { /*return slotDataset["is_shooting"].getDataBool();*/ return lastShootTimeMill() != 0; };

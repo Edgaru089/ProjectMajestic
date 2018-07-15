@@ -80,7 +80,7 @@ Clock desktopUpdate;
 const double sqr(double x) { return x * x; }
 
 const double getDisSquared(double posX1, double posY1, double posX2, double posY2) {
-	return abs(posX1 - posX2)*abs(posX1 - posX2) + abs(posY1 - posY2)*abs(posY1 - posY2);
+	return fabs(posX1 - posX2)*fabs(posX1 - posX2) + fabs(posY1 - posY2)*fabs(posY1 - posY2);
 }
 
 const double getDisSquared(Vector2d posX, Vector2d posY) {
