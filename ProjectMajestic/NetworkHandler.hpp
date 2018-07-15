@@ -49,6 +49,8 @@ public:
 
 	void sendEntityData();
 
+	void sendLocalPlayerData();
+
 	void onInsertEntity(Uuid id, Entity * entity);
 
 	void onRemoveEntity(Uuid id);

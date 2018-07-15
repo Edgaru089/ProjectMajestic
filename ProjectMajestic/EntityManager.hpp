@@ -13,7 +13,7 @@ public:
 	void initalaize();
 
 	void updateLogic();
-	
+
 	// Triangles
 	void getRenderList(VertexArray& verts);
 
@@ -31,7 +31,7 @@ public:
 public:
 
 	// Summon an explosion
-	void explode(Vector2d position, double force, bool damageTerrain = false);
+	void explode(Vector2d position, double force, bool damageTerrain = gameIO.ruleExplosionDamagesTerrain);
 
 private:
 

@@ -59,20 +59,24 @@ void RpgEntity::pushTriangleVertexes(VertexArray& verts) {
 
 ////////////////////////////////////////
 void RpgEntity::_onCollision(Block* block) {
+	if (!isAlive())
+		return;
 	if (!block->isSolid())
 		return;
-	entityManager.explode(getCenterPos(), force, false);
+	entityManager.explode(getCenterPos(), force);
 	kill();
 }
 
 
 ////////////////////////////////////////
 void RpgEntity::_onCollideEntity(Entity* e) {
+	if (!isAlive())
+		return;
 	Mob* mob = dynamic_cast<Mob*>(e);
 	if (mob == nullptr)
 		return;
 
-	entityManager.explode(getCenterPos(), force, false);
+	entityManager.explode(getCenterPos(), force);
 	kill();
 }
 

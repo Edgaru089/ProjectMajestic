@@ -16,6 +16,8 @@ void BulletEntity::shoot(double damage, Vector2d position, double degree) {
 
 ////////////////////////////////////////
 void BulletEntity::_onCollideEntity(Entity* e) {
+	if (!isAlive())
+		return;
 	if (e->getUuid() != localPlayer->getUuid()) {
 		Mob* mob = dynamic_cast<Mob*>(e);
 		if (mob != nullptr) {
@@ -28,6 +30,8 @@ void BulletEntity::_onCollideEntity(Entity* e) {
 
 ////////////////////////////////////////
 void BulletEntity::_onCollision(Block* b) {
+	if (!isAlive())
+		return;
 	if (b->isSolid())
 		kill();
 }

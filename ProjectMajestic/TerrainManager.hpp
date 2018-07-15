@@ -42,6 +42,7 @@ public:
 	void clear();
 
 	Chunk* getChunk(Vector2i chunkId);
+	map<Vector2i, Chunk*, Vector2Less<int>>& getChunks() { return chunks; }
 	Block* getBlock(Vector2i coord);
 
 	// SetBlock() doesn't call the block's OnDestroy() function

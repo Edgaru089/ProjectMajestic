@@ -2,10 +2,6 @@
 
 #include "Item.hpp"
 
-// 600 RPM
-const Time minigunShootInterval = milliseconds(100);
-const Time minigunReloadTime = seconds(3.5f);
-const int minigunRoundsPerDrum = 150;
 
 class GunItem :public Item {
 public:

@@ -2,7 +2,7 @@
 
 #include "Entity.hpp"
 
-const double grenadeDamage = 12.0;
+const double grenadeDamage = 16.0;
 
 class GrenadeEntity :public Entity {
 public:

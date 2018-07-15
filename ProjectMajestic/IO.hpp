@@ -49,6 +49,10 @@ struct GameIO {
 	// in clockwise pattern
 	double degreeAngle;
 
+	// Game rules
+	// Does explosions damage terrain?
+	bool ruleExplosionDamagesTerrain;
+
 };
 
 // Enum representing the networking role of the local game

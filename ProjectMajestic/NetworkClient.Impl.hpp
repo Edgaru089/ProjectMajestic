@@ -10,6 +10,7 @@ bool NetworkClient::connect(IpAddress target, Uint16 port) {
 		return false;
 	else {
 		role = Client;
+		notifyEntityInsert(localPlayer->getUuid(), localPlayer);
 		return true;
 	}
 }
@@ -56,8 +57,26 @@ void NetworkClient::uploadChunk(Vector2i chunkId) {
 
 
 ////////////////////////////////////////
+void NetworkClient::syncPlayerPos() {
+	handler.sendLocalPlayerData();
+}
+
+
+////////////////////////////////////////
 void NetworkClient::notifyParticleEmit(ParticleEmitTrace trace) {
 	handler.sendParticleEmitData(trace);
+}
+
+
+////////////////////////////////////////
+void NetworkClient::notifyEntityInsert(Uuid id, Entity* entity) {
+	handler.onInsertEntity(id, entity);
+}
+
+
+////////////////////////////////////////
+void NetworkClient::notifyEntityKill(Uuid id) {
+	handler.onRemoveEntity(id);
 }
 
 

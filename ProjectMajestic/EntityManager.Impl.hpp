@@ -30,20 +30,19 @@ void EntityManager::updateLogic() {
 		}
 	}
 	for (auto i : entities) {
-		if (i.second->requestEntityCollisionCallback())
+		if (i.second->requestEntityCollisionCallback() && i.second->isAlive())
 			for (auto j : entities)
 				if (j.first != i.first&&j.second->getHitbox().intersects(i.second->getHitbox()))
 					i.second->_onCollideEntity(j.second);
 	}
+
+	if (role == Client)
+		networkClient.syncPlayerPos();
 }
 
 
 ////////////////////////////////////////
 void EntityManager::explode(Vector2d position, double force, bool damageTerrain) {
-	// Particles
-	particleSystem.emitSmoke(position, 1.2 * force, -4.0, 0.002, 0.0, 360.0, 7 * force);
-	particleSystem.emitSmoke(position, 1.7 * force, -4.0, 0.002, 0.0, 360.0, 0.5 * force);
-
 	// Damage
 	for (auto& i : entities) {
 		Mob* m = dynamic_cast<Mob*>(i.second);
@@ -57,6 +56,24 @@ void EntityManager::explode(Vector2d position, double force, bool damageTerrain)
 	}
 
 	// TODO Terrain destruction
+	if (damageTerrain) {
+		for (auto& k : terrainManager.getChunks()) {
+			Vector2i off = k.first*chunkSize;
+			Chunk* c = k.second;
+			for (int i = 0; i < chunkSize; i++)
+				for (int j = 0; j < chunkSize; j++) {
+					if (c->getBlock(Vector2i(i, j)) == nullptr)
+						continue;
+					Vector2d blockCenter = Vector2d(off + Vector2i(i, j)) + Vector2d(.5, .5);
+					if (sqr(getDis(blockCenter, position)*1.6) < force)
+						terrainManager.breakBlock(off + Vector2i(i, j));
+				}
+		}
+	}
+
+	// Particles
+	particleSystem.emitSmoke(position, 1.2 * force, -4.0, 0.002, 0.0, 360.0, 7 * force);
+	particleSystem.emitSmoke(position, 1.7 * force, -4.0, 0.002, 0.0, 360.0, 0.5 * force);
 }
 
 

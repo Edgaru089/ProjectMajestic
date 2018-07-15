@@ -90,6 +90,8 @@ void TestScene::start(RenderWindow & win) {
 	localPlayer = new PlayerEntity();
 	entityManager.insert(localPlayer, Vector2d(prov.getSpawnPoints()[0]) + Vector2d(0.5, 1 - 1e-7));
 
+	gameIO.ruleExplosionDamagesTerrain = true;
+
 	role = Server;
 }
 
@@ -381,6 +383,7 @@ void TestScene::runImGui() {
 	static float value = renderIO.gameScaleFactor;
 	imgui::SliderFloat("GameScaleFactor", &value, 24, 64);
 	renderIO.gameScaleFactor = value;
+	imgui::Checkbox("Explosion damages terrain", &gameIO.ruleExplosionDamagesTerrain);
 	imgui::Image(*textureManager.getBindingTexture());
 	imgui::End();
 

@@ -6,7 +6,6 @@
 
 ////////////////////////////////////////
 void RpgLauncherItem::_onShoot() {
-	mlog << "OnShoot" << dlog;
 	RpgEntity::shoot();
 }
 

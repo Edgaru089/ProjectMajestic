@@ -3,7 +3,7 @@
 #include "Entity.hpp"
 #include "PlayerEntity.hpp"
 
-const double rpgExplodeForce = 16.0;
+const double rpgExplodeForce = 25.0;
 
 class RpgEntity :public Entity {
 public:

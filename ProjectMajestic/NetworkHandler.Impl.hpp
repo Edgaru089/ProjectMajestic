@@ -30,7 +30,7 @@ bool NetworkHandler::start(bool client) {
 
 	if (peer.majorVersion != majorVersion || peer.minorVersion != minorVersion) {
 		logicIO.lastError = StringParser::toStringFormatted("Client/Server Version Mismatch, Local: %d.%d.%d, Remote: %d.%d.%d",
-			majorVersion, minorVersion, patchVersion, peer.majorVersion, peer.minorVersion, peer.patchVersion);
+															majorVersion, minorVersion, patchVersion, peer.majorVersion, peer.minorVersion, peer.patchVersion);
 		mlog << Log::Error << "[Network/Handshake Error] " << logicIO.lastError << dlog;
 		socket.disconnect();
 		return false;
@@ -38,7 +38,7 @@ bool NetworkHandler::start(bool client) {
 
 	if (peer.chunkSize != chunkSize) {
 		logicIO.lastError = StringParser::toStringFormatted("Client/Server Chunk Size Mismatch, Local: %d, Remote: %d",
-			chunkSize, peer.chunkSize);
+															chunkSize, peer.chunkSize);
 		mlog << Log::Error << "[Network/Handshake Error] " << logicIO.lastError << dlog;
 		socket.disconnect();
 		return false;
@@ -414,6 +414,28 @@ void NetworkHandler::sendEntityData() {
 	entityManager.unlock();
 
 	CHECKED_SEND(pack);
+}
+
+
+////////////////////////////////////////
+void NetworkHandler::sendLocalPlayerData() {
+	if (localPlayer != nullptr) {
+		CHECK_CONNECT;
+		PACKET_COMMAND(pack, "ENTITY");
+
+		entityManager.lock();
+
+		pack << 1;
+		pack << localPlayer->getUuid();
+		pack << localPlayer->getEntityId();
+		pack << localPlayer->getPosition().x << localPlayer->getPosition().y;
+		pack << localPlayer->getVelocity().x << localPlayer->getVelocity().y;
+		pack << localPlayer->getDataset();
+
+		entityManager.unlock();
+
+		CHECKED_SEND(pack);
+	}
 }
 
 

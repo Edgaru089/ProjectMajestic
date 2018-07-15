@@ -25,7 +25,13 @@ public:
 
 public:
 
+	void syncPlayerPos();
+
 	void notifyParticleEmit(ParticleEmitTrace trace);
+
+	void notifyEntityInsert(Uuid id, Entity* entity);
+
+	void notifyEntityKill(Uuid id);
 
 	void notifyBlockSet(Vector2i coord, string blockId);
 
