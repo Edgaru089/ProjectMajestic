@@ -17,6 +17,8 @@ public:
 	virtual TextureInfo getTextureInfo() { return textureManager.getTextureInfo("item_" + getItemId()); }
 	virtual int getMaxItemsPerSlotCount() { return maxItemsPerSlot; }
 
+	virtual void updateLogic() {}
+
 	// Tool atturibs
 	// Returns the damage caused when used as a weapon
 	virtual const int getWeaponDamage() { return 1; }
@@ -34,6 +36,8 @@ public:
 	// Returns false when nothing is done(and send right click signal to the block), true when the item is used
 	virtual bool _onRightPressed() { return false; }
 	virtual void _onRightReleased() {}
+
+	virtual void _pushExtraImguiItemsToDashboard() {}
 
 	Dataset& slotDataset;
 

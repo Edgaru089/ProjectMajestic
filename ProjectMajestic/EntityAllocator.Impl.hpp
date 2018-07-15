@@ -8,6 +8,8 @@
 #include "FallingSand.hpp"
 #include "PlayerEntity.hpp"
 #include "ArrowEntity.hpp"
+#include "BulletEntity.hpp"
+#include "GrenadeEntity.hpp"
 
 #define REGISTER_ENTITY_TYPE(type) allocs.insert_or_assign(type().getEntityId(), allocEntity<type>)
 
@@ -18,6 +20,8 @@ void EntityAllocator::initalaize() {
 	REGISTER_ENTITY_TYPE(FallingSand);
 	REGISTER_ENTITY_TYPE(PlayerEntity);
 	REGISTER_ENTITY_TYPE(ArrowEntity);
+	REGISTER_ENTITY_TYPE(BulletEntity);
+	REGISTER_ENTITY_TYPE(GrenadeEntity);
 }
 
 

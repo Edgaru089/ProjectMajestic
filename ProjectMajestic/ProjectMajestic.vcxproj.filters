@@ -255,9 +255,6 @@
     <ClInclude Include="TestEntity.hpp">
       <Filter>Game\Entities\Entities</Filter>
     </ClInclude>
-    <ClInclude Include="TestEntity.Impl.hpp">
-      <Filter>Game\Entities\Entities</Filter>
-    </ClInclude>
     <ClInclude Include="NetworkServer.hpp">
       <Filter>Game\Network</Filter>
     </ClInclude>
@@ -371,6 +368,36 @@
     </ClInclude>
     <ClInclude Include="App.Impl.hpp">
       <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletEntity.hpp">
+      <Filter>Game\Entities\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletEntity.Impl.hpp">
+      <Filter>Game\Entities\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="MinigunItem.hpp">
+      <Filter>Game\Items&amp;Blocks\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="GrenadeEntity.hpp">
+      <Filter>Game\Entities\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="GrenadeEntity.Impl.hpp">
+      <Filter>Game\Entities\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="GrenadeItem.hpp">
+      <Filter>Game\Items&amp;Blocks\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="GrenadeItem.Impl.hpp">
+      <Filter>Game\Items&amp;Blocks\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="MinigunAmmoItem.hpp">
+      <Filter>Game\Items&amp;Blocks\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="GunItem.hpp">
+      <Filter>Game\Items&amp;Blocks\Item\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="GunItem.Impl.hpp">
+      <Filter>Game\Items&amp;Blocks\Item\Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

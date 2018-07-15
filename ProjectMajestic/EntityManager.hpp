@@ -28,6 +28,11 @@ public:
 
 	map<Uuid, Entity*>& getEntityMapList() { return entities; }
 
+public:
+
+	// Summon an explosion
+	void explode(Vector2d position, double force, bool damageTerrain = false);
+
 private:
 
 	map<Uuid, Entity*> entities;

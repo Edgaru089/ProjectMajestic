@@ -19,6 +19,28 @@ PlayerInventory::PlayerInventory() {
 	slots[0][2].setData("count", 1);
 	slots[0][3].setData("item_name", "block_ladder"s);
 	slots[0][3].setData("count", 5);
+	slots[0][4].setData("item_name", "item_minigun"s);
+	slots[0][4].setData("count", 1);
+	slots[0][5].setData("item_name", "item_minigun_ammo"s);
+	slots[0][5].setData("count", 8);
+	slots[0][6].setData("item_name", "item_grenade"s);
+	slots[0][6].setData("count", 4);
+}
+
+
+////////////////////////////////////////
+void PlayerInventory::updateLogic() {
+	for (int i = 0; i <= 3; i++)
+		for (int j = 0; j < 9; j++) {
+			if (slots[i][j]["item_name"].getDataString() == "")
+				continue;
+			const string& name = slots[i][j]["item_name"];
+			Item* item = itemAllocator.allocate(name.substr(5), slots[i][j]);
+			if (item != nullptr) {
+				item->updateLogic();
+				delete item;
+			}
+		}
 }
 
 
@@ -78,7 +100,15 @@ void PlayerInventory::runImGui() {
 	imgui::Begin("BottomInventoryExtend", nullptr,
 				 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
 
-	imgui::Text(slots[0][cursorId]["item_name"].getDataString().c_str());
+	const string& name = slots[0][cursorId]["item_name"].getDataString();
+	imgui::Text(name.c_str());
+	if (name != "") {
+		Item* item = itemAllocator.allocate(name.substr(5), slots[0][cursorId]);
+		if (item != nullptr) {
+			item->_pushExtraImguiItemsToDashboard();
+			delete item;
+		}
+	}
 
 	imgui::End();
 

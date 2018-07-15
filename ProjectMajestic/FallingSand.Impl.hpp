@@ -7,8 +7,12 @@
 void FallingSand::_updateLogic() {
 	if (terrainManager.getBlock(TerrainManager::convertWorldPositionToBlockCoord(getPosition())) == nullptr) {
 		if (onGround) {
-			terrainManager.placeBlock(TerrainManager::convertWorldPositionToBlockCoord(getPosition()),
-				getData("block_id").getDataString());
+			Vector2i coord = TerrainManager::convertWorldPositionToBlockCoord(getPosition());
+			terrainManager.placeBlock(coord, getData("block_id").getDataString());
+			Block* b = terrainManager.getBlock(coord);
+			for (auto& i : datasets.getDatasets())
+				if (i.first != "block_id")
+					b->getDataset().getDatasets().insert(i);
 			kill();
 		}
 	}

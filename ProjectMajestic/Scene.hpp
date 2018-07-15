@@ -10,6 +10,7 @@ public:
 	virtual const string getSceneName() = 0;
 
 	virtual void preWindowInitalaize() {}
+	virtual void postWindowInitalaize(RenderWindow& win) {}
 
 	virtual void start(RenderWindow& win) = 0;
 

@@ -18,6 +18,7 @@ public:
 	}
 
 	void preWindowInitalaize() override;
+	void postWindowInitalaize(RenderWindow& win) override;
 
 	void start(RenderWindow& win) override;
 
@@ -33,6 +34,12 @@ public:
 
 
 private:
+
+	bool _sendMousePressedToHandItem(Mouse::Button button);
+	void _sendMouseReleasedToHandItem(Mouse::Button button);
+
+	Uuid testEntity;
+
 
 	Vector2i mouseWorldCoord;
 

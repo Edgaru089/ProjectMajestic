@@ -184,6 +184,8 @@ bool PlayerEntity::collectItem(ItemEntity* item) {
 			if (d["item_name"].getDataString() == "") {
 				d["item_name"].setData(item->getItemName());
 				d["count"].getDataInt() = 1;
+				for (auto& i : item->getDataset().getDatasets())
+					d.getDatasets().insert(i);
 				item->kill();
 				return true;
 			}

@@ -1,13 +1,16 @@
 #pragma once
 
 #include "Entity.hpp"
+#include "PlayerEntity.hpp"
 
 const int maxArrowDamage = 10;
 
 class ArrowEntity :public Entity {
 public:
 
-	static void shoot(int damage = maxArrowDamage);
+	static void shoot(double damage = maxArrowDamage,
+					  Vector2d position = localPlayer->getEyePosition(),
+					  double degree = gameIO.degreeAngle);
 
 public:
 
@@ -16,6 +19,9 @@ public:
 	const string getEntityId() override { return "arrow"; }
 	const bool requestSpeicalRendering() override { return true; }
 	void pushTriangleVertexes(VertexArray& verts) override;
+
+	const bool requestEntityCollisionCallback() override { return true; }
+	void _onCollideEntity(Entity* e) override;
 
 	const double getGravityAclc() override { return 2.0; }
 
@@ -26,12 +32,18 @@ public:
 
 private:
 
+	void _dropItem();
+
 	Clock particleClock;
 
+	double damage;
+
 	bool& inWall() { return getData("in_wall").getDataBool(); };
+	bool& inEntity() { return getData("in_entity").getDataBool(); }
 
 	Vector2d pos0;
 	Vector2i inWallBlock;
+	Uuid inEntityId;
 	double angle0;
 
 };

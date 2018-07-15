@@ -175,6 +175,8 @@
     <ClInclude Include="BlockAllocator.Impl.hpp" />
     <ClInclude Include="BowItem.hpp" />
     <ClInclude Include="BowItem.Impl.hpp" />
+    <ClInclude Include="BulletEntity.hpp" />
+    <ClInclude Include="BulletEntity.Impl.hpp" />
     <ClInclude Include="Chest.hpp" />
     <ClInclude Include="Chest.Impl.hpp" />
     <ClInclude Include="ChestInventory.hpp" />
@@ -194,6 +196,12 @@
     <ClInclude Include="GameScene.hpp" />
     <ClInclude Include="Gravel.hpp" />
     <ClInclude Include="Gravel.Impl.hpp" />
+    <ClInclude Include="GrenadeEntity.hpp" />
+    <ClInclude Include="GrenadeEntity.Impl.hpp" />
+    <ClInclude Include="GrenadeItem.hpp" />
+    <ClInclude Include="GrenadeItem.Impl.hpp" />
+    <ClInclude Include="GunItem.hpp" />
+    <ClInclude Include="GunItem.Impl.hpp" />
     <ClInclude Include="ImGui\imconfig-SFML.h" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui-setup.h" />
@@ -217,6 +225,8 @@
     <ClInclude Include="LogBlock.hpp" />
     <ClInclude Include="LogSystem.hpp" />
     <ClInclude Include="Main.hpp" />
+    <ClInclude Include="MinigunAmmoItem.hpp" />
+    <ClInclude Include="MinigunItem.hpp" />
     <ClInclude Include="Mob.hpp" />
     <ClInclude Include="NetworkClient.hpp" />
     <ClInclude Include="NetworkClient.Impl.hpp" />
@@ -243,7 +253,6 @@
     <ClInclude Include="TerrainProvider.hpp" />
     <ClInclude Include="TerrainProvider.Impl.hpp" />
     <ClInclude Include="TestEntity.hpp" />
-    <ClInclude Include="TestEntity.Impl.hpp" />
     <ClInclude Include="TestScene.hpp" />
     <ClInclude Include="TextureManager.hpp" />
     <ClInclude Include="ThreadPool.hpp" />

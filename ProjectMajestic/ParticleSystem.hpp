@@ -7,13 +7,14 @@
 class Particle :public Entity {
 public:
 
-	Particle(TextureInfo texture, double sizeDivisor, Time liveTime, Vector2d onScreenSize = Vector2d(0.2, 0.2), double gravity = 2.8);
+	Particle(TextureInfo texture, double sizeDivisor, Time liveTime, Vector2d onScreenSize = Vector2d(0.2, 0.2), double gravity = 2.8, double airFriction = .0);
 
 	const string getEntityId() override { return "particle"; }
 	TextureInfo getTextureInfo() override { return TextureInfo(wholeText.texture, textureSubRect, wholeText.id); }
 
 	const double getFrictionDeaclc() override { return 5.0; }
 	const double getGravityAclc() override { return gravity; }
+	double getAirFrictionDeaclc() { return airFriction; }
 
 	Vector2d getSize() override { return size; }
 
@@ -25,6 +26,7 @@ protected:
 	IntRect textureSubRect;
 	Vector2d size;
 	double gravity;
+	double airFriction;
 
 	Time liveTime;
 	Clock liveClock;
@@ -35,23 +37,23 @@ struct ParticleEmitTrace {
 
 	ParticleEmitTrace() {}
 	ParticleEmitTrace(Vector2d position,
-		string textureId,
-		double sizeDivisor,
-		double speed,
-		int count,
-		double angleBegin, double angleEnd,
-		Time liveTimeBegin, Time liveTimeEnd,
-		Vector2d size, double gravity) :
+					  string textureId,
+					  double sizeDivisor,
+					  double speed,
+					  int count,
+					  double angleBegin, double angleEnd,
+					  Time liveTimeBegin, Time liveTimeEnd,
+					  Vector2d size, double gravity) :
 		range(position.x, position.y, 0.0, 0.0), textureId(textureId), sizeDivisor(sizeDivisor), speed(speed), count(count),
 		angleBegin(angleBegin), angleEnd(angleEnd), liveTimeBegin(liveTimeBegin), liveTimeEnd(liveTimeEnd), size(size), gravity(gravity) {}
 	ParticleEmitTrace(DoubleRect range,
-		string textureId,
-		double sizeDivisor,
-		double speed,
-		int count,
-		double angleBegin, double angleEnd,
-		Time liveTimeBegin, Time liveTimeEnd,
-		Vector2d size, double gravity) :
+					  string textureId,
+					  double sizeDivisor,
+					  double speed,
+					  int count,
+					  double angleBegin, double angleEnd,
+					  Time liveTimeBegin, Time liveTimeEnd,
+					  Vector2d size, double gravity) :
 		range(range), textureId(textureId), sizeDivisor(sizeDivisor), speed(speed), count(count),
 		angleBegin(angleBegin), angleEnd(angleEnd), liveTimeBegin(liveTimeBegin), liveTimeEnd(liveTimeEnd),
 		size(size), gravity(gravity) {}
@@ -93,7 +95,13 @@ public:
 	list<Particle>& getParticleList() { return parts; }
 public:
 
-	void emitSmoke(Vector2d position, int count = 16);
+	void emitSmoke(Vector2d position,
+				   double speed = 0.4,
+				   double gravity = -0.5,
+				   double airFriction = 0.2,
+				   double angleBegin = 180.0,
+				   double angleEnd = 360.0,
+				   int count = 16);
 
 	void emitArrowGlow(Vector2d position);
 

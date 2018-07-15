@@ -66,8 +66,7 @@ void TestScene::preWindowInitalaize() {
 }
 
 
-////////////////////////////////////////
-void TestScene::start(RenderWindow & win) {
+void TestScene::postWindowInitalaize(RenderWindow& win) {
 	imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("font_minecraft").c_str(),
 											 16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
 	imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("courier_new").c_str(),
@@ -81,6 +80,12 @@ void TestScene::start(RenderWindow & win) {
 	imgui::SFML::UpdateFontTexture();
 
 	prov.setup(Vector2u(3, 2), 5);
+}
+
+
+////////////////////////////////////////
+void TestScene::start(RenderWindow & win) {
+	testEntity = Uuid::nil();
 
 	localPlayer = new PlayerEntity();
 	entityManager.insert(localPlayer, Vector2d(prov.getSpawnPoints()[0]) + Vector2d(0.5, 1 - 1e-7));
@@ -176,6 +181,37 @@ void TestScene::onRender(RenderWindow & win) {
 
 
 ////////////////////////////////////////
+bool TestScene::_sendMousePressedToHandItem(Mouse::Button button) {
+	bool flag = false;
+	const string& name = playerInventory.slots[0][playerInventory.cursorId]["item_name"];
+	if (name.substr(0, 5) == "item_") {
+		Item* item = itemAllocator.allocate(name.substr(5), playerInventory.slots[0][playerInventory.cursorId]);
+		if (item != nullptr && (button == Mouse::Left ? item->_onLeftPressed() : item->_onRightPressed()))
+			flag = true;
+		if (item != nullptr)
+			delete item;
+	}
+	return flag;
+}
+
+
+////////////////////////////////////////
+void TestScene::_sendMouseReleasedToHandItem(Mouse::Button button) {
+	const string& name = playerInventory.slots[0][playerInventory.cursorId]["item_name"];
+	if (name.substr(0, 5) == "item_") {
+		Item* item = itemAllocator.allocate(name.substr(5), playerInventory.slots[0][playerInventory.cursorId]);
+		if (item != nullptr) {
+			if (button == Mouse::Left)
+				item->_onLeftReleased();
+			else
+				item->_onRightReleased();
+			delete item;
+		}
+	}
+}
+
+
+////////////////////////////////////////
 void TestScene::updateLogic(RenderWindow & win) {
 	AUTOLOCKABLE_NAMED(terrainManager, tml);
 	AUTOLOCKABLE_NAMED(particleSystem, psl);
@@ -195,29 +231,11 @@ void TestScene::updateLogic(RenderWindow & win) {
 
 	// Manage keys and game/player controls
 	// Mouse controls
-	if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Left] == LogicIO::JustPressed)) {
-		bool breakFlag = true;
-		const string& name = playerInventory.slots[0][playerInventory.cursorId]["item_name"];
-		if (name.substr(0, 5) == "item_") {
-			Item* item = itemAllocator.allocate(name.substr(5), playerInventory.slots[0][playerInventory.cursorId]);
-			if (item != nullptr && item->_onLeftPressed())
-				breakFlag = false;
-			if (item != nullptr)
-				delete item;
-		}
-		if (breakFlag)
+	if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Left] == LogicIO::JustPressed))
+		if (!_sendMousePressedToHandItem(Mouse::Left))
 			terrainManager.breakBlock(TerrainManager::convertScreenPixelToWorldBlockCoord(Vector2d(Mouse::getPosition(win))));
-	}
-	if (logicIO.mouseState[Mouse::Left] == LogicIO::JustReleased) {
-		const string& name = playerInventory.slots[0][playerInventory.cursorId]["item_name"];
-		if (name.substr(0, 5) == "item_") {
-			Item* item = itemAllocator.allocate(name.substr(5), playerInventory.slots[0][playerInventory.cursorId]);
-			if (item != nullptr) {
-				item->_onLeftReleased();
-				delete item;
-			}
-		}
-	}
+	if (logicIO.mouseState[Mouse::Left] == LogicIO::JustReleased)
+		_sendMouseReleasedToHandItem(Mouse::Left);
 	if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Right] == LogicIO::JustPressed)) {
 		const string& str = playerInventory.slots[0][playerInventory.cursorId]["item_name"].getDataString();
 		bool sendRightClick = true;
@@ -239,31 +257,32 @@ void TestScene::updateLogic(RenderWindow & win) {
 				b->_onRightClick();
 		}
 	}
-	if (logicIO.mouseState[Mouse::Right] == LogicIO::JustReleased) {
-		const string& name = playerInventory.slots[0][playerInventory.cursorId]["item_name"];
-		if (name.substr(0, 5) == "item_") {
-			Item* item = itemAllocator.allocate(name.substr(5), playerInventory.slots[0][playerInventory.cursorId]);
-			if (item != nullptr) {
-				item->_onRightReleased();
-				delete item;
-			}
-		}
-	}
+	if (logicIO.mouseState[Mouse::Right] == LogicIO::JustReleased)
+		_sendMouseReleasedToHandItem(Mouse::Right);
 	if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Middle] == LogicIO::JustPressed))
 		if (localPlayer == nullptr) {
 			localPlayer = new PlayerEntity();
 			entityManager.insert(localPlayer, TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win))));
 		}
 		else {
-			particleSystem.emitSmoke(TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win))));
-			/*for (int i = 1; i <= 1000; i++) {
-				// Tile Drop
-				ItemEntity* e = new ItemEntity("block_stone");
-				// Give a random velocity
-				e->accelerateVector(1.0, 180 + rand() % 180);
+			if (testEntity == Uuid()) {
+				TestEntity* te = new TestEntity;
+				te->setHealth(te->getMaxHealth());
+				testEntity = entityManager.insert(te,
+												  TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win))));
+			}
+			else
+				entityManager.explode(TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win))),
+									  12.0, false);
+			//particleSystem.emitSmoke(TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win))));
+			//for (int i = 1; i <= 1000; i++) {
+			//	// Tile Drop
+			//	ItemEntity* e = new ItemEntity("block_stone");
+			//	// Give a random velocity
+			//	e->accelerateVector(1.0, 180 + rand() % 180);
 
-				entityManager.insert(e, Vector2d(TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win)))) + Vector2d(0.5, 0.8));
-			}*/
+			//	entityManager.insert(e, Vector2d(TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win)))) + Vector2d(0.5, 0.8));
+			//}
 		}
 
 		// Keyboard controls
@@ -298,6 +317,7 @@ void TestScene::updateLogic(RenderWindow & win) {
 		terrainManager.updateLogic();
 		particleSystem.updateLogic();
 		entityManager.updateLogic();
+		playerInventory.updateLogic();
 		uiManager.updateLogic();
 
 		if (logicIO.keyboardState[Keyboard::E] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard)
@@ -314,10 +334,20 @@ void TestScene::handleEvent(RenderWindow & win, Event & event) {
 	AUTOLOCKABLE_NAMED(entityManager, eml);
 
 	if (event.type == Event::MouseWheelScrolled) {
-		if (event.mouseWheelScroll.delta < 0)
+		if (Mouse::isButtonPressed(Mouse::Left))
+			_sendMouseReleasedToHandItem(Mouse::Left);
+		if (Mouse::isButtonPressed(Mouse::Right))
+			_sendMouseReleasedToHandItem(Mouse::Right);
+		if (event.mouseWheelScroll.delta < 0) {
 			playerInventory.addCursorId();
-		if (event.mouseWheelScroll.delta > 0)
+		}
+		else /*if (event.mouseWheelScroll.delta > 0)*/ {
 			playerInventory.minusCursorId();
+		}
+		if (Mouse::isButtonPressed(Mouse::Left))
+			_sendMousePressedToHandItem(Mouse::Left);
+		if (Mouse::isButtonPressed(Mouse::Right))
+			_sendMousePressedToHandItem(Mouse::Right);
 	}
 }
 
@@ -327,6 +357,20 @@ void TestScene::runImGui() {
 	AUTOLOCKABLE_NAMED(terrainManager, tml);
 	AUTOLOCKABLE_NAMED(particleSystem, psl);
 	AUTOLOCKABLE_NAMED(entityManager, eml);
+
+	imgui::Begin("TestEntity");
+	if (testEntity == Uuid::nil())
+		imgui::Text("TextEntity == nullptr");
+	else {
+		Entity* e = entityManager.getEntity(testEntity);
+		if (e == nullptr)
+			testEntity = Uuid();
+		else {
+			TestEntity* te = dynamic_cast<TestEntity*>(e);
+			imgui::Text("Health: %d / %d", te->getHealth(), te->getMaxHealth());
+		}
+	}
+	imgui::End();
 
 	imgui::Begin("Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 	imgui::ShowFontSelector("Fonts");
@@ -491,9 +535,6 @@ void TestScene::runImGui() {
 	uiManager.runImGui();
 
 	playerInventory.runImGui();
-
-	imgui::PopStyleVar();
-	imgui::End();
 }
 
 

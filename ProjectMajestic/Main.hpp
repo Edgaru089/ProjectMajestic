@@ -35,7 +35,7 @@ USING_NAMESPACE;
 //#define USE_DISCRETE_GPU
 
 #define OUTPUT_LOG_TO_STDOUT
-#define OUTPUT_LOG_TO_FILE
+//#define OUTPUT_LOG_TO_FILE
 #define LOG_FILENAME "latest.log"
 #define LOG_IGNORE_LEVEL -1
 
@@ -181,6 +181,38 @@ ImGuiWindowFlags_NoMove| ImGuiWindowFlags_NoScrollbar| ImGuiWindowFlags_NoSavedS
 imgui::End();\
 imgui::PopStyleColor(4);\
 imgui::PopStyleVar()
+
+//void DebugSliderInt(int& val, char name[], int min = 0, int max = 100) {
+//	imgui::Begin("Debug Variables");
+//	imgui::SliderInt(name, &val, min, max);
+//	imgui::End();
+//}
+//
+//int DebugSliderInt(char name[], int fallback = 0, int min = 0, int max = 100) {
+//	DebugSliderInt(fallback, name, min, max); return fallback;
+//}
+//
+//void DebugSliderFloat(float& val, char name[], float min = 0, float max = 100) {
+//	imgui::Begin("Debug Variables");
+//	imgui::SliderFloat(name, &val, min, max);
+//	imgui::End();
+//}
+//
+//float DebugSliderFloat(char name[], float fallback = 0, float min = 0, float max = 100) {
+//	DebugSliderFloat(fallback, name, min, max); return fallback;
+//}
+//
+//void DebugSliderDouble(double& val, char name[], double min = 0, double max = 100) {
+//	imgui::Begin("Debug Variables");
+//	float v = val;
+//	imgui::SliderFloat(name, &v, min, max);
+//	val = v;
+//	imgui::End();
+//}
+//
+//double DebugSliderDouble(char name[], double fallback = 0, double min = 0, double max = 100) {
+//	DebugSliderDouble(fallback, name, min, max); return fallback;
+//}
 
 
 // Platform-Depedent: Windows

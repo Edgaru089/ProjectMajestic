@@ -1,5 +1,7 @@
 
 #include "EntityManager.hpp"
+#include "ParticleSystem.hpp"
+#include "Mob.hpp"
 #include "NetworkClient.hpp"
 #include "NetworkServer.hpp"
 #include <typeinfo>
@@ -27,6 +29,34 @@ void EntityManager::updateLogic() {
 			i++;
 		}
 	}
+	for (auto i : entities) {
+		if (i.second->requestEntityCollisionCallback())
+			for (auto j : entities)
+				if (j.first != i.first&&j.second->getHitbox().intersects(i.second->getHitbox()))
+					i.second->_onCollideEntity(j.second);
+	}
+}
+
+
+////////////////////////////////////////
+void EntityManager::explode(Vector2d position, double force, bool damageTerrain) {
+	// Particles
+	particleSystem.emitSmoke(position, force, -4.0, pow(0.7, force), 0.0, 360.0, 8 * force);
+	particleSystem.emitSmoke(position, 1.5*force, -4.0, pow(0.7, force), 0.0, 360.0, 0.8 * force);
+
+	// Damage
+	for (auto& i : entities) {
+		Mob* m = dynamic_cast<Mob*>(i.second);
+		if (m != nullptr) {
+			// Use the center point for distance calculations
+			double dist = getDis(m->getPosition() + Vector2d(.0, -m->getSize().y / 2), position);
+			double damage = force - dist * dist / 1.2;
+			if (damage > 0)
+				m->harm(damage, position, damage / 5.0);
+		}
+	}
+
+	// TODO Terrain destruction
 }
 
 
@@ -59,33 +89,33 @@ void EntityManager::getRenderList(VertexArray& verts) {
 
 		// Left-Top
 		verts.append(Vertex(Vector2f(center.x - width / 2.0, center.y - height),
-			Color(mask, mask, mask),
-			Vector2f(tex.textureRect.left, tex.textureRect.top)
+							Color(mask, mask, mask),
+							Vector2f(tex.textureRect.left, tex.textureRect.top)
 		));
 		// Right-Top
 		verts.append(Vertex(Vector2f(center.x + width / 2.0, center.y - height),
-			Color(mask, mask, mask),
-			Vector2f(tex.textureRect.left + tex.textureRect.width, tex.textureRect.top)
+							Color(mask, mask, mask),
+							Vector2f(tex.textureRect.left + tex.textureRect.width, tex.textureRect.top)
 		));
 		// Left-Bottom
 		verts.append(Vertex(Vector2f(center.x - width / 2.0, center.y),
-			Color(mask, mask, mask),
-			Vector2f(tex.textureRect.left, tex.textureRect.top + tex.textureRect.height)
+							Color(mask, mask, mask),
+							Vector2f(tex.textureRect.left, tex.textureRect.top + tex.textureRect.height)
 		));
 		// Right-Top
 		verts.append(Vertex(Vector2f(center.x + width / 2.0, center.y - height),
-			Color(mask, mask, mask),
-			Vector2f(tex.textureRect.left + tex.textureRect.width, tex.textureRect.top)
+							Color(mask, mask, mask),
+							Vector2f(tex.textureRect.left + tex.textureRect.width, tex.textureRect.top)
 		));
 		// Left-Bottom
 		verts.append(Vertex(Vector2f(center.x - width / 2.0, center.y),
-			Color(mask, mask, mask),
-			Vector2f(tex.textureRect.left, tex.textureRect.top + tex.textureRect.height)
+							Color(mask, mask, mask),
+							Vector2f(tex.textureRect.left, tex.textureRect.top + tex.textureRect.height)
 		));
 		// Right-Bottom
 		verts.append(Vertex(Vector2f(center.x + width / 2.0, center.y),
-			Color(mask, mask, mask),
-			Vector2f(tex.textureRect.left + tex.textureRect.width, tex.textureRect.top + tex.textureRect.height)
+							Color(mask, mask, mask),
+							Vector2f(tex.textureRect.left + tex.textureRect.width, tex.textureRect.top + tex.textureRect.height)
 		));
 	}
 }

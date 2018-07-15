@@ -12,6 +12,9 @@
 
 ////////////////////////////////////////
 void App::initalaizePostWindow(RenderWindow& win) {
+	for (pair<const string, Scene*>& i : sceneMapper)
+		i.second->postWindowInitalaize(win);
+
 	currentScene->start(win);
 	logicDeltaClock.restart();
 }

@@ -20,6 +20,9 @@ public:
 
 	virtual const string getEntityId() = 0;
 
+	virtual const bool requestEntityCollisionCallback() { return false; }
+	virtual void _onCollideEntity(Entity* collided) {}
+
 
 	void updateLogic();
 
