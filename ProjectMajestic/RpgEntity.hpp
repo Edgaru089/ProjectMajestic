@@ -3,12 +3,12 @@
 #include "Entity.hpp"
 #include "PlayerEntity.hpp"
 
-const double rpgExplodeForce = 25.0;
+const double RpgExplodeForce = 25.0;
 
 class RpgEntity :public Entity {
 public:
 
-	static void shoot(double force = rpgExplodeForce,
+	static void shoot(double force = RpgExplodeForce,
 					  Vector2d position = localPlayer->getEyePosition(),
 					  double degree = gameIO.degreeAngle);
 
@@ -17,8 +17,6 @@ public:
 	RpgEntity() {}
 
 	const string getEntityId() override { return "rpg"; }
-	const bool requestSpeicalRendering() override { return true; }
-	void pushTriangleVertexes(VertexArray& verts) override;
 
 	const bool requestEntityCollisionCallback() override { return true; }
 	void _onCollideEntity(Entity* e) override;

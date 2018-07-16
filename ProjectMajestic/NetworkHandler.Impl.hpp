@@ -183,40 +183,6 @@ void NetworkHandler::_messageLoopThread() {
 			terrainManager.getSpawnpoints().shrink_to_fit();
 			terrainManager.unlock();
 		}
-		IF_COMMAND("GETLIGHTS") {
-			//mlog << "[NetworkHandler] Sending light sources" << dlog;
-			PACKET_COMMAND(ret, "LIGHTS");
-			terrainManager.lock();
-			auto& m = terrainManager.getLightSources();
-			ret << m.size();
-			for (auto& i : m)
-				ret << i.first << i.second.first.x << i.second.first.y << i.second.second;
-			terrainManager.unlock();
-			CHECKED_SEND(ret);
-		}
-		IF_COMMAND("LIGHTS") {
-			size_t size;
-			Uuid id;
-			Vector2i pos;
-			int strength;
-			pack >> size;
-			mlog << "[NetworkHandler] Acquired " << size << " light sources" << dlog;
-			terrainManager.lock();
-			terrainManager.getLightSources().clear();
-			for (int i = 1; i <= size; i++) {
-				pack >> id >> pos.x >> pos.y >> strength;
-				terrainManager.poseLightForced(id, pos, strength);
-			}
-			// Update all lightings
-			for (int i = 0; i < terrainManager.getChunkCount().x; i++)
-				for (int j = 0; j < terrainManager.getChunkCount().y; j++) {
-					Chunk* ct;
-					if ((ct = terrainManager.getChunk(Vector2i(i, j))) != nullptr) {
-						terrainManager._updateLighting(Vector2i(i, j));
-					}
-				}
-			terrainManager.unlock();
-		}
 		IF_COMMAND("GETCHUNK") {
 			Vector2i chunkId;
 			pack >> chunkId.x >> chunkId.y;

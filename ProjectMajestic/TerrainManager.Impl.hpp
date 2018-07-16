@@ -109,9 +109,9 @@ void TerrainManager::updateLogic() {
 		for (pair<const Vector2i, Chunk*>&i : chunks) {
 			i.second->updateLogic();
 		}
-
-	// Update right click
-	if (!imgui::GetIO().WantCaptureMouse && logicIO.mouseState[Mouse::Right] == LogicIO::JustPressed) {
+	if (wantUpdateLight) {
+		_updateLighting();
+		wantUpdateLight = false;
 	}
 }
 
@@ -258,8 +258,11 @@ void TerrainManager::breakBlock(Vector2i pos, Entity * breaker, bool isForced) {
 			return;
 
 		Chunk* c = i->second;
-		if (c->getBlock(convertWorldCoordToInChunkCoord(pos)) != nullptr) {
-			c->getBlock(convertWorldCoordToInChunkCoord(pos))->onDestroy(breaker, role == Server);
+		Block* b = c->getBlock(convertWorldCoordToInChunkCoord(pos));
+		if (b != nullptr) {
+			b->onDestroy(breaker, role == Server);
+			if (b->getLightStrength() > 0)
+				wantUpdateLight = true;
 			c->setBlock(convertWorldCoordToInChunkCoord(pos), nullptr); // nullptr means empty
 		}
 	}
@@ -281,114 +284,45 @@ void TerrainManager::placeBlock(Vector2i pos, string blockId, Entity * placer, b
 			Block* b = blockAllocator.allocate(blockId);
 			i->second->setBlock(convertWorldCoordToInChunkCoord(pos), b);
 			b->_onPlaced(placer);
+			if (b->getLightStrength() > 0)
+				wantUpdateLight = true;
 		}
 	}
 }
 
 
 ////////////////////////////////////////
-Uuid TerrainManager::poseLight(Vector2i pos, int strength) {
-	AUTOLOCKABLE(*this);
-	Uuid id = Uuid::get();
-
-	if (getChunk(convertWorldCoordToChunkId(pos)) == nullptr)
-		return Uuid();
-
-	lightSources.insert_or_assign(id, pair<Vector2i, int>(pos, strength));
-	getChunk(convertWorldCoordToChunkId(pos))->lightSources.insert_or_assign(
-		id, pair<Vector2i, int>(pos, strength));
-
-	Vector2i chunk = convertWorldCoordToChunkId(pos);
-	int offsetX[9] = { 0, 1, 0, -1, 0, 1, 1, -1, -1 };
-	int offsetY[9] = { 0, 0, 1, 0, -1, 1, -1, -1, 1 };
-	for (int i = 0; i < 9; i++) {
-		int X = chunk.x + offsetX[i];
-		int Y = chunk.y + offsetY[i];
-		Chunk* ct;
-		if ((ct = getChunk(Vector2i(X, Y))) != nullptr) {
-			_updateLighting(Vector2i(X, Y));
-		}
-	}
-
-	return id;
-}
-
-
-////////////////////////////////////////
-void TerrainManager::poseLightForced(Uuid id, Vector2i pos, int strength) {
+void TerrainManager::_updateLighting() {
 	AUTOLOCKABLE(*this);
 
-	lightSources.insert_or_assign(id, pair<Vector2i, int>(pos, strength));
-	getChunk(convertWorldCoordToChunkId(pos))->lightSources.insert_or_assign(id, pair<Vector2i, int>(pos, strength));
-
-	//Don't update lighting
-}
-
-
-////////////////////////////////////////
-void TerrainManager::removeLight(Uuid id) {
-	AUTOLOCKABLE(*this);
-	if (id == Uuid::nil())
-		return;
-
-	auto i = lightSources.find(id);
-	if (i == lightSources.end())
-		return;
-	Vector2i chunk = convertWorldCoordToChunkId(i->second.first);
-	lightSources.erase(i);
-	chunks[chunk]->lightSources.erase(id);
-
-	int offsetX[9] = { 0, 1, 0, -1, 0, 1, 1, -1, -1 };
-	int offsetY[9] = { 0, 0, 1, 0, -1, 1, -1, -1, 1 };
-	for (int i = 0; i < 9; i++) {
-		int X = chunk.x + offsetX[i];
-		int Y = chunk.y + offsetY[i];
-		Chunk* ct;
-		if ((ct = getChunk(Vector2i(X, Y))) != nullptr) {
-			_updateLighting(Vector2i(X, Y));
-		}
-	}
-
-}
-
-
-////////////////////////////////////////
-void TerrainManager::_updateLighting(Vector2i chunkId) {
-	AUTOLOCKABLE(*this);
-	map<Vector2i, Chunk*, Vector2Less<int>>::iterator i = chunks.find(chunkId);
-	if (i == chunks.end() || i->second == nullptr)
-		return;
-
-	Chunk* c = i->second;
 	vector<pair<Vector2i, int>> lights;
 
-	int offsetX[9] = { 0, 1, 0, -1, 0, 1, 1, -1, -1 };
-	int offsetY[9] = { 0, 0, 1, 0, -1, 1, -1, -1, 1 };
-	for (int i = 0; i < 9; i++) {
-		int X = c->getChunkId().x + offsetX[i];
-		int Y = c->getChunkId().y + offsetY[i];
-		Chunk* ct;
-		if ((ct = getChunk(Vector2i(X, Y))) != nullptr) {
-			for (auto i : ct->lightSources) {
-				lights.push_back(i.second);
-			}
-		}
+	for (auto& k : chunks) {
+		Chunk* c = k.second;
+		for (int i = 0; i < chunkSize; i++)
+			for (int j = 0; j < chunkSize; j++)
+				if (c->getBlock(Vector2i(i, j)) != nullptr &&
+					c->getBlock(Vector2i(i, j))->getLightStrength() > 0)
+					lights.push_back(make_pair(convertChunkToWorldCoord(k.first, Vector2i(i, j)),
+											   c->getBlock(Vector2i(i, j))->getLightStrength()));
 	}
 
-	for (int i = 0; i < chunkSize; i++)
-		for (int j = 0; j < chunkSize; j++) {
-			Vector2i coord = convertChunkToWorldCoord(chunkId, Vector2i(i, j));
-			int Max = 0;
-			for (pair<Vector2i, int> k : lights) {
-				int level;
-				if (k.first == coord)
-					level = k.second;
-				else
-					level = k.second - (abs(k.first.x - coord.x) + abs(k.first.y - coord.y));
-				Max = max(Max, level);
+	for (auto& l : chunks) {
+		Chunk* c = l.second;
+		for (int i = 0; i < chunkSize; i++)
+			for (int j = 0; j < chunkSize; j++) {
+				Vector2i coord = convertChunkToWorldCoord(l.first, Vector2i(i, j));
+				int Max = 0;
+				for (auto& k : lights) {
+					int level;
+					if (k.first == coord)
+						level = k.second;
+					else
+						level = k.second - (abs(k.first.x - coord.x) + abs(k.first.y - coord.y));
+					Max = max(Max, level);
+				}
+				c->lightLevel[i][j] = Max;
 			}
-			c->lightLevel[i][j] = Max;
-		}
-
+	}
 }
 

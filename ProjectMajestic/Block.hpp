@@ -44,6 +44,9 @@ public:
 
 	virtual bool isSolid() { return true; }
 
+	// Zerom means none
+	virtual int getLightStrength() { return 0; }
+
 	Data& getData(string id) {
 		return datasets[id];
 	}

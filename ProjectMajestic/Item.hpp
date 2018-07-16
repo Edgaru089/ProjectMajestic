@@ -20,7 +20,7 @@ public:
 	virtual void updateLogic() {}
 
 	void setFocus(bool focus) { this->focus = focus; }
-	bool hasFocus() { return focus; }
+	bool isInHand() { return focus; }
 
 	// Tool atturibs
 	// Returns the damage caused when used as a weapon

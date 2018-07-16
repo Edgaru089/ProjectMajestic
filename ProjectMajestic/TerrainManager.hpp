@@ -58,26 +58,18 @@ public:
 	// Does nothing if the block isn't empty
 	void placeBlock(Vector2i pos, string blockId, Entity * placer = nullptr, bool isForced = false);
 
-	// Pose a beam of light on (pos), strength: 0~11 (maxLightingLevel)
-	// Return: lighting id
-	Uuid poseLight(Vector2i pos, int strength);
-
-	void poseLightForced(Uuid id, Vector2i pos, int strength);
-
-	// Vector2i: global coords; int: light strength
-	pair<Vector2i, int> getLight(Uuid id);
-
-	// Remove the beam of light with Uuid id
-	// Does nothing if not found
-	void removeLight(Uuid id);
-
-	void _updateLighting(Vector2i chunkId);
+	// Request a whole-map lighting update
+	void requestLightingUpdate() { wantUpdateLight = true; }
 
 private:
+
+	void _updateLighting();
 
 
 	map<Vector2i, Chunk*, Vector2Less<int>> chunks;
 	map<Uuid, pair<Vector2i, int>> lightSources; // First: pos(global coords); Second: strength
+
+	bool wantUpdateLight;
 
 	// Just stores the data; never uses it
 	Vector2i chunkCount;

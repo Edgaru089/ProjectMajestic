@@ -171,9 +171,6 @@
     <ClInclude Include="Torch.hpp">
       <Filter>Game\Items&amp;Blocks\Blocks</Filter>
     </ClInclude>
-    <ClInclude Include="Torch.Impl.hpp">
-      <Filter>Game\Items&amp;Blocks\Blocks</Filter>
-    </ClInclude>
     <ClInclude Include="PlayerEntity.hpp">
       <Filter>Game\Player</Filter>
     </ClInclude>

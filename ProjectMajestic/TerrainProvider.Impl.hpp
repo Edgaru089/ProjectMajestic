@@ -36,9 +36,9 @@ void TerrainProvider::setup(Vector2u chunkCount, int spawnCount) {
 	 ****Lss...Lss****
 	 **..Lss..|.ss..**
 	 *...Lsssx.Csss..*
-	 *****s***********
+	 *ppppspppppppppp*
 	 *: stone; x: spawn; s: gravel; |: torch; L: log;
-	 C: chest; .: air.
+	 p: planks; C: chest; .: air.
 	 */
 	for (int l = 0; l < spawnCount; l++) {
 		int x = spawnPoints[l].x, y = spawnPoints[l].y;
@@ -55,7 +55,7 @@ void TerrainProvider::setup(Vector2u chunkCount, int spawnCount) {
 		terrainManager.setBlock(Vector2i(x + 7, y), "NULL");
 		terrainManager.setBlock(Vector2i(x - 7, y), "NULL");
 
-		
+
 		// Logs
 		terrainManager.setBlock(Vector2i(x - 4, y), "log");
 		terrainManager.setBlock(Vector2i(x - 4, y - 1), "log");
@@ -94,7 +94,23 @@ void TerrainProvider::setup(Vector2u chunkCount, int spawnCount) {
 		terrainManager.setBlock(Vector2i(x + 4, y - 2), "gravel");
 		terrainManager.setBlock(Vector2i(x + 4, y - 3), "gravel");
 		terrainManager.setBlock(Vector2i(x + 5, y), "gravel");
-		
+
+		// Planks
+		terrainManager.setBlock(Vector2i(x - 7, y + 1), "planks");
+		terrainManager.setBlock(Vector2i(x - 6, y + 1), "planks");
+		terrainManager.setBlock(Vector2i(x - 5, y + 1), "planks");
+		terrainManager.setBlock(Vector2i(x - 4, y + 1), "planks");
+		terrainManager.setBlock(Vector2i(x - 2, y + 1), "planks");
+		terrainManager.setBlock(Vector2i(x - 1, y + 1), "planks");
+		terrainManager.setBlock(Vector2i(x, y + 1), "planks");
+		terrainManager.setBlock(Vector2i(x + 1, y + 1), "planks");
+		terrainManager.setBlock(Vector2i(x + 2, y + 1), "planks");
+		terrainManager.setBlock(Vector2i(x + 3, y + 1), "planks");
+		terrainManager.setBlock(Vector2i(x + 4, y + 1), "planks");
+		terrainManager.setBlock(Vector2i(x + 5, y + 1), "planks");
+		terrainManager.setBlock(Vector2i(x + 6, y + 1), "planks");
+		terrainManager.setBlock(Vector2i(x + 7, y + 1), "planks");
+
 		// Torch
 		terrainManager.placeBlock(Vector2i(x + 1, y - 1), "torch");
 

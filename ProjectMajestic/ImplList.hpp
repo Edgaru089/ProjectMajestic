@@ -38,5 +38,4 @@
 #include "TerrainProvider.Impl.hpp"
 #include "TestScene.Impl.hpp"
 #include "TextureManager.Impl.hpp"
-#include "Torch.Impl.hpp"
 

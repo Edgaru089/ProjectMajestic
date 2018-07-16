@@ -126,7 +126,7 @@ void ArrowEntity::_updateLogic() {
 		}
 	}
 	else {
-		// TODO Particles when arrow is flying
+		// Particles when arrow is flying
 		if (particleClock.getElapsedTime() >= milliseconds(25)) {
 			particleClock.restart();
 			particleSystem.emitArrowGlow(getCenterPos());

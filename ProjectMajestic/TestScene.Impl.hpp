@@ -381,9 +381,24 @@ void TestScene::runImGui() {
 	imgui::ShowFontSelector("Fonts");
 	imgui::Text(u8"Innovation In China 中国智造，惠及全球 1234567890");
 	static float value = renderIO.gameScaleFactor;
-	imgui::SliderFloat("GameScaleFactor", &value, 24, 64);
+	imgui::SliderFloat("GameScaleFactor", &value, 16, 64);
 	renderIO.gameScaleFactor = value;
 	imgui::Checkbox("Explosion damages terrain", &gameIO.ruleExplosionDamagesTerrain);
+	if (imgui::Button("Break!"))
+		for (auto& k : terrainManager.getChunks()) {
+			Vector2i off = k.first*chunkSize;
+			Chunk* c = k.second;
+			for (int i = 0; i < chunkSize; i++)
+				for (int j = 0; j < chunkSize; j++) {
+					if (c->getBlock(Vector2i(i, j)) == nullptr)
+						continue;
+					if (c->getBlock(Vector2i(i, j))->getBlockId() != "bedrock")
+						terrainManager.breakBlock(off + Vector2i(i, j));
+				}
+		}
+	imgui::SameLine();
+	if (imgui::Button("Update lighting"))
+		terrainManager.requestLightingUpdate();
 	imgui::Image(*textureManager.getBindingTexture());
 	imgui::End();
 

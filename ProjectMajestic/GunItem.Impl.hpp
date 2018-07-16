@@ -22,7 +22,7 @@ void GunItem::updateLogic() {
 			}
 		}
 	}
-	if (!isReloading() && hasFocus()) {
+	if (!isReloading() && isInHand()) {
 		if (logicIO.keyboardState[Keyboard::R] == LogicIO::JustPressed) {
 			bool ok = false;
 			for (int i = 0; i < 4; i++)
