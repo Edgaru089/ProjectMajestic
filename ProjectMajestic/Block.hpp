@@ -40,7 +40,7 @@ public:
 	TextureInfo getTextureInfo() { return textureManager.getTextureInfo(getTextureId()); }
 
 	virtual const bool requestSpeicalRendering() { return false; }
-	virtual void pushTriangleVertexes(VertexArray& arr) {}
+	virtual void _pushTriangleVertexes(VertexArray& arr) {}
 
 	virtual bool isSolid() { return true; }
 

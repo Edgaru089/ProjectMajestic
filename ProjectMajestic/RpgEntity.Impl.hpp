@@ -11,8 +11,8 @@
 void RpgEntity::shoot(double force, Vector2d position, double degree) {
 	RpgEntity* e = new RpgEntity;
 	e->force = force;
-	e->accelerateVector(15.0, degree);
-	entityManager.insert(e, position);
+	e->accelerateVector(16.0, degree);
+	entityManager.insert(e, position + Vector2d(.0, e->getSize().y / 2.0));
 }
 
 

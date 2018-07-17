@@ -14,6 +14,6 @@ void GrenadeItem::_onRightReleased() {
 	
 	GrenadeEntity* e = new GrenadeEntity;
 	e->accelerateVector(5.0, gameIO.degreeAngle);
-	entityManager.insert(e, localPlayer->getEyePosition());
+	entityManager.insert(e, localPlayer->getEyePosition() + Vector2d(.0, e->getSize().y / 2.0));
 }
 

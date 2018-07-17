@@ -59,7 +59,7 @@ Vector2i TerrainManager::convertWorldPositionToBlockCoord(Vector2d position) {
 
 
 ////////////////////////////////////////
-Vector2i TerrainManager::convertScreenPixelToWorldBlockCoord(Vector2d pixel) {
+Vector2i TerrainManager::convertScreenPixelToWorldBlockCoord(Vector2i pixel) {
 	int X, Y;
 
 	if (pixel.x - renderIO.gameScenePosOffset.x >= 0)
@@ -77,7 +77,7 @@ Vector2i TerrainManager::convertScreenPixelToWorldBlockCoord(Vector2d pixel) {
 
 
 ////////////////////////////////////////
-Vector2d TerrainManager::convertScreenPixelToWorldCoord(Vector2d pixel) {
+Vector2d TerrainManager::convertScreenPixelToWorldCoord(Vector2i pixel) {
 	double X, Y;
 
 	if (pixel.x - renderIO.gameScenePosOffset.x >= 0)

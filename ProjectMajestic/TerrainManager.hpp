@@ -15,8 +15,8 @@ public:
 	static Vector2i convertChunkToWorldCoord(Vector2i chunkId, Vector2i inChunkCoord);
 	static Vector2i convertWorldPositionToBlockCoord(Vector2d position);
 
-	static Vector2i convertScreenPixelToWorldBlockCoord(Vector2d pixel);
-	static Vector2d convertScreenPixelToWorldCoord(Vector2d pixel);
+	static Vector2i convertScreenPixelToWorldBlockCoord(Vector2i pixel);
+	static Vector2d convertScreenPixelToWorldCoord(Vector2i pixel);
 
 public:
 

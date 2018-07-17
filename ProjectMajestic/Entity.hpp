@@ -32,7 +32,7 @@ public:
 	virtual TextureInfo getTextureInfo() { return textureManager.getTextureInfo("entity_" + getEntityId()); }
 
 	virtual const bool requestSpeicalRendering() { return false; }
-	virtual void pushTriangleVertexes(VertexArray& arr) {}
+	virtual void _pushTriangleVertexes(VertexArray& arr) {}
 
 
 	void setPosition(Vector2d pos) { posX = pos.x; posY = pos.y; }
@@ -88,6 +88,10 @@ public:
 	virtual void _updateLogic() {}
 	virtual void _onCollision(Block* block) {}
 	virtual void _onKill(Entity* killer) {}
+
+protected:
+
+	virtual void _getBoundingCollisionPoints(vector<Vector2d>& vec);
 
 private:
 

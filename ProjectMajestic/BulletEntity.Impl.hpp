@@ -10,7 +10,7 @@ void BulletEntity::shoot(double damage, Vector2d position, double degree) {
 	BulletEntity* b = new BulletEntity;
 	b->damage = damage;
 	b->accelerateVector(25.0, degree);
-	entityManager.insert(b, position);
+	entityManager.insert(b, position + Vector2d(.0, b->getSize().y / 2.0));
 }
 
 

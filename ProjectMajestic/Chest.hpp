@@ -13,7 +13,7 @@ public:
 	DoubleRect getHitbox() override;
 
 	const bool requestSpeicalRendering() override { return true; }
-	void pushTriangleVertexes(VertexArray& verts) override;
+	void _pushTriangleVertexes(VertexArray& verts) override;
 
 	void _onRightClick() override;
 	void _onDestroy(Entity* destroyer) override;

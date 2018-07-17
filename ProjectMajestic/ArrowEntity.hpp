@@ -18,7 +18,7 @@ public:
 
 	const string getEntityId() override { return "arrow"; }
 	const bool requestSpeicalRendering() override { return true; }
-	void pushTriangleVertexes(VertexArray& verts) override;
+	void _pushTriangleVertexes(VertexArray& verts) override;
 
 	const bool requestEntityCollisionCallback() override { return true; }
 	void _onCollideEntity(Entity* e) override;

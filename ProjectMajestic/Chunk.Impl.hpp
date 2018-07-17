@@ -25,7 +25,7 @@ void Chunk::getRenderList(VertexArray& verts) {
 		for (int j = 0; j < chunkSize; j++) {
 			if (blocks[i][j] != nullptr && blocks[i][j]->getHitbox().intersects(renderIO.viewRectBlock)) {
 				if (blocks[i][j]->requestSpeicalRendering()) {
-					blocks[i][j]->pushTriangleVertexes(verts);
+					blocks[i][j]->_pushTriangleVertexes(verts);
 					continue;
 				}
 

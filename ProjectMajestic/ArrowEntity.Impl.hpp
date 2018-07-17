@@ -15,12 +15,12 @@ void ArrowEntity::shoot(double damage, Vector2d position, double degree) {
 	ArrowEntity* e = new ArrowEntity;
 	e->damage = damage;
 	e->accelerateVector(20.0 * damage / maxArrowDamage, degree + 5.0 * (rand01() - 0.5));
-	entityManager.insert(e, position);
+	entityManager.insert(e, position + Vector2d(.0, e->getSize().y / 2.0));
 }
 
 
 ////////////////////////////////////////
-void ArrowEntity::pushTriangleVertexes(VertexArray& verts) {
+void ArrowEntity::_pushTriangleVertexes(VertexArray& verts) {
 	Transform trans;
 	TextureInfo info = textureManager.getTextureInfo("entity_arrow");
 	Vector2f center = Vector2f(getPosition() - Vector2d(0, getSize().y / 2));

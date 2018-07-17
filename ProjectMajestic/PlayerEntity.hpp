@@ -47,6 +47,12 @@ public:
 	string getPlayerName() { return name(); };
 	string setPlayerName(string name) { this->name() = name; }
 
+	bool isLocalPlayer() { return islocal; }
+	void setIsLocalPlayer(bool set) { islocal = set; }
+
+	const bool requestSpeicalRendering() override { return true; }
+	void _pushTriangleVertexes(VertexArray& arr) override;
+
 	void _updateLogic() override;
 
 public:
@@ -78,6 +84,8 @@ private:
 	bool& onLadder() { return datasets["on_ladder"].getDataBool(); }
 	bool& isAscendingLadder() { return datasets["ladder_up"].getDataBool(); }
 	bool& isDecendingLadder() { return datasets["ladder_down"].getDataBool(); }
+
+	bool islocal;
 
 };
 

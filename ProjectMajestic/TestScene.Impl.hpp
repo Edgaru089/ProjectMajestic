@@ -88,6 +88,7 @@ void TestScene::start(RenderWindow & win) {
 	testEntity = Uuid::nil();
 
 	localPlayer = new PlayerEntity();
+	localPlayer->setIsLocalPlayer(true);
 	entityManager.insert(localPlayer, Vector2d(prov.getSpawnPoints()[0]) + Vector2d(0.5, 1 - 1e-7));
 
 	gameIO.ruleExplosionDamagesTerrain = true;
@@ -145,7 +146,7 @@ void TestScene::onRender(RenderWindow & win) {
 		if (i.second != nullptr)
 			win.draw(renderRect(i.second->getHitbox()*renderIO.gameScaleFactor));
 
-	Vector2i mousePos = TerrainManager::convertScreenPixelToWorldBlockCoord(Vector2d(Mouse::getPosition(win)));
+	Vector2i mousePos = TerrainManager::convertScreenPixelToWorldBlockCoord(Mouse::getPosition(win));
 	Block* b = terrainManager.getBlock(mousePos);
 	if (b == nullptr) {
 		Vector2d center = Vector2d(mousePos.x + 0.5, mousePos.y + 0.5)*renderIO.gameScaleFactor;
@@ -167,18 +168,34 @@ void TestScene::onRender(RenderWindow & win) {
 	}
 	else
 		win.draw(renderRect(b->getHitbox()*renderIO.gameScaleFactor));
-	/*
-		win.setView(View(FloatRect(0, 0, win.getSize().x, win.getSize().y)));
 
+	if (localPlayer != nullptr) {
 		VertexArray verts;
-		Vector2i pos = Mouse::getPosition(win);
-		verts.append(Vertex(Vector2f(pos.x, 0)));
-		verts.append(Vertex(Vector2f(pos.x, win.getView().getSize().y)));
-		verts.append(Vertex(Vector2f(0, pos.y)));
-		verts.append(Vertex(Vector2f(win.getView().getSize().x, pos.y)));
+		Vector2d eye = localPlayer->getEyePosition();
+		//verts.append(Vertex(Vector2f(eye.x, eye.y - win.getSize().y / (float)renderIO.gameScaleFactor / 2.0f) * (float)renderIO.gameScaleFactor, Color::White));
+		//verts.append(Vertex(Vector2f(eye.x, eye.y + win.getSize().y / (float)renderIO.gameScaleFactor / 2.0f) * (float)renderIO.gameScaleFactor, Color::White));
+		//verts.append(Vertex(Vector2f(eye.x - win.getSize().x / (float)renderIO.gameScaleFactor / 2.0f, eye.y) * (float)renderIO.gameScaleFactor, Color::White));
+		//verts.append(Vertex(Vector2f(eye.x + win.getSize().x / (float)renderIO.gameScaleFactor / 2.0f, eye.y) * (float)renderIO.gameScaleFactor, Color::White));
+		verts.append(Vertex(Vector2f(eye) * (float)renderIO.gameScaleFactor, Color::White));
+		verts.append(Vertex(Vector2f(TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win))) * (float)renderIO.gameScaleFactor, Color::White));
 		verts.setPrimitiveType(PrimitiveType::Lines);
 		win.draw(verts);
-	*/
+	}
+
+	win.setView(View(FloatRect(0, 0, win.getSize().x, win.getSize().y)));
+	VertexArray verts;
+	Vector2i pos = Mouse::getPosition(win);
+	//verts.append(Vertex(Vector2f(pos.x, 0)));
+	//verts.append(Vertex(Vector2f(pos.x, win.getView().getSize().y)));
+	//verts.append(Vertex(Vector2f(0, pos.y)));
+	//verts.append(Vertex(Vector2f(win.getView().getSize().x, pos.y)));
+	verts.append(Vertex(Vector2f(pos.x, pos.y - 15)));
+	verts.append(Vertex(Vector2f(pos.x, pos.y + 15)));
+	verts.append(Vertex(Vector2f(pos.x - 15, pos.y)));
+	verts.append(Vertex(Vector2f(pos.x + 15, pos.y)));
+	verts.setPrimitiveType(PrimitiveType::Lines);
+	win.draw(verts);
+
 }
 
 
@@ -220,7 +237,7 @@ void TestScene::updateLogic(RenderWindow & win) {
 	AUTOLOCKABLE_NAMED(entityManager, eml);
 
 	if (localPlayer != nullptr) {
-		Vector2d mouseBlock = TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win)));
+		Vector2d mouseBlock = TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win));
 		Vector2d eyePos = localPlayer->getEyePosition();
 		gameIO.degreeAngle = atan((mouseBlock.y - eyePos.y) / (mouseBlock.x - eyePos.x)) * 180.0 / PI;
 		if (mouseBlock.x - eyePos.x < 0)
@@ -235,13 +252,13 @@ void TestScene::updateLogic(RenderWindow & win) {
 	// Mouse controls
 	if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Left] == LogicIO::JustPressed))
 		if (!_sendMousePressedToHandItem(Mouse::Left))
-			terrainManager.breakBlock(TerrainManager::convertScreenPixelToWorldBlockCoord(Vector2d(Mouse::getPosition(win))));
+			terrainManager.breakBlock(TerrainManager::convertScreenPixelToWorldBlockCoord(Mouse::getPosition(win)));
 	if (logicIO.mouseState[Mouse::Left] == LogicIO::JustReleased)
 		_sendMouseReleasedToHandItem(Mouse::Left);
 	if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Right] == LogicIO::JustPressed)) {
 		const string& str = playerInventory.slots[0][playerInventory.cursorId]["item_name"].getDataString();
 		bool sendRightClick = true;
-		Vector2i coord = TerrainManager::convertScreenPixelToWorldBlockCoord(Vector2d(Mouse::getPosition(win)));
+		Vector2i coord = TerrainManager::convertScreenPixelToWorldBlockCoord(Mouse::getPosition(win));
 		Block* b = terrainManager.getBlock(coord);
 		if (str != "") {
 			if (str.substr(0, 6) == "block_")
@@ -264,29 +281,30 @@ void TestScene::updateLogic(RenderWindow & win) {
 	if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Middle] == LogicIO::JustPressed))
 		if (localPlayer == nullptr) {
 			localPlayer = new PlayerEntity();
-			entityManager.insert(localPlayer, TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win))));
+			localPlayer->setIsLocalPlayer(true);
+			entityManager.insert(localPlayer, TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win)));
 		}
 		else {
 			if (testEntity == Uuid()) {
 				TestEntity* te = new TestEntity;
 				te->setHealth(te->getMaxHealth());
-				testEntity = entityManager.insert(te, TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win))));
+				testEntity = entityManager.insert(te, TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win)));
 			}
 			else {
 				TestEntity* te = new TestEntity;
 				te->setHealth(te->getMaxHealth());
-				entityManager.insert(te, TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win))));
+				entityManager.insert(te, TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win)));
 			}
-				//entityManager.explode(TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win))),
+				//entityManager.explode(TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win)),
 				//					  12.0, false);
-			//particleSystem.emitSmoke(TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win))));
+			//particleSystem.emitSmoke(TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win)));
 			//for (int i = 1; i <= 1000; i++) {
 			//	// Tile Drop
 			//	ItemEntity* e = new ItemEntity("block_stone");
 			//	// Give a random velocity
 			//	e->accelerateVector(1.0, 180 + rand() % 180);
 
-			//	entityManager.insert(e, Vector2d(TerrainManager::convertScreenPixelToWorldCoord(Vector2d(Mouse::getPosition(win)))) + Vector2d(0.5, 0.8));
+			//	entityManager.insert(e, Vector2d(TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win))) + Vector2d(0.5, 0.8));
 			//}
 		}
 
@@ -433,8 +451,8 @@ void TestScene::runImGui() {
 
 	imgui::Text("Mouse Cursor Info");
 	Vector2i pos = Mouse::getPosition(win);
-	Vector2i posB = TerrainManager::convertScreenPixelToWorldBlockCoord(Vector2d(pos));
-	Vector2d posC = TerrainManager::convertScreenPixelToWorldCoord(Vector2d(pos));
+	Vector2i posB = TerrainManager::convertScreenPixelToWorldBlockCoord(pos);
+	Vector2d posC = TerrainManager::convertScreenPixelToWorldCoord(pos);
 	Vector2i chunkId = TerrainManager::convertWorldCoordToChunkId(posB);
 	Vector2i inChunkC = TerrainManager::convertWorldCoordToInChunkCoord(posB);
 	Chunk* c = terrainManager.getChunk(chunkId);

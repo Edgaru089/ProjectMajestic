@@ -253,9 +253,9 @@ void NetworkHandler::_messageLoopThread() {
 			pack >> id;
 			entityManager.lock();
 			Entity* e = entityManager.getEntity(id);
-			entityManager.unlock();
 			if (e != nullptr)
 				e->kill();
+			entityManager.unlock();
 		}
 		IF_COMMAND("ENTITY") {
 			vector<Uuid> ids;
@@ -410,10 +410,14 @@ void NetworkHandler::onInsertEntity(Uuid id, Entity* entity) {
 	CHECK_CONNECT;
 	PACKET_COMMAND(pack, "INSENTITY");
 
+	entityManager.lock();
+
 	pack << id << entity->getEntityId();
 	pack << entity->getPosition().x << entity->getPosition().y;
 	pack << entity->getVelocity().x << entity->getVelocity().y;
 	pack << entity->getDataset();
+
+	entityManager.unlock();
 
 	CHECKED_SEND(pack);
 }

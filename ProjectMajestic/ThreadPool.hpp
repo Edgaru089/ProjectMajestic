@@ -125,5 +125,5 @@ inline ThreadPool::~ThreadPool()
 }
 
 
-ThreadPool threadPool;
+//ThreadPool threadPool;
 

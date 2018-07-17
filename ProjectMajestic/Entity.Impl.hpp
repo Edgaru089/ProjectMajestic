@@ -3,6 +3,31 @@
 #include "Entity.hpp"
 
 
+void Entity::_getBoundingCollisionPoints(vector<Vector2d>& points) {
+	DoubleRect bound = getHitbox();
+	points.clear();
+
+	points.push_back(Vector2d(bound.left + bound.width, bound.top));                  // Right-Top    Point (X-Positive, Y-Negative)
+	points.push_back(Vector2d(bound.left + bound.width, bound.top + bound.height));   // Right-Bottom Point (X-Positive, Y-Positive)
+	points.push_back(Vector2d(bound.left, bound.top));                                // Left-Top     Point (X-Negative, Y-Negative)
+	points.push_back(Vector2d(bound.left, bound.top + bound.height));                 // Left-Bottom  Point (X-Negative, Y-Positive)
+
+	// Add other mesh points to collision points
+	// Left   Edge (X-Negative)
+	for (double x = 0.5; x < bound.height; x += 0.5)
+		points.push_back(Vector2d(bound.left, bound.top + x));
+	// Right  Edge (X-Positive)
+	for (double x = 0.5; x < bound.height; x += 0.5)
+		points.push_back(Vector2d(bound.left + bound.width, bound.top + x));
+	// Top    Edge (Y-Negative)
+	for (double x = 0.5; x < bound.width; x += 0.5)
+		points.push_back(Vector2d(bound.left + x, bound.top));
+	// Bottom Edge (Y-Positive)
+	for (double x = 0.5; x < bound.width; x += 0.5)
+		points.push_back(Vector2d(bound.left + x, bound.top + bound.height));
+}
+
+
 ////////////////////////////////////////
 void Entity::_moveX(double amount) {
 	if (isSame(amount, 0))
@@ -11,20 +36,13 @@ void Entity::_moveX(double amount) {
 	double move;
 	bool isHit = false;
 
+	vector<Vector2d> points;
+	_getBoundingCollisionPoints(points);
+
 	// X-Positive
 	if (amount > 0) {
 		if (amount > 0.9999)
 			amount = 0.9999;
-
-		vector<Vector2d> points;
-		DoubleRect bound = getHitbox();
-
-		points.push_back(Vector2d(bound.left + bound.width, bound.top));                  // Right-Top    Point (X-Positive, Y-Negative)
-		points.push_back(Vector2d(bound.left + bound.width, bound.top + bound.height));   // Right-Bottom Point (X-Positive, Y-Positive)
-
-		// Add other mesh points to collision points
-		for (double x = 0.5; x < bound.height; x += 0.5)
-			points.push_back(Vector2d(bound.left + bound.width, bound.top + x));
 
 		// Iterate through the list to find the most X-Negative-placed collision point
 		move = 10000;
@@ -35,7 +53,7 @@ void Entity::_moveX(double amount) {
 				flag = false;
 				move = 0;
 				isHit = true;
-				continue;
+				break;
 			}
 
 			Vector2d ix = i; // Moved point
@@ -67,16 +85,6 @@ void Entity::_moveX(double amount) {
 		if (amount < -0.9999)
 			amount = -0.9999;
 
-		vector<Vector2d> points;
-		DoubleRect bound = getHitbox();
-
-		points.push_back(Vector2d(bound.left, bound.top));                  // Left-Top    Point (X-Negative, Y-Negative)
-		points.push_back(Vector2d(bound.left, bound.top + bound.height));   // Left-Bottom Point (X-Negative, Y-Positive)
-
-		// Add other mesh points to collision points
-		for (double x = 0.5; x < bound.height; x += 0.5)
-			points.push_back(Vector2d(bound.left, bound.top + x));
-
 		// Iterate through the list to find the most X-Positive-placed collision point
 		move = -10000;
 		bool flag = true;
@@ -86,7 +94,7 @@ void Entity::_moveX(double amount) {
 				flag = false;
 				move = 0;
 				isHit = true;
-				continue;
+				break;
 			}
 
 			Vector2d ix = i; // Moved point
@@ -128,22 +136,15 @@ void Entity::_moveY(double amount) {
 	double move;
 	bool isHit = false;
 
+	vector<Vector2d> points;
+	_getBoundingCollisionPoints(points);
+
 	onGround = false;
 
 	// Y-Positive
 	if (amount > 0) {
 		if (amount > 0.9999)
 			amount = 0.9999;
-
-		vector<Vector2d> points;
-		DoubleRect bound = getHitbox();
-
-		points.push_back(Vector2d(bound.left, bound.top + bound.height));                 // Bottom-Left  Point (X-Negative, Y-Negative)
-		points.push_back(Vector2d(bound.left + bound.width, bound.top + bound.height));   // Bottom-Right Point (X-Positive, Y-Negative)
-
-		// Add other mesh points to collision points
-		for (double x = 0.5; x < bound.width; x += 0.5)
-			points.push_back(Vector2d(bound.left + x, bound.top + bound.height));
 
 		// Iterate through the list to find the most Y-Positive-placed collision point
 		move = 10000;
@@ -154,7 +155,7 @@ void Entity::_moveY(double amount) {
 				flag = false;
 				move = 0;
 				isHit = true;
-				continue;
+				break;
 			}
 
 			Vector2d ix = i; // Moved point
@@ -189,16 +190,6 @@ void Entity::_moveY(double amount) {
 		if (amount < -0.9999)
 			amount = -0.9999;
 
-		vector<Vector2d> points;
-		DoubleRect bound = getHitbox();
-
-		points.push_back(Vector2d(bound.left, bound.top));                 // Top-Left  Point (X-Negative, Y-Negative)
-		points.push_back(Vector2d(bound.left + bound.width, bound.top));   // Top-Right Point (X-Positive, Y-Negative)
-
-		// Add other mesh points to collision points
-		for (double x = 0.5; x < bound.width; x += 0.5)
-			points.push_back(Vector2d(bound.left + x, bound.top));
-
 		// Iterate through the list to find the most Y-Positive-placed collision point
 		move = -10000;
 		bool flag = true;
@@ -208,7 +199,7 @@ void Entity::_moveY(double amount) {
 				flag = false;
 				move = 0;
 				isHit = true;
-				continue;
+				break;
 			}
 
 			Vector2d ix = i; // Moved point
@@ -247,6 +238,10 @@ void Entity::updateLogic() {
 	if (!alive)
 		return;
 
+	// Collision detection with terrain on move
+	_moveX(vecX * logicIO.deltaTime.asSeconds());
+	_moveY(vecY * logicIO.deltaTime.asSeconds());
+
 	if (onGround) {
 		double minusVecX = getFrictionDeaclc()*logicIO.deltaTime.asSeconds();
 		if (vecX > 0) {
@@ -262,10 +257,6 @@ void Entity::updateLogic() {
 	}
 
 	vecY += getGravityAclc()*logicIO.deltaTime.asSeconds();
-
-	// Collision detection with terrain on move
-	_moveX(vecX * logicIO.deltaTime.asSeconds());
-	_moveY(vecY * logicIO.deltaTime.asSeconds());
 
 	if (!isSame(vecY, 0)) {
 		angle = atan(vecY / vecX) / PI * 180.0;

@@ -19,7 +19,8 @@ void TerrainProvider::setup(Vector2u chunkCount, int spawnCount) {
 	// Start out with filled stones
 	for (int i = 0; i < chunkCount.x; i++) {
 		for (int j = 0; j < chunkCount.y; j++) {
-			terrainManager.loadChunk(Vector2i(i, j), EmptyChunkProvider());
+			EmptyChunkProvider prov;
+			terrainManager.loadChunk(Vector2i(i, j), prov);
 		}
 	}
 

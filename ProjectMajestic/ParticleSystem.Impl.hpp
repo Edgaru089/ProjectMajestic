@@ -47,6 +47,13 @@ void Particle::_updateLogic() {
 
 
 ////////////////////////////////////////
+void Particle::_getBoundingCollisionPoints(vector<Vector2d>& points) {
+	points.clear();
+	points.push_back(getCenterPos());
+}
+
+
+////////////////////////////////////////
 void PartlcleSystem::updateLogic() {
 	for (auto i = parts.begin(); i != parts.end();) {
 		if (!i->isAlive())
@@ -276,7 +283,7 @@ void PartlcleSystem::emit(DoubleRect range, TextureInfo texture, double sizeDivi
 }
 
 
-
+////////////////////////////////////////
 void PartlcleSystem::emitTraced(const ParticleEmitTrace & log) {
 	emit(log.range, textureManager.getTextureInfo(log.textureId), log.sizeDivisor, log.speed, log.count, log.angleBegin, log.angleEnd, log.liveTimeBegin, log.liveTimeEnd, log.size, log.gravity, true);
 }

@@ -85,7 +85,7 @@ void EntityManager::getRenderList(VertexArray& verts) {
 			continue;
 
 		if (i.second->requestSpeicalRendering()) {
-			i.second->pushTriangleVertexes(verts);
+			i.second->_pushTriangleVertexes(verts);
 			continue;
 		}
 

@@ -56,7 +56,8 @@ void ChunkClient::parseChunkData(Packet & packet) {
 		}
 	};
 
-	terrainManager.loadChunk(chunkId, ChunkProviderWrapper(func));
+	ChunkProviderWrapper wrapper(func);
+	terrainManager.loadChunk(chunkId, wrapper);
 
 }
 

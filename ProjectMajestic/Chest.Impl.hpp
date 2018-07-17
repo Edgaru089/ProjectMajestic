@@ -24,7 +24,7 @@ DoubleRect Chest::getHitbox() {
 
 
 ////////////////////////////////////////
-void Chest::pushTriangleVertexes(VertexArray& verts) {
+void Chest::_pushTriangleVertexes(VertexArray& verts) {
 	int lightLevel = terrainManager.getChunk(chunk)->lightLevel[inChunkPos.x][inChunkPos.y];
 	Vector2d center = Vector2d(inChunkPos.x + chunk.x*chunkSize + 0.5,
 		inChunkPos.y + chunk.y*chunkSize + 0.5 + 0.0625)*renderIO.gameScaleFactor;
