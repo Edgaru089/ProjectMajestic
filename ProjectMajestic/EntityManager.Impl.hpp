@@ -144,7 +144,7 @@ Uuid EntityManager::insert(Entity * entity, Vector2d position) {
 	entity->setUuid(id);
 	entity->setPosition(position);
 	lock();
-	entities.insert_or_assign(id, entity);
+	entities.insert(make_pair(id, entity));
 	unlock();
 	entity->onCreate();
 	networkServer.notifyEntityInsert(id, entity);
@@ -156,7 +156,7 @@ Uuid EntityManager::insert(Entity * entity, Vector2d position) {
 void EntityManager::insert(Uuid id, Entity * entity) {
 	entity->setUuid(id);
 	lock();
-	entities.insert_or_assign(id, entity);
+	entities.insert(make_pair(id, entity));
 	unlock();
 	entity->onCreate();
 }

@@ -11,7 +11,7 @@
 #include "BulletEntity.hpp"
 #include "GrenadeEntity.hpp"
 
-#define REGISTER_ENTITY_TYPE(type) allocs.insert_or_assign(type().getEntityId(), allocEntity<type>)
+#define REGISTER_ENTITY_TYPE(type) allocs.insert(make_pair(type().getEntityId(), allocEntity<type>))
 
 ////////////////////////////////////////
 void EntityAllocator::initalaize() {

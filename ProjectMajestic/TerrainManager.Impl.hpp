@@ -177,7 +177,7 @@ void TerrainManager::loadChunk(Vector2i id, ChunkProvider& provider) {
 	AUTOLOCKABLE(*this);
 	if (chunks.find(id) != chunks.end())
 		delete chunks[id];
-	map<Vector2i, Chunk*, Vector2Less<int>>::iterator i = chunks.insert_or_assign(id, new Chunk()).first;
+	map<Vector2i, Chunk*, Vector2Less<int>>::iterator i = chunks.insert(make_pair(id, new Chunk())).first;
 	i->second->id = id;
 	i->second->setChunkId(id.x, id.y);
 	provider.loadChunk(id, *chunks[id]);

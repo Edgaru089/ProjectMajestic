@@ -12,7 +12,7 @@
 #include "M16A4.hpp"
 #include "Barrett.hpp"
 
-#define REGISTER_ITEM_TYPE(type) allocs.insert_or_assign(type(data).getItemId(), allocItem<type>)
+#define REGISTER_ITEM_TYPE(type) allocs.insert(make_pair(type(data).getItemId(), allocItem<type>))
 
 ////////////////////////////////////////
 void ItemAllocator::initalaize() {

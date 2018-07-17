@@ -93,7 +93,7 @@ bool AssetManager::loadListFile(string filename) {
 			//	m << StringParser::toStringFormatted(" Off[%d, %d] %dx%d]", rect.left, rect.top, rect.width, rect.height);
 			//m.logout(dlog);
 
-			assets.insert_or_assign(id, Asset(id, file, assetType, rect));
+			assets.insert(make_pair(id, Asset(id, file, assetType, rect)));
 		}
 	}
 

@@ -109,7 +109,7 @@ Packet& operator >> (Packet& packet, Data& data) {
 class Dataset {
 public:
 
-	void insert(string id, Data& data) { datasets.insert_or_assign(id, data); }
+	void insert(string id, Data& data) { datasets.insert(make_pair(id, data)); }
 
 	template<typename DataType>
 	void setData(string id, DataType data) {
@@ -127,7 +127,7 @@ private:
 };
 
 Packet& operator << (Packet& packet, Dataset& datas) {
-	packet << datas.getDatasets().size();
+	packet << (unsigned long long)datas.getDatasets().size();
 	for (auto& i : datas.getDatasets()) {
 		packet << i.first << i.second;
 	}
@@ -136,7 +136,7 @@ Packet& operator << (Packet& packet, Dataset& datas) {
 
 Packet& operator >> (Packet& packet, Dataset& datas) {
 	datas.getDatasets().clear();
-	size_t size;
+	unsigned long long size;
 	string id;
 	packet >> size;
 	for (int i = 1; i <= size; i++) {

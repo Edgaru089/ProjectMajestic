@@ -34,7 +34,7 @@ public:
 			if (str.size() == 0 || str[0] == '#' || (pos = str.find('=')) == string::npos)
 				continue;
 			string id = str.substr(0, pos), cont = str.substr(pos + 1);
-			mlog << "             Loaded object: " << id << " = " << cont << dlog;
+			//mlog << "             Loaded object: " << id << " = " << cont << dlog;
 			langs.insert(make_pair(id, cont));
 		}
 

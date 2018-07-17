@@ -17,7 +17,7 @@
 #include <Windows.h>
 #endif
 
-#include "ImGui\imgui-setup.h"
+#include "ImGui/imgui-setup.h"
 
 #include "LogSystem.hpp"
 #include "Uuid.hpp"
@@ -41,10 +41,10 @@ USING_NAMESPACE;
 
 //Marcos & Typedefs
 #define var auto
-#define AUTOLOCK(a) lock_guard<mutex> lock(a)
-#define AUTOLOCKTYPE(type, a) lock_guard<type> lock(a)
-#define AUTOLOCKABLE(a) lock_guard<Lockable> lockable(a)
-#define AUTOLOCKABLE_NAMED(a,name) lock_guard<Lockable> name(a)
+#define AUTOLOCK(a) lock_guard<mutex> __mutex_lock(a)
+#define AUTOLOCKTYPE(type, a) lock_guar1d<type> __type_lock(a)
+#define AUTOLOCKABLE(a) lock_guard<Lockable> __lockable_lock(a)
+#define AUTOLOCKABLE_NAMED(a, name) lock_guard<Lockable> name(a)
 typedef Vector2<double> Vector2d;
 typedef sf::Rect<Uint32> UintRect;
 typedef sf::Rect<double> DoubleRect;
@@ -72,7 +72,7 @@ int logicTickPerSecond, logicTickCounter, framePerSecond, frameCounter, eventTic
 Clock logicTickCounterClock, frameCounterClock, eventTickCounterClock;
 Clock programRunTimeClock;  //Nerer resets; started as time (for this process) begins
 atomic_bool isReady;
-mt19937 random((random_device())());
+mt19937 randomEngine((random_device())());
 
 Clock desktopUpdate;
 
@@ -153,7 +153,7 @@ Rect<RectType> operator * (Rect<RectType> rect, ValType val) {
 }
 
 double rand01() {
-	return uniform_real_distribution<double>(0.0, 1.0)(random);
+	return uniform_real_distribution<double>(0.0, 1.0)(randomEngine);
 }
 
 // [x, y]

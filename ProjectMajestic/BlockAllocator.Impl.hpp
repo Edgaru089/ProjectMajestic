@@ -12,7 +12,7 @@
 #include "Chest.hpp"
 #include "Ladder.hpp"
 
-#define REGISTER_BLOCK_TYPE(type) allocs.insert_or_assign(type().getBlockId(), alloc<type>)
+#define REGISTER_BLOCK_TYPE(type) allocs.insert(make_pair(type().getBlockId(), alloc<type>))
 
 ////////////////////////////////////////
 void BlockAllocator::initalaize() {

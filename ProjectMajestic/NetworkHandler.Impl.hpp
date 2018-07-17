@@ -62,7 +62,7 @@ bool NetworkHandler::start(bool client) {
 		socket.send(packet); packet.clear();
 		socket.receive(packet);
 
-		size_t size;
+		unsigned long long size;
 		packet >> command >> size;
 		for (int i = 1; i <= size; i++) {
 			Vector2i pos;
@@ -165,14 +165,14 @@ void NetworkHandler::_messageLoopThread() {
 		IF_COMMAND("GETSPAWN") {
 			PACKET_COMMAND(ret, "SPAWN");
 			terrainManager.lock();
-			ret << terrainManager.getSpawnpoints().size();
+			ret << (unsigned long long)terrainManager.getSpawnpoints().size();
 			for (auto& i : terrainManager.getSpawnpoints())
 				ret << i.x << i.y;
 			terrainManager.unlock();
 			CHECKED_SEND(ret);
 		}
 		IF_COMMAND("SPAWN") {
-			size_t size;
+			unsigned long long size;
 			pack >> size;
 			terrainManager.lock();
 			for (int i = 1; i <= size; i++) {
@@ -262,7 +262,7 @@ void NetworkHandler::_messageLoopThread() {
 			vector<string> eids;
 			vector<Vector2d> pos, vec;
 			vector<Dataset> datas;
-			size_t cnt;
+			unsigned long long cnt;
 
 			pack >> cnt;
 			ids.resize(cnt); eids.resize(cnt); pos.resize(cnt); vec.resize(cnt); datas.resize(cnt);
@@ -367,7 +367,7 @@ void NetworkHandler::sendEntityData() {
 	entityManager.lock();
 
 	auto& m = entityManager.getEntityMapList();
-	pack << m.size();
+	pack << (unsigned long long)m.size();
 
 	for (auto& i : m) {
 		pack << i.first;
@@ -391,7 +391,7 @@ void NetworkHandler::sendLocalPlayerData() {
 
 		entityManager.lock();
 
-		pack << 1;
+		pack << 1ull;
 		pack << localPlayer->getUuid();
 		pack << localPlayer->getEntityId();
 		pack << localPlayer->getPosition().x << localPlayer->getPosition().y;

@@ -11,7 +11,7 @@
 #include "StringParser.hpp"
 using namespace std;
 
-#define AUTOLOCK(a) lock_guard<mutex> lock(a)
+#define AUTOLOCK(a) lock_guard<mutex> __mutex_lock(a)
 
 class Log {
 public:
@@ -50,7 +50,7 @@ public:
 	template<typename... Args>
 	void logf(LogLevel level, string format, Args... args) {
 		char buf[2560];
-		sprintf_s(buf, 2560, format.c_str(), args...);
+		sprintf(buf, format.c_str(), args...);
 		log(string(buf), level);
 	}
 
