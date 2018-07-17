@@ -123,8 +123,9 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>Full</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>
+      </FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -140,6 +141,8 @@
       <EnableModules>false</EnableModules>
       <DisableLanguageExtensions>
       </DisableLanguageExtensions>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -172,6 +175,7 @@
     <ClInclude Include="ArrowItem.hpp" />
     <ClInclude Include="AssetManager.hpp" />
     <ClInclude Include="AssetManager.Impl.hpp" />
+    <ClInclude Include="Barrett.hpp" />
     <ClInclude Include="Bedrock.hpp" />
     <ClInclude Include="Block.hpp" />
     <ClInclude Include="Block.Impl.hpp" />
@@ -228,8 +232,8 @@
     <ClInclude Include="Lockable.hpp" />
     <ClInclude Include="LogBlock.hpp" />
     <ClInclude Include="LogSystem.hpp" />
+    <ClInclude Include="M16A4.hpp" />
     <ClInclude Include="Main.hpp" />
-    <ClInclude Include="MinigunAmmoItem.hpp" />
     <ClInclude Include="MinigunItem.hpp" />
     <ClInclude Include="Mob.hpp" />
     <ClInclude Include="NetworkClient.hpp" />
@@ -250,7 +254,6 @@
     <ClInclude Include="PlayerEntity.Impl.hpp" />
     <ClInclude Include="PlayerInventory.hpp" />
     <ClInclude Include="PlayerInventory.Impl.hpp" />
-    <ClInclude Include="RpgAmmoItem.hpp" />
     <ClInclude Include="RpgEntity.hpp" />
     <ClInclude Include="RpgEntity.Impl.hpp" />
     <ClInclude Include="RpgLauncherItem.hpp" />
@@ -263,6 +266,7 @@
     <ClInclude Include="TerrainProvider.Impl.hpp" />
     <ClInclude Include="TestEntity.hpp" />
     <ClInclude Include="TestScene.hpp" />
+    <ClInclude Include="TextSystem.hpp" />
     <ClInclude Include="TextureManager.hpp" />
     <ClInclude Include="ThreadPool.hpp" />
     <ClInclude Include="Torch.hpp" />

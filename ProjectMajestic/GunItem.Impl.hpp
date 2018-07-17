@@ -6,7 +6,7 @@
 
 ////////////////////////////////////////
 void GunItem::_onShoot() {
-	BulletEntity::shoot(bulletDamage());
+	BulletEntity::shoot(bulletDamage(), bulletSpeed());
 }
 
 
@@ -15,8 +15,8 @@ void GunItem::updateLogic() {
 	if (isShooting()) {
 		int curtime = programRunTimeClock.getElapsedTime().asMilliseconds();
 		if (curtime - lastShootTimeMill() > shootInterval().asMilliseconds()) {
-			lastShootTimeMill() = curtime;
 			if (roundsLeft() > 0) {
+				lastShootTimeMill() = curtime;
 				roundsLeft()--;
 				_onShoot();
 			}
@@ -58,7 +58,7 @@ void GunItem::_pushExtraImguiItemsToDashboard() {
 			(programRunTimeClock.getElapsedTime().asMilliseconds() - startReloadTimeMill()) * 100 / reloadTime().asMilliseconds());
 		imgui::PushStyleColor(ImGuiCol_PlotHistogram, Color(240, 240, 240));
 		imgui::ProgressBar((float)(programRunTimeClock.getElapsedTime().asMilliseconds() - startReloadTimeMill()) / reloadTime().asMilliseconds(),
-						   ImVec2(-1, 15));
+						   ImVec2(-1, 12));
 		imgui::PopStyleColor();
 	}
 	else {
@@ -66,15 +66,25 @@ void GunItem::_pushExtraImguiItemsToDashboard() {
 		imgui::PushStyleColor(ImGuiCol_PlotHistogram, Color(240 - 240 * (float)roundsLeft() / roundsPerMagazine(),
 															0,
 															240 * (float)roundsLeft() / roundsPerMagazine()));
-		imgui::ProgressBar((float)roundsLeft() / roundsPerMagazine(), ImVec2(-1, 15));
+		imgui::ProgressBar((float)roundsLeft() / roundsPerMagazine(), ImVec2(-1, 12), "");
 		imgui::PopStyleColor();
 	}
+	//if (shootInterval() > milliseconds(800)) {  // Long shoot interval - bolt action
+		// Display load progress bar
+	imgui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, -1));
+	imgui::PushStyleColor(ImGuiCol_PlotHistogram, Color(192, 192, 192));
+	imgui::ProgressBar(min(1.0f, (float)(programRunTimeClock.getElapsedTime().asMilliseconds() -
+										 lastShootTimeMill()) /
+						   shootInterval().asMilliseconds()), ImVec2(-1, 4), "");
+	imgui::PopStyleColor();
+	imgui::PopStyleVar();
+//}
 }
 
 
 ////////////////////////////////////////
 bool GunItem::_onRightPressed() {
-	lastShootTimeMill() = programRunTimeClock.getElapsedTime().asMilliseconds();
+	isShooting() = true;
 
 	return true;
 }
@@ -82,6 +92,6 @@ bool GunItem::_onRightPressed() {
 
 ////////////////////////////////////////
 void GunItem::_onRightReleased() {
-	lastShootTimeMill() = 0;
+	isShooting() = false;
 }
 

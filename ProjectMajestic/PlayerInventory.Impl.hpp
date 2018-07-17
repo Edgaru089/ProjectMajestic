@@ -2,6 +2,7 @@
 
 #include "PlayerInventory.hpp"
 #include "TextureManager.hpp"
+#include "TextSystem.hpp"
 
 
 ////////////////////////////////////////
@@ -17,16 +18,15 @@ PlayerInventory::PlayerInventory() {
 	slots[0][1].setData("count", 1);
 	slots[0][2].setData("item_name", "item_rpg_launcher"s);
 	slots[0][2].setData("count", 1);
-	slots[0][3].setData("item_name", "item_grenade"s);
-	slots[0][3].setData("count", 8);
-	slots[0][4].setData("item_name", "item_grenade"s);
-	slots[0][4].setData("count", 8);
-	slots[0][5].setData("item_name", "item_grenade"s);
-	slots[0][5].setData("count", 8);
-	slots[0][6].setData("item_name", "block_torch"s);
-	slots[0][6].setData("count", 1);
-	slots[0][7].setData("item_name", "block_ladder"s);
-	slots[0][7].setData("count", 5);
+	slots[0][3].setData("item_name", "item_m16a4"s);
+	slots[0][3].setData("count", 1);
+	slots[0][4].setData("item_name", "item_barrett"s);
+	slots[0][4].setData("count", 1);
+	slots[0][7].setData("item_name", "block_torch"s);
+	slots[0][7].setData("count", 1);
+	slots[0][8].setData("item_name", "block_ladder"s);
+	slots[0][8].setData("count", 5);
+
 	slots[1][0].setData("item_name", "item_minigun_ammo"s);
 	slots[1][0].setData("count", 8);
 	slots[1][1].setData("item_name", "item_rpg_ammo"s);
@@ -35,6 +35,29 @@ PlayerInventory::PlayerInventory() {
 	slots[1][2].setData("count", 16);
 	slots[1][3].setData("item_name", "item_arrow"s);
 	slots[1][3].setData("count", 64);
+	slots[1][4].setData("item_name", "item_m16a4_ammo"s);
+	slots[1][4].setData("count", 12);
+	slots[1][5].setData("item_name", "item_barrett_ammo"s);
+	slots[1][5].setData("count", 6);
+
+	slots[2][0].setData("item_name", "item_grenade"s);
+	slots[2][0].setData("count", 8);
+	slots[2][1].setData("item_name", "item_grenade"s);
+	slots[2][1].setData("count", 8);
+	slots[2][2].setData("item_name", "item_grenade"s);
+	slots[2][2].setData("count", 8);
+	slots[2][3].setData("item_name", "item_grenade"s);
+	slots[2][3].setData("count", 8);
+	slots[2][4].setData("item_name", "item_grenade"s);
+	slots[2][4].setData("count", 8);
+	slots[2][5].setData("item_name", "item_grenade"s);
+	slots[2][5].setData("count", 8);
+	slots[2][6].setData("item_name", "item_grenade"s);
+	slots[2][6].setData("count", 8);
+	slots[2][7].setData("item_name", "item_grenade"s);
+	slots[2][7].setData("count", 8);
+	slots[2][8].setData("item_name", "item_grenade"s);
+	slots[2][8].setData("count", 8);
 }
 
 
@@ -113,7 +136,7 @@ void PlayerInventory::runImGui() {
 				 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
 
 	const string& name = slots[0][cursorId]["item_name"].getDataString();
-	imgui::Text(name.c_str());
+	imgui::Text(text.get(name + ".name"));
 	if (name != "") {
 		Item* item = itemAllocator.allocate(name.substr(5), slots[0][cursorId], true);
 		if (item != nullptr) {

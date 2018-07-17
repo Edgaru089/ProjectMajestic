@@ -11,6 +11,7 @@ public:
 
 	virtual Time shootInterval() = 0;
 	virtual double bulletDamage() = 0;
+	virtual double bulletSpeed() { return 25.0; }
 	virtual Time reloadTime() = 0;
 	virtual int roundsPerMagazine() = 0;
 	virtual string magazineItemName() = 0; // "item_xxx"
@@ -29,7 +30,7 @@ public:
 protected:
 
 	int& lastShootTimeMill() { return slotDataset["last_shoot_time"].getDataInt(); }
-	bool isShooting() { /*return slotDataset["is_shooting"].getDataBool();*/ return lastShootTimeMill() != 0; };
+	bool& isShooting() { return slotDataset["is_shooting"].getDataBool(); };
 	int& roundsLeft() { return slotDataset["rounds_left"].getDataInt(); }
 	int& startReloadTimeMill() { return slotDataset["load_time"].getDataInt(); }
 	bool isReloading() { return startReloadTimeMill() != 0; }

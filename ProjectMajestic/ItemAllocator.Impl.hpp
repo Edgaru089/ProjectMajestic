@@ -7,10 +7,10 @@
 #include "ArrowItem.hpp"
 #include "BowItem.hpp"
 #include "MinigunItem.hpp"
-#include "MinigunAmmoItem.hpp"
 #include "GrenadeItem.hpp"
-#include "RpgAmmoItem.hpp"
 #include "RpgLauncherItem.hpp"
+#include "M16A4.hpp"
+#include "Barrett.hpp"
 
 #define REGISTER_ITEM_TYPE(type) allocs.insert_or_assign(type(data).getItemId(), allocItem<type>)
 
@@ -24,6 +24,10 @@ void ItemAllocator::initalaize() {
 	REGISTER_ITEM_TYPE(GrenadeItem);
 	REGISTER_ITEM_TYPE(RpgAmmoItem);
 	REGISTER_ITEM_TYPE(RpgLauncherItem);
+	REGISTER_ITEM_TYPE(M16A4);
+	REGISTER_ITEM_TYPE(M16A4Ammo);
+	REGISTER_ITEM_TYPE(Barrett);
+	REGISTER_ITEM_TYPE(BarrettAmmo);
 }
 
 

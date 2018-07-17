@@ -82,6 +82,9 @@
     <Filter Include="Game\Player">
       <UniqueIdentifier>{06dce042-6a6e-4fcd-8d00-b53d7e313b47}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Items&amp;Blocks\Item\Guns">
+      <UniqueIdentifier>{b0339b29-9700-4f4d-8a81-7b021f29e3fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imconfig.h">
@@ -372,9 +375,6 @@
     <ClInclude Include="BulletEntity.Impl.hpp">
       <Filter>Game\Entities\Entities</Filter>
     </ClInclude>
-    <ClInclude Include="MinigunItem.hpp">
-      <Filter>Game\Items&amp;Blocks\Item</Filter>
-    </ClInclude>
     <ClInclude Include="GrenadeEntity.hpp">
       <Filter>Game\Entities\Entities</Filter>
     </ClInclude>
@@ -387,29 +387,35 @@
     <ClInclude Include="GrenadeItem.Impl.hpp">
       <Filter>Game\Items&amp;Blocks\Item</Filter>
     </ClInclude>
-    <ClInclude Include="MinigunAmmoItem.hpp">
-      <Filter>Game\Items&amp;Blocks\Item</Filter>
-    </ClInclude>
     <ClInclude Include="GunItem.hpp">
       <Filter>Game\Items&amp;Blocks\Item\Base</Filter>
     </ClInclude>
     <ClInclude Include="GunItem.Impl.hpp">
       <Filter>Game\Items&amp;Blocks\Item\Base</Filter>
     </ClInclude>
-    <ClInclude Include="RpgLauncherItem.hpp">
-      <Filter>Game\Items&amp;Blocks\Item</Filter>
-    </ClInclude>
-    <ClInclude Include="RpgAmmoItem.hpp">
-      <Filter>Game\Items&amp;Blocks\Item</Filter>
-    </ClInclude>
-    <ClInclude Include="RpgLauncherItem.Impl.hpp">
-      <Filter>Game\Items&amp;Blocks\Item</Filter>
-    </ClInclude>
     <ClInclude Include="RpgEntity.hpp">
       <Filter>Game\Entities\Entities</Filter>
     </ClInclude>
     <ClInclude Include="RpgEntity.Impl.hpp">
       <Filter>Game\Entities\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="RpgLauncherItem.hpp">
+      <Filter>Game\Items&amp;Blocks\Item\Guns</Filter>
+    </ClInclude>
+    <ClInclude Include="RpgLauncherItem.Impl.hpp">
+      <Filter>Game\Items&amp;Blocks\Item\Guns</Filter>
+    </ClInclude>
+    <ClInclude Include="M16A4.hpp">
+      <Filter>Game\Items&amp;Blocks\Item\Guns</Filter>
+    </ClInclude>
+    <ClInclude Include="MinigunItem.hpp">
+      <Filter>Game\Items&amp;Blocks\Item\Guns</Filter>
+    </ClInclude>
+    <ClInclude Include="Barrett.hpp">
+      <Filter>Game\Items&amp;Blocks\Item\Guns</Filter>
+    </ClInclude>
+    <ClInclude Include="TextSystem.hpp">
+      <Filter>Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

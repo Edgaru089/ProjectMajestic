@@ -8,6 +8,7 @@ class BulletEntity :public Entity {
 public:
 
 	static void shoot(double damage = 5,
+					  double speed = 25.0,
 					  Vector2d position = localPlayer->getEyePosition(),
 					  double degree = gameIO.degreeAngle);
 

@@ -77,6 +77,9 @@ mt19937 random((random_device())());
 Clock desktopUpdate;
 
 //Utilities
+String u8ToSfString(string u8string) { return String::fromUtf8(u8string.begin(), u8string.end()); }
+String u8ToSfString(char* u8string) { return String::fromUtf8(u8string, u8string + strlen(u8string)); }
+
 const double sqr(double x) { return x * x; }
 
 const double getDisSquared(double posX1, double posY1, double posX2, double posY2) {

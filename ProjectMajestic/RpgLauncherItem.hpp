@@ -21,7 +21,11 @@ public:
 	Time reloadTime() override { return seconds(5.0f); }
 	int roundsPerMagazine() override { return 1; }
 	string magazineItemName() override { return "item_rpg_ammo"; }
-
-
 };
 
+class RpgAmmoItem :public Item {
+public:
+	RpgAmmoItem(Dataset& data) :Item(data) {}
+	const string getItemId() override { return "rpg_ammo"; }
+	int getMaxItemsPerSlotCount() override { return 16; }
+};

@@ -9,6 +9,8 @@
 #include "TestScene.hpp"
 #include "IO.hpp"
 
+#include "TextSystem.hpp"
+
 
 ////////////////////////////////////////
 void App::initalaizePostWindow(RenderWindow& win) {
@@ -30,6 +32,8 @@ void App::initalaize() {
 		i.second->preWindowInitalaize();
 
 	currentScene = sceneMapper["TestScene"];
+
+	text.loadFromFile("lang.list");
 
 }
 
