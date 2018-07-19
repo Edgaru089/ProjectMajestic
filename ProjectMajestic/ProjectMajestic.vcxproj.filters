@@ -46,9 +46,6 @@
     <Filter Include="Game\Network">
       <UniqueIdentifier>{5e00d7c5-9b06-4053-a3b1-fd421a7c4110}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Renderers\Asset">
-      <UniqueIdentifier>{9e4dc9e7-c3ff-4001-a5a1-71b444b8b7ac}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Terrain\TerrainProvider">
       <UniqueIdentifier>{6046da30-c3c5-4287-ba16-a0e71a11224c}</UniqueIdentifier>
     </Filter>
@@ -87,6 +84,9 @@
     </Filter>
     <Filter Include="Game\Items&amp;Blocks\Item\Guns\Post">
       <UniqueIdentifier>{68df724a-48ca-40b4-a4da-f1e2abe0f023}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Asset">
+      <UniqueIdentifier>{9e4dc9e7-c3ff-4001-a5a1-71b444b8b7ac}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -220,16 +220,16 @@
       <Filter>Game\Network</Filter>
     </ClInclude>
     <ClInclude Include="AssetManager.hpp">
-      <Filter>Game\Renderers\Asset</Filter>
+      <Filter>Game\Asset</Filter>
     </ClInclude>
     <ClInclude Include="AssetManager.Impl.hpp">
-      <Filter>Game\Renderers\Asset</Filter>
+      <Filter>Game\Asset</Filter>
     </ClInclude>
     <ClInclude Include="TextureManager.hpp">
-      <Filter>Game\Renderers\Asset</Filter>
+      <Filter>Game\Asset</Filter>
     </ClInclude>
     <ClInclude Include="TextureManager.Impl.hpp">
-      <Filter>Game\Renderers\Asset</Filter>
+      <Filter>Game\Asset</Filter>
     </ClInclude>
     <ClInclude Include="GameScene.hpp">
       <Filter>Scenes</Filter>

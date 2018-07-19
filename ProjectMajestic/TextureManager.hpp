@@ -46,7 +46,7 @@ public:
 	Texture* getBindingTexture();
 
 private:
-
+	// cannot use shared_ptr because of sf::RenderStates requirements
 	Texture * texture;
 
 	map<string, Image> images;

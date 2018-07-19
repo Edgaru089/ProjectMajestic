@@ -12,7 +12,7 @@
 
 ////////////////////////////////////////
 void ArrowEntity::shoot(double damage, Vector2d position, double degree) {
-	ArrowEntity* e = new ArrowEntity;
+	shared_ptr<ArrowEntity> e = make_shared<ArrowEntity>();
 	e->damage = damage;
 	e->accelerateVector(20.0 * damage / maxArrowDamage, degree + 5.0 * (rand01() - 0.5));
 	entityManager.insert(e, position + Vector2d(.0, e->getSize().y / 2.0));
@@ -28,7 +28,7 @@ void ArrowEntity::_pushTriangleVertexes(VertexArray& verts) {
 
 	Vector2i chunk = TerrainManager::convertWorldCoordToChunkId(Vector2i(getPosition().x, getPosition().y));
 	Vector2i inCc = TerrainManager::convertWorldCoordToInChunkCoord(Vector2i(getPosition().x, getPosition().y));
-	Chunk* c = terrainManager.getChunk(chunk);
+	shared_ptr<Chunk> c = terrainManager.getChunk(chunk);
 
 	Uint8 mask;
 	if (c != nullptr)
@@ -61,7 +61,7 @@ void ArrowEntity::_pushTriangleVertexes(VertexArray& verts) {
 
 
 ////////////////////////////////////////
-void ArrowEntity::_onCollision(Block* block) {
+void ArrowEntity::_onCollision(shared_ptr<Block> block) {
 	if (inEntity() || inWall())
 		return;
 	if (!block->isSolid())
@@ -74,18 +74,19 @@ void ArrowEntity::_onCollision(Block* block) {
 
 
 ////////////////////////////////////////
-void ArrowEntity::_onCollideEntity(Entity* e) {
+void ArrowEntity::_onCollideEntity(shared_ptr<Entity> e) {
 	if (inEntity() || inWall())
 		return;
-	Mob* mob = dynamic_cast<Mob*>(e);
-	if (mob == nullptr)
-		return;
-	mob->harm(damage, getPosition());
+	try {
+		Mob& mob = dynamic_cast<Mob&>(*e);
+		mob.harm(damage, getPosition());
 
-	inEntity() = true;
-	pos0 = Vector2d(posX, posY) - e->getPosition();
-	angle0 = angle;
-	inEntityId = e->getUuid();
+		inEntity() = true;
+		pos0 = Vector2d(posX, posY) - e->getPosition();
+		angle0 = angle;
+		inEntityId = e->getUuid();
+	}
+	catch (bad_cast) {}
 }
 
 
@@ -93,7 +94,7 @@ void ArrowEntity::_onCollideEntity(Entity* e) {
 void ArrowEntity::_dropItem() {
 	// Tile Drop
 	// Borrow code from Block::_onDestory()
-	ItemEntity* e = new ItemEntity("item_arrow");
+	shared_ptr<ItemEntity> e = make_shared<ItemEntity>("item_arrow");
 	// Give a random velocity
 	e->accelerateVector(1.0, 180 + rand() % 180);
 
@@ -110,12 +111,12 @@ void ArrowEntity::_updateLogic() {
 		posY = pos0.y;
 		angle = angle0;
 
-		Block* b = terrainManager.getBlock(inWallBlock);
+		auto b = terrainManager.getBlock(inWallBlock);
 		if (b == nullptr || !b->isSolid())
 			_dropItem();
 	}
 	else if (inEntity()) {
-		Entity* e = entityManager.getEntity(inEntityId);
+		shared_ptr<Entity> e = entityManager.getEntity(inEntityId);
 		if (e == nullptr)
 			_dropItem();
 		else {

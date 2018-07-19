@@ -48,7 +48,7 @@ void Entity::_moveX(double amount) {
 		move = 10000;
 		bool flag = true;
 		for (Vector2d i : points) {
-			Block* bi = terrainManager.getBlock(TerrainManager::convertWorldPositionToBlockCoord(i));
+			shared_ptr<Block> bi = terrainManager.getBlock(TerrainManager::convertWorldPositionToBlockCoord(i));
 			if (bi != nullptr && (bi->isSolid() && bi->getHitbox().contains(i))) { // Already stuck - continue
 				flag = false;
 				move = 0;
@@ -60,7 +60,7 @@ void Entity::_moveX(double amount) {
 			ix.x += amount;
 
 			Vector2i blockCoord = TerrainManager::convertWorldPositionToBlockCoord(ix);
-			Block* b = terrainManager.getBlock(blockCoord);
+			shared_ptr<Block> b = terrainManager.getBlock(blockCoord);
 
 			if (b != nullptr && b->getHitbox().contains(ix)) {
 				if (b->isSolid()) {
@@ -89,7 +89,7 @@ void Entity::_moveX(double amount) {
 		move = -10000;
 		bool flag = true;
 		for (Vector2d i : points) {
-			Block* bi = terrainManager.getBlock(TerrainManager::convertWorldPositionToBlockCoord(i));
+			shared_ptr<Block> bi = terrainManager.getBlock(TerrainManager::convertWorldPositionToBlockCoord(i));
 			if (bi != nullptr && (bi->isSolid() && bi->getHitbox().contains(i))) { // Already stuck - continue
 				flag = false;
 				move = 0;
@@ -101,7 +101,7 @@ void Entity::_moveX(double amount) {
 			ix.x += amount;
 
 			Vector2i blockCoord = TerrainManager::convertWorldPositionToBlockCoord(ix);
-			Block* b = terrainManager.getBlock(blockCoord);
+			shared_ptr<Block> b = terrainManager.getBlock(blockCoord);
 			if (b != nullptr && b->getHitbox().contains(ix)) {
 				if (b->isSolid()) {
 					ix.x = b->getHitbox().left + b->getHitbox().width + 1e-7;  //HACK Minus EPS to avoid being treated as stuck in walls
@@ -150,7 +150,7 @@ void Entity::_moveY(double amount) {
 		move = 10000;
 		bool flag = true;
 		for (Vector2d i : points) {
-			Block* bi = terrainManager.getBlock(TerrainManager::convertWorldPositionToBlockCoord(i));
+			shared_ptr<Block> bi = terrainManager.getBlock(TerrainManager::convertWorldPositionToBlockCoord(i));
 			if (bi != nullptr && (bi->isSolid() && bi->getHitbox().contains(i))) { // Already stuck - continue
 				flag = false;
 				move = 0;
@@ -162,7 +162,7 @@ void Entity::_moveY(double amount) {
 			ix.y += amount;
 
 			Vector2i blockCoord = TerrainManager::convertWorldPositionToBlockCoord(ix);
-			Block* b = terrainManager.getBlock(blockCoord);
+			shared_ptr<Block> b = terrainManager.getBlock(blockCoord);
 			if (b != nullptr && b->getHitbox().contains(ix)) {
 				if (b->isSolid()) {
 					ix.y = b->getHitbox().top - 1e-7;  //HACK Minus EPS to avoid being treated as stuck in walls
@@ -194,7 +194,7 @@ void Entity::_moveY(double amount) {
 		move = -10000;
 		bool flag = true;
 		for (Vector2d i : points) {
-			Block* bi = terrainManager.getBlock(TerrainManager::convertWorldPositionToBlockCoord(i));
+			shared_ptr<Block> bi = terrainManager.getBlock(TerrainManager::convertWorldPositionToBlockCoord(i));
 			if (bi != nullptr && (bi->isSolid() && bi->getHitbox().contains(i))) { // Already stuck - continue
 				flag = false;
 				move = 0;
@@ -206,7 +206,7 @@ void Entity::_moveY(double amount) {
 			ix.y += amount;
 
 			Vector2i blockCoord = TerrainManager::convertWorldPositionToBlockCoord(ix);
-			Block* b = terrainManager.getBlock(blockCoord);
+			shared_ptr<Block> b = terrainManager.getBlock(blockCoord);
 			if (b != nullptr && b->getHitbox().contains(ix)) {
 				if (b->isSolid()) {
 					ix.y = b->getHitbox().top + b->getHitbox().height + 1e-7;  //HACK Minus EPS to avoid being treated as stuck in walls

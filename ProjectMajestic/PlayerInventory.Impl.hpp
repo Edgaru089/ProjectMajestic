@@ -76,10 +76,9 @@ void PlayerInventory::updateLogic() {
 			if (slots[i][j]["item_name"].getDataString() == "")
 				continue;
 			const string& name = slots[i][j]["item_name"];
-			Item* item = itemAllocator.allocate(name.substr(5), slots[i][j], i == 0 && j == cursorId);
+			shared_ptr<Item> item = itemAllocator.allocate(name.substr(5), slots[i][j], i == 0 && j == cursorId);
 			if (item != nullptr) {
 				item->updateLogic();
-				delete item;
 			}
 		}
 }
@@ -146,11 +145,9 @@ void PlayerInventory::runImGui() {
 	const string& name = slots[0][cursorId]["item_name"].getDataString();
 	imgui::Text(text.get(name + ".name"));
 	if (name != "") {
-		Item* item = itemAllocator.allocate(name.substr(5), slots[0][cursorId], true);
-		if (item != nullptr) {
+		shared_ptr<Item> item = itemAllocator.allocate(name.substr(5), slots[0][cursorId], true);
+		if (item != nullptr)
 			item->_pushExtraImguiItemsToDashboard();
-			delete item;
-		}
 	}
 
 	imgui::End();

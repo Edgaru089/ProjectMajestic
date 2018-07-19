@@ -21,7 +21,7 @@ public:
 	virtual const string getEntityId() = 0;
 
 	virtual const bool requestEntityCollisionCallback() { return false; }
-	virtual void _onCollideEntity(Entity* collided) {}
+	virtual void _onCollideEntity(shared_ptr<Entity> collided) {}
 
 
 	void updateLogic();
@@ -56,7 +56,7 @@ public:
 	}
 
 	const bool isAlive() { return alive; }
-	void kill(Entity* killer = nullptr) { alive = false; _onKill(killer); }
+	void kill() { alive = false; _onKill(); }
 	double getRotation() { return angle; }
 
 	virtual Vector2d getSize() { return Vector2d(0.2, 0.2); }
@@ -86,8 +86,8 @@ public:
 
 	virtual void _onCreate() {}
 	virtual void _updateLogic() {}
-	virtual void _onCollision(Block* block) {}
-	virtual void _onKill(Entity* killer) {}
+	virtual void _onCollision(shared_ptr<Block> block) {}
+	virtual void _onKill() {}
 
 protected:
 

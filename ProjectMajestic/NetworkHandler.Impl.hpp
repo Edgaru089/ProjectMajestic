@@ -30,7 +30,7 @@ bool NetworkHandler::start(bool client) {
 
 	if (peer.majorVersion != majorVersion || peer.minorVersion != minorVersion) {
 		logicIO.lastError = StringParser::toStringF("Client/Server Version Mismatch, Local: %d.%d.%d, Remote: %d.%d.%d",
-															majorVersion, minorVersion, patchVersion, peer.majorVersion, peer.minorVersion, peer.patchVersion);
+													majorVersion, minorVersion, patchVersion, peer.majorVersion, peer.minorVersion, peer.patchVersion);
 		mlog << Log::Error << "[Network/Handshake Error] " << logicIO.lastError << dlog;
 		socket.disconnect();
 		return false;
@@ -38,7 +38,7 @@ bool NetworkHandler::start(bool client) {
 
 	if (peer.chunkSize != chunkSize) {
 		logicIO.lastError = StringParser::toStringF("Client/Server Chunk Size Mismatch, Local: %d, Remote: %d",
-															chunkSize, peer.chunkSize);
+													chunkSize, peer.chunkSize);
 		mlog << Log::Error << "[Network/Handshake Error] " << logicIO.lastError << dlog;
 		socket.disconnect();
 		return false;
@@ -238,7 +238,7 @@ void NetworkHandler::_messageLoopThread() {
 			Vector2d pos, vel;
 			pack >> id >> str;
 			pack >> pos.x >> pos.y >> vel.x >> vel.y;
-			Entity* e = entityAllocator.allocate(str);
+			shared_ptr<Entity> e = entityAllocator.allocate(str);
 			if (e != nullptr) {
 				e->setUuid(id);
 				e->setPosition(pos);
@@ -252,7 +252,7 @@ void NetworkHandler::_messageLoopThread() {
 			Uuid id;
 			pack >> id;
 			entityManager.lock();
-			Entity* e = entityManager.getEntity(id);
+			shared_ptr<Entity> e = entityManager.getEntity(id);
 			if (e != nullptr)
 				e->kill();
 			entityManager.unlock();
@@ -271,10 +271,10 @@ void NetworkHandler::_messageLoopThread() {
 
 			entityManager.lock();
 			for (int i = 0; i < cnt; i++) {
-				Entity* e = entityManager.getEntity(ids[i]);
+				shared_ptr<Entity> e = entityManager.getEntity(ids[i]);
 				if (e == nullptr) {
 					// Allocate a new entity
-					Entity* ex = entityAllocator.allocate(eids[i]);
+					shared_ptr<Entity> ex = entityAllocator.allocate(eids[i]);
 					if (ex != nullptr) {
 						ex->setUuid(ids[i]);
 						ex->setPosition(pos[i]);
@@ -406,7 +406,7 @@ void NetworkHandler::sendLocalPlayerData() {
 
 
 ////////////////////////////////////////
-void NetworkHandler::onInsertEntity(Uuid id, Entity* entity) {
+void NetworkHandler::onInsertEntity(Uuid id, shared_ptr<Entity> entity) {
 	CHECK_CONNECT;
 	PACKET_COMMAND(pack, "INSENTITY");
 

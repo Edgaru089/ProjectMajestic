@@ -22,14 +22,14 @@ public:
 	void setChunkId(int x, int y);
 	Vector2i getChunkId();
 
-	Block* getBlock(Vector2i inChunkCoord);
-	void setBlock(Vector2i inChunkCoord, Block* block);
+	shared_ptr<Block> getBlock(Vector2i inChunkCoord);
+	void setBlock(Vector2i inChunkCoord, shared_ptr<Block> block);
 
 	void _resize(int width, int height);
 
 	// First: pos(global coords); Second: strength
 	map<Uuid, pair<Vector2i, int>> lightSources;
-	vector<vector<Block*>> blocks;
+	vector<vector<shared_ptr<Block>>> blocks;
 	vector<vector<int>> lightLevel;
 	Vector2i id;
 

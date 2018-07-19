@@ -20,7 +20,6 @@ void EntityManager::updateLogic() {
 		if (i->second == nullptr || !i->second->isAlive()) {
 			if (i->second != nullptr) {
 				networkServer.notifyEntityKill(i->second->getUuid());
-				delete i->second;
 			}
 			i = entities.erase(i);
 		}
@@ -45,21 +44,22 @@ void EntityManager::updateLogic() {
 void EntityManager::explode(Vector2d position, double force, bool damageTerrain) {
 	// Damage
 	for (auto& i : entities) {
-		Mob* m = dynamic_cast<Mob*>(i.second);
-		if (m != nullptr) {
-			// Use the center point for distance calculations
-			double dist = getDis(m->getCenterPos(), position);
+		try {
+			Mob& m = dynamic_cast<Mob&>(*i.second);
+				// Use the center point for distance calculations
+			double dist = getDis(m.getCenterPos(), position);
 			double damage = force - dist * dist * 1.1;
 			if (damage > 0)
-				m->harm(damage, position, damage / 5.0);
+				m.harm(damage, position, damage / 5.0);
 		}
+		catch (bad_cast) {}
 	}
 
 	// TODO Terrain destruction
 	if (damageTerrain) {
 		for (auto& k : terrainManager.getChunks()) {
 			Vector2i off = k.first*chunkSize;
-			Chunk* c = k.second;
+			shared_ptr<Chunk> c = k.second;
 			for (int i = 0; i < chunkSize; i++)
 				for (int j = 0; j < chunkSize; j++) {
 					if (c->getBlock(Vector2i(i, j)) == nullptr)
@@ -89,14 +89,14 @@ void EntityManager::getRenderList(VertexArray& verts) {
 			continue;
 		}
 
-		Entity* e = i.second;
+		shared_ptr<Entity> e = i.second;
 		TextureInfo tex = e->getTextureInfo();
 		Vector2d center = e->getPosition()*renderIO.gameScaleFactor;
 		double width = e->getSize().x*renderIO.gameScaleFactor, height = e->getSize().y*renderIO.gameScaleFactor;
 
 		Vector2i chunk = TerrainManager::convertWorldCoordToChunkId(Vector2i(e->getPosition().x, e->getPosition().y));
 		Vector2i inCc = TerrainManager::convertWorldCoordToInChunkCoord(Vector2i(e->getPosition().x, e->getPosition().y));
-		Chunk* c = terrainManager.getChunk(chunk);
+		shared_ptr<Chunk> c = terrainManager.getChunk(chunk);
 
 		Uint8 mask;
 		if (c != nullptr)
@@ -139,7 +139,7 @@ void EntityManager::getRenderList(VertexArray& verts) {
 
 
 ////////////////////////////////////////
-Uuid EntityManager::insert(Entity * entity, Vector2d position) {
+Uuid EntityManager::insert(shared_ptr<Entity> entity, Vector2d position) {
 	Uuid id = Uuid::get();
 	entity->setUuid(id);
 	entity->setPosition(position);
@@ -153,7 +153,7 @@ Uuid EntityManager::insert(Entity * entity, Vector2d position) {
 
 
 ////////////////////////////////////////
-void EntityManager::insert(Uuid id, Entity * entity) {
+void EntityManager::insert(Uuid id, shared_ptr<Entity> entity) {
 	entity->setUuid(id);
 	lock();
 	entities.insert(make_pair(id, entity));
@@ -163,7 +163,7 @@ void EntityManager::insert(Uuid id, Entity * entity) {
 
 
 ////////////////////////////////////////
-Entity * EntityManager::getEntity(Uuid id) {
+shared_ptr<Entity> EntityManager::getEntity(Uuid id) {
 	AUTOLOCKABLE(*this);
 	auto i = entities.find(id);
 	if (i == entities.end() || i->second == nullptr)

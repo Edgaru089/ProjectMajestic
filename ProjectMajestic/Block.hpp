@@ -16,19 +16,13 @@ const int maxLightingLevel = 12;
 class Block {
 public:
 
-	static Block* alloc(string id) {
-		return blockAllocator.allocate(id);
-	}
-
-public:
-
 	friend class TerrainManager;
 
 	virtual ~Block() {}
 
 	virtual const string getBlockId() = 0;
-	Block* copyAllocate() {
-		Block* b = blockAllocator.allocate(getBlockId());
+	shared_ptr<Block> copyAllocate() {
+		shared_ptr<Block> b = blockAllocator.allocate(getBlockId());
 		b->inChunkPos = inChunkPos;
 		b->chunk = chunk;
 		b->datasets = datasets;
@@ -74,7 +68,7 @@ public:
 
 public:
 
-	virtual void _copyCustomData(Block* b) {}
+	virtual void _copyCustomData(shared_ptr<Block> b) {}
 
 	virtual void _onPlaced(Entity* placer) {}
 	virtual void _updateLogic() {}

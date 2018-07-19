@@ -51,7 +51,7 @@ public:
 
 	void sendLocalPlayerData();
 
-	void onInsertEntity(Uuid id, Entity * entity);
+	void onInsertEntity(Uuid id, shared_ptr<Entity> entity);
 
 	void onRemoveEntity(Uuid id);
 

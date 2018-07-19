@@ -27,35 +27,35 @@ DoubleRect Chest::getHitbox() {
 void Chest::_pushTriangleVertexes(VertexArray& verts) {
 	int lightLevel = terrainManager.getChunk(chunk)->lightLevel[inChunkPos.x][inChunkPos.y];
 	Vector2d center = Vector2d(inChunkPos.x + chunk.x*chunkSize + 0.5,
-		inChunkPos.y + chunk.y*chunkSize + 0.5 + 0.0625)*renderIO.gameScaleFactor;
+							   inChunkPos.y + chunk.y*chunkSize + 0.5 + 0.0625)*renderIO.gameScaleFactor;
 	double width = renderIO.gameScaleFactor*0.875;
 
 	Uint8 mask = 63 + 192.0*((double)lightLevel / maxLightingLevel);
 	TextureInfo tex = getTextureInfo();
 	// Left-Top
 	verts.append(Vertex(Vector2f(center.x - width / 2.0, center.y - width / 2.0),
-		Vector2f(tex.textureRect.left, tex.textureRect.top)));
-	// Right-Top
+						Vector2f(tex.textureRect.left, tex.textureRect.top)));
+					// Right-Top
 	verts.append(Vertex(Vector2f(center.x + width / 2.0, center.y - width / 2.0),
-		Vector2f(tex.textureRect.left + tex.textureRect.width, tex.textureRect.top)));
-	// Left-Bottom
+						Vector2f(tex.textureRect.left + tex.textureRect.width, tex.textureRect.top)));
+					// Left-Bottom
 	verts.append(Vertex(Vector2f(center.x - width / 2.0, center.y + width / 2.0),
-		Vector2f(tex.textureRect.left, tex.textureRect.top + tex.textureRect.height)));
-	// Right-Top
+						Vector2f(tex.textureRect.left, tex.textureRect.top + tex.textureRect.height)));
+					// Right-Top
 	verts.append(Vertex(Vector2f(center.x + width / 2.0, center.y - width / 2.0),
-		Vector2f(tex.textureRect.left + tex.textureRect.width, tex.textureRect.top)));
-	// Left-Bottom
+						Vector2f(tex.textureRect.left + tex.textureRect.width, tex.textureRect.top)));
+					// Left-Bottom
 	verts.append(Vertex(Vector2f(center.x - width / 2.0, center.y + width / 2.0),
-		Vector2f(tex.textureRect.left, tex.textureRect.top + tex.textureRect.height)));
-	// Right-Bottom
+						Vector2f(tex.textureRect.left, tex.textureRect.top + tex.textureRect.height)));
+					// Right-Bottom
 	verts.append(Vertex(Vector2f(center.x + width / 2.0, center.y + width / 2.0),
-		Vector2f(tex.textureRect.left + tex.textureRect.width, tex.textureRect.top + tex.textureRect.height)));
+						Vector2f(tex.textureRect.left + tex.textureRect.width, tex.textureRect.top + tex.textureRect.height)));
 }
 
 
 ////////////////////////////////////////
 void Chest::_onRightClick() {
-	uiManager.changeUI(new ChestInventory(getPosition()));
+	uiManager.changeUI(make_shared<ChestInventory>(getPosition()));
 }
 
 
@@ -69,7 +69,7 @@ void Chest::_onDestroy(Entity* destroyer) {
 				int count = chestSlots[i][j]["count"].getDataInt();
 				for (int k = 1; k <= count; k++) {
 					// Tile Drop
-					ItemEntity* e = new ItemEntity(chestSlots[i][j]["item_name"].getDataString());
+					shared_ptr<ItemEntity> e = make_shared<ItemEntity>(chestSlots[i][j]["item_name"].getDataString());
 					// Give a random velocity
 					e->accelerateVector(1.0, 180 + rand() % 180);
 					entityManager.insert(e, Vector2d(TerrainManager::convertChunkToWorldCoord(chunk, inChunkPos)) + Vector2d(0.5, 0.8));

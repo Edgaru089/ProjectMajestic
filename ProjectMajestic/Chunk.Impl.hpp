@@ -4,16 +4,13 @@
 
 ////////////////////////////////////////
 Chunk::~Chunk() {
-	for (auto& i : blocks)
-		for (Block* j : i)
-			delete j;
 }
 
 
 ////////////////////////////////////////
 void Chunk::updateLogic() {
 	for (auto& i : blocks)
-		for (Block* j : i)
+		for (shared_ptr<Block> j : i)
 			if (j != nullptr)
 				j->_updateLogic();
 }
@@ -110,7 +107,7 @@ Vector2i Chunk::getChunkId() {
 
 
 ////////////////////////////////////////
-Block * Chunk::getBlock(Vector2i inChunkCoord) {
+shared_ptr<Block> Chunk::getBlock(Vector2i inChunkCoord) {
 	if (inChunkCoord.x < 0 || inChunkCoord.x >= chunkSize || inChunkCoord.y < 0 || inChunkCoord.y >= chunkSize)
 		return nullptr;
 	return blocks[inChunkCoord.x][inChunkCoord.y];
@@ -118,9 +115,7 @@ Block * Chunk::getBlock(Vector2i inChunkCoord) {
 
 
 ////////////////////////////////////////
-void Chunk::setBlock(Vector2i inChunkCoord, Block* block) {
-	if (blocks[inChunkCoord.x][inChunkCoord.y] != nullptr)
-		delete blocks[inChunkCoord.x][inChunkCoord.y];
+void Chunk::setBlock(Vector2i inChunkCoord, shared_ptr<Block> block) {
 	blocks[inChunkCoord.x][inChunkCoord.y] = block;
 	if (block != nullptr) {
 		block->setInChunkPosition(inChunkCoord);

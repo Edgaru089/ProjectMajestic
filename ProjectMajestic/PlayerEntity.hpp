@@ -71,7 +71,7 @@ public:
 	void decendLadder(bool state = true);
 	void jumpOffLadder();
 
-	bool collectItem(ItemEntity* item);
+	bool collectItem(ItemEntity& item);
 
 private:
 
@@ -90,5 +90,5 @@ private:
 };
 
 
-PlayerEntity* localPlayer;
+shared_ptr<PlayerEntity> localPlayer;
 

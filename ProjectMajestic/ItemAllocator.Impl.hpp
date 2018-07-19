@@ -38,12 +38,12 @@ void ItemAllocator::initalaize() {
 
 
 ////////////////////////////////////////
-Item* ItemAllocator::allocate(string id, Dataset& slot, bool hasFocus) {
+shared_ptr<Item> ItemAllocator::allocate(string id, Dataset& slot, bool hasFocus) {
 	auto i = allocs.find(id);
 	if (i == allocs.end())
 		return nullptr;
 	else {
-		Item* it = i->second(slot);
+		shared_ptr<Item> it = i->second(slot);
 		it->setFocus(hasFocus);
 		return it;
 	}

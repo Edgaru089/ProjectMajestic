@@ -96,9 +96,6 @@ Vector2d TerrainManager::convertScreenPixelToWorldCoord(Vector2i pixel) {
 
 ////////////////////////////////////////
 TerrainManager::~TerrainManager() {
-	for (auto i : chunks) {
-		delete i.second;
-	}
 }
 
 
@@ -106,7 +103,7 @@ TerrainManager::~TerrainManager() {
 void TerrainManager::updateLogic() {
 	AUTOLOCKABLE(*this);
 	if (role == Server)
-		for (pair<const Vector2i, Chunk*>&i : chunks) {
+		for (auto&i : chunks) {
 			i.second->updateLogic();
 		}
 	if (wantUpdateLight) {
@@ -119,7 +116,7 @@ void TerrainManager::updateLogic() {
 ////////////////////////////////////////
 void TerrainManager::getRenderList(VertexArray& array) {
 	AUTOLOCKABLE(*this);
-	for (pair<const Vector2i, Chunk*>&i : chunks) {
+	for (auto&i : chunks) {
 		i.second->getRenderList(array);
 	}
 }
@@ -128,7 +125,7 @@ void TerrainManager::getRenderList(VertexArray& array) {
 ////////////////////////////////////////
 void TerrainManager::getLightMask(VertexArray& array) {
 	AUTOLOCKABLE(*this);
-	for (pair<const Vector2i, Chunk*>&i : chunks)
+	for (auto&i : chunks)
 		i.second->getLightMask(array);
 
 	// Append extra triangles covering the outside if required
@@ -175,9 +172,7 @@ void TerrainManager::getLightMask(VertexArray& array) {
 ////////////////////////////////////////
 void TerrainManager::loadChunk(Vector2i id, ChunkProvider& provider) {
 	AUTOLOCKABLE(*this);
-	if (chunks.find(id) != chunks.end())
-		delete chunks[id];
-	map<Vector2i, Chunk*, Vector2Less<int>>::iterator i = chunks.insert(make_pair(id, new Chunk())).first;
+	auto i = chunks.insert(make_pair(id, make_shared<Chunk>())).first;
 	i->second->id = id;
 	i->second->setChunkId(id.x, id.y);
 	provider.loadChunk(id, *chunks[id]);
@@ -187,9 +182,8 @@ void TerrainManager::loadChunk(Vector2i id, ChunkProvider& provider) {
 ////////////////////////////////////////
 void TerrainManager::unloadChunk(Vector2i id) {
 	AUTOLOCKABLE(*this);
-	map<Vector2i, Chunk*>::iterator i;
+	map<Vector2i, shared_ptr<Chunk>, Vector2Less<int>>::iterator i;
 	if ((i = chunks.find(id)) != chunks.end()) {
-		delete chunks[id];
 		chunks.erase(i);
 	}
 }
@@ -198,18 +192,15 @@ void TerrainManager::unloadChunk(Vector2i id) {
 ////////////////////////////////////////
 void TerrainManager::clearChunks() {
 	AUTOLOCKABLE(*this);
-	for (auto i : chunks) {
-		delete i.second;
-	}
 
 	chunks.clear();
 }
 
 
 ////////////////////////////////////////
-Chunk* TerrainManager::getChunk(Vector2i chunkId) {
+shared_ptr<Chunk> TerrainManager::getChunk(Vector2i chunkId) {
 	AUTOLOCKABLE(*this);
-	map<Vector2i, Chunk*, Vector2Less<int>>::iterator i = chunks.find(chunkId);
+	auto i = chunks.find(chunkId);
 	if (i != chunks.end())
 		return i->second;
 	else
@@ -218,10 +209,9 @@ Chunk* TerrainManager::getChunk(Vector2i chunkId) {
 
 
 ////////////////////////////////////////
-Block* TerrainManager::getBlock(Vector2i coord) {
+shared_ptr<Block> TerrainManager::getBlock(Vector2i coord) {
 	AUTOLOCKABLE(*this);
-	map<Vector2i, Chunk*, Vector2Less<int>>::iterator i = chunks.find(
-		convertWorldCoordToChunkId(coord));
+	auto i = chunks.find(convertWorldCoordToChunkId(coord));
 	if (i != chunks.end() && i->second != nullptr)
 		return i->second->getBlock(convertWorldCoordToInChunkCoord(coord));
 	else
@@ -252,12 +242,12 @@ void TerrainManager::breakBlock(Vector2i pos, Entity * breaker, bool isForced) {
 		networkServer.notifyBlockBreak(pos);
 	}
 	if (isForced || role == Server) {
-		map<Vector2i, Chunk*, Vector2Less<int>>::iterator i = chunks.find(convertWorldCoordToChunkId(pos));
+		auto i = chunks.find(convertWorldCoordToChunkId(pos));
 		if (i == chunks.end()) // Chunk not loaded
 			return;
 
-		Chunk* c = i->second;
-		Block* b = c->getBlock(convertWorldCoordToInChunkCoord(pos));
+		shared_ptr<Chunk> c = i->second;
+		shared_ptr<Block> b = c->getBlock(convertWorldCoordToInChunkCoord(pos));
 		if (b != nullptr) {
 			b->onDestroy(breaker, role == Server);
 			if (b->getLightStrength() > 0)
@@ -276,11 +266,11 @@ void TerrainManager::placeBlock(Vector2i pos, string blockId, Entity * placer, b
 		networkServer.notifyBlockPlace(pos, blockId);
 	}
 	if (isForced || role == Server) {
-		map<Vector2i, Chunk*, Vector2Less<int>>::iterator i = chunks.find(convertWorldCoordToChunkId(pos));
+		map<Vector2i, shared_ptr<Chunk>, Vector2Less<int>>::iterator i = chunks.find(convertWorldCoordToChunkId(pos));
 		if (i == chunks.end() || i->second == nullptr)
 			return;
 		if (i->second->getBlock(convertWorldCoordToInChunkCoord(pos)) == nullptr) {
-			Block* b = blockAllocator.allocate(blockId);
+			shared_ptr<Block> b = blockAllocator.allocate(blockId);
 			i->second->setBlock(convertWorldCoordToInChunkCoord(pos), b);
 			b->_onPlaced(placer);
 			if (b->getLightStrength() > 0)
@@ -297,7 +287,7 @@ void TerrainManager::_updateLighting() {
 	vector<pair<Vector2i, int>> lights;
 
 	for (auto& k : chunks) {
-		Chunk* c = k.second;
+		auto c = k.second;
 		for (int i = 0; i < chunkSize; i++)
 			for (int j = 0; j < chunkSize; j++)
 				if (c->getBlock(Vector2i(i, j)) != nullptr &&
@@ -307,7 +297,7 @@ void TerrainManager::_updateLighting() {
 	}
 
 	for (auto& l : chunks) {
-		Chunk* c = l.second;
+		auto c = l.second;
 		for (int i = 0; i < chunkSize; i++)
 			for (int j = 0; j < chunkSize; j++) {
 				Vector2i coord = convertChunkToWorldCoord(l.first, Vector2i(i, j));

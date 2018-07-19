@@ -38,9 +38,9 @@ public:
 
 	void clearChunks();
 
-	Chunk* getChunk(Vector2i chunkId);
-	map<Vector2i, Chunk*, Vector2Less<int>>& getChunks() { return chunks; }
-	Block* getBlock(Vector2i coord);
+	shared_ptr<Chunk> getChunk(Vector2i chunkId);
+	map<Vector2i, shared_ptr<Chunk>, Vector2Less<int>>& getChunks() { return chunks; }
+	shared_ptr<Block> getBlock(Vector2i coord);
 
 	// SetBlock() doesn't call the block's OnDestroy() function
 	// Use PlaceBlock() when player places a block
@@ -63,7 +63,7 @@ private:
 	void _updateLighting();
 
 
-	map<Vector2i, Chunk*, Vector2Less<int>> chunks;
+	map<Vector2i, shared_ptr<Chunk>, Vector2Less<int>> chunks;
 
 	bool wantUpdateLight;
 

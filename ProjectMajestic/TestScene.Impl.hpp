@@ -87,7 +87,7 @@ void TestScene::postWindowInitalaize(RenderWindow& win) {
 void TestScene::start(RenderWindow & win) {
 	testEntity = Uuid::nil();
 
-	localPlayer = new PlayerEntity();
+	localPlayer = make_shared<PlayerEntity>();
 	localPlayer->setIsLocalPlayer(true);
 	entityManager.insert(localPlayer, Vector2d(prov.getSpawnPoints()[0]) + Vector2d(0.5, 1 - 1e-7));
 
@@ -149,7 +149,7 @@ void TestScene::onRender(RenderWindow & win) {
 			win.draw(renderRect(i.second->getHitbox()*renderIO.gameScaleFactor));
 
 	Vector2i mousePos = TerrainManager::convertScreenPixelToWorldBlockCoord(Mouse::getPosition(win));
-	Block* b = terrainManager.getBlock(mousePos);
+	shared_ptr<Block> b = terrainManager.getBlock(mousePos);
 	if (b == nullptr) {
 		Vector2d center = Vector2d(mousePos.x + 0.5, mousePos.y + 0.5)*renderIO.gameScaleFactor;
 		double width = renderIO.gameScaleFactor;
@@ -206,11 +206,9 @@ bool TestScene::_sendMousePressedToHandItem(Mouse::Button button) {
 	bool flag = false;
 	const string& name = playerInventory.slots[0][playerInventory.cursorId]["item_name"];
 	if (name.substr(0, 5) == "item_") {
-		Item* item = itemAllocator.allocate(name.substr(5), playerInventory.slots[0][playerInventory.cursorId]);
+		shared_ptr<Item> item = itemAllocator.allocate(name.substr(5), playerInventory.slots[0][playerInventory.cursorId]);
 		if (item != nullptr && (button == Mouse::Left ? item->_onLeftPressed() : item->_onRightPressed()))
 			flag = true;
-		if (item != nullptr)
-			delete item;
 	}
 	return flag;
 }
@@ -220,13 +218,12 @@ bool TestScene::_sendMousePressedToHandItem(Mouse::Button button) {
 void TestScene::_sendMouseReleasedToHandItem(Mouse::Button button) {
 	const string& name = playerInventory.slots[0][playerInventory.cursorId]["item_name"];
 	if (name.substr(0, 5) == "item_") {
-		Item* item = itemAllocator.allocate(name.substr(5), playerInventory.slots[0][playerInventory.cursorId]);
+		shared_ptr<Item> item = itemAllocator.allocate(name.substr(5), playerInventory.slots[0][playerInventory.cursorId]);
 		if (item != nullptr) {
 			if (button == Mouse::Left)
 				item->_onLeftReleased();
 			else
 				item->_onRightReleased();
-			delete item;
 		}
 	}
 }
@@ -261,16 +258,14 @@ void TestScene::updateLogic(RenderWindow & win) {
 		const string& str = playerInventory.slots[0][playerInventory.cursorId]["item_name"].getDataString();
 		bool sendRightClick = true;
 		Vector2i coord = TerrainManager::convertScreenPixelToWorldBlockCoord(Mouse::getPosition(win));
-		Block* b = terrainManager.getBlock(coord);
+		shared_ptr<Block> b = terrainManager.getBlock(coord);
 		if (str != "") {
 			if (str.substr(0, 6) == "block_")
 				terrainManager.placeBlock(coord, str.substr(6));
 			else if (str.substr(0, 5) == "item_") {
-				Item* item = itemAllocator.allocate(str.substr(5), playerInventory.slots[0][playerInventory.cursorId]);
-				if (item != nullptr) {
+				shared_ptr<Item> item = itemAllocator.allocate(str.substr(5), playerInventory.slots[0][playerInventory.cursorId]);
+				if (item != nullptr)
 					sendRightClick = !item->_onRightPressed();
-					delete item;
-				}
 			}
 		}
 		if (sendRightClick) {
@@ -280,20 +275,20 @@ void TestScene::updateLogic(RenderWindow & win) {
 	}
 	if (logicIO.mouseState[Mouse::Right] == LogicIO::JustReleased)
 		_sendMouseReleasedToHandItem(Mouse::Right);
-	if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Middle] == LogicIO::JustPressed))
+	if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Middle] == LogicIO::JustPressed)) {
 		if (localPlayer == nullptr) {
-			localPlayer = new PlayerEntity();
+			localPlayer = make_shared<PlayerEntity>();
 			localPlayer->setIsLocalPlayer(true);
 			entityManager.insert(localPlayer, TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win)));
 		}
 		else {
 			if (testEntity == Uuid()) {
-				TestEntity* te = new TestEntity;
+				shared_ptr<TestEntity> te = make_shared<TestEntity>();
 				te->setHealth(te->getMaxHealth());
 				testEntity = entityManager.insert(te, TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win)));
 			}
 			else {
-				TestEntity* te = new TestEntity;
+				shared_ptr<TestEntity> te = make_shared<TestEntity>();
 				te->setHealth(te->getMaxHealth());
 				entityManager.insert(te, TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win)));
 			}
@@ -309,53 +304,54 @@ void TestScene::updateLogic(RenderWindow & win) {
 			//	entityManager.insert(e, Vector2d(TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win))) + Vector2d(0.5, 0.8));
 			//}
 		}
+	}
 
-		// Keyboard controls
-		if (!imgui::GetIO().WantCaptureKeyboard &&
-			logicIO.keyboardState[Keyboard::F1] == LogicIO::JustPressed)
-			showExtraImGuiWindows = !showExtraImGuiWindows;
-		if (!imgui::GetIO().WantCaptureKeyboard &&
-			logicIO.keyboardState[Keyboard::F3] == LogicIO::JustPressed)
-			showDebugInfo = !showDebugInfo;
-		if (!imgui::GetIO().WantCaptureKeyboard &&
-			(logicIO.keyboardState[Keyboard::A] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustPressed))
-			localPlayer->moveLeft(true);
-		if (logicIO.keyboardState[Keyboard::A] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustReleased)
-			localPlayer->moveLeft(false);
-		if (!imgui::GetIO().WantCaptureKeyboard &&
-			(logicIO.keyboardState[Keyboard::D] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Right] == LogicIO::JustPressed))
-			localPlayer->moveRight(true);
-		if (logicIO.keyboardState[Keyboard::D] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Right] == LogicIO::JustReleased)
-			localPlayer->moveRight(false);
-		if (!imgui::GetIO().WantCaptureKeyboard &&
-			(Keyboard::isKeyPressed(Keyboard::W) || Keyboard::isKeyPressed(Keyboard::Up)))
-			localPlayer->ascendLadder(true);
-		if (logicIO.keyboardState[Keyboard::W] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Up] == LogicIO::JustReleased)
-			localPlayer->ascendLadder(false);
-		if (!imgui::GetIO().WantCaptureKeyboard &&
-			(Keyboard::isKeyPressed(Keyboard::S) || Keyboard::isKeyPressed(Keyboard::Down)))
-			localPlayer->decendLadder(true);
-		if (logicIO.keyboardState[Keyboard::S] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Down] == LogicIO::JustReleased)
-			localPlayer->decendLadder(false);
-		if (!imgui::GetIO().WantCaptureKeyboard &&
-			(logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustPressed))
-			localPlayer->crouch(true);
-		if (logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustReleased)
-			localPlayer->crouch(false);
-		if (!imgui::GetIO().WantCaptureKeyboard &&
-			Keyboard::isKeyPressed(Keyboard::Space))
-			localPlayer->jump();
+	// Keyboard controls
+	if (!imgui::GetIO().WantCaptureKeyboard &&
+		logicIO.keyboardState[Keyboard::F1] == LogicIO::JustPressed)
+		showExtraImGuiWindows = !showExtraImGuiWindows;
+	if (!imgui::GetIO().WantCaptureKeyboard &&
+		logicIO.keyboardState[Keyboard::F3] == LogicIO::JustPressed)
+		app->hasLog = showDebugInfo = !showDebugInfo;
+	if (!imgui::GetIO().WantCaptureKeyboard &&
+		(logicIO.keyboardState[Keyboard::A] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustPressed))
+		localPlayer->moveLeft(true);
+	if (logicIO.keyboardState[Keyboard::A] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustReleased)
+		localPlayer->moveLeft(false);
+	if (!imgui::GetIO().WantCaptureKeyboard &&
+		(logicIO.keyboardState[Keyboard::D] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Right] == LogicIO::JustPressed))
+		localPlayer->moveRight(true);
+	if (logicIO.keyboardState[Keyboard::D] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Right] == LogicIO::JustReleased)
+		localPlayer->moveRight(false);
+	if (!imgui::GetIO().WantCaptureKeyboard &&
+		(Keyboard::isKeyPressed(Keyboard::W) || Keyboard::isKeyPressed(Keyboard::Up)))
+		localPlayer->ascendLadder(true);
+	if (logicIO.keyboardState[Keyboard::W] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Up] == LogicIO::JustReleased)
+		localPlayer->ascendLadder(false);
+	if (!imgui::GetIO().WantCaptureKeyboard &&
+		(Keyboard::isKeyPressed(Keyboard::S) || Keyboard::isKeyPressed(Keyboard::Down)))
+		localPlayer->decendLadder(true);
+	if (logicIO.keyboardState[Keyboard::S] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Down] == LogicIO::JustReleased)
+		localPlayer->decendLadder(false);
+	if (!imgui::GetIO().WantCaptureKeyboard &&
+		(logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustPressed))
+		localPlayer->crouch(true);
+	if (logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustReleased)
+		localPlayer->crouch(false);
+	if (!imgui::GetIO().WantCaptureKeyboard &&
+		Keyboard::isKeyPressed(Keyboard::Space))
+		localPlayer->jump();
 
-		terrainManager.updateLogic();
-		particleSystem.updateLogic();
-		entityManager.updateLogic();
-		playerInventory.updateLogic();
-		uiManager.updateLogic();
+	terrainManager.updateLogic();
+	particleSystem.updateLogic();
+	entityManager.updateLogic();
+	playerInventory.updateLogic();
+	uiManager.updateLogic();
 
-		if (logicIO.keyboardState[Keyboard::E] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard)
-			uiManager.changeUI(new PlayerInventoryUI);
-		if (logicIO.keyboardState[Keyboard::Escape] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard)
-			uiManager.changeUI(new PlayerInventoryUI);
+	if (logicIO.keyboardState[Keyboard::E] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard)
+		uiManager.changeUI(make_shared<PlayerInventoryUI>());
+	if (logicIO.keyboardState[Keyboard::Escape] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard)
+		uiManager.changeUI(make_shared<PlayerInventoryUI>());
 }
 
 
@@ -395,12 +391,12 @@ void TestScene::runImGui() {
 		if (testEntity == Uuid::nil())
 			imgui::Text("TextEntity == nullptr");
 		else {
-			Entity* e = entityManager.getEntity(testEntity);
+			shared_ptr<Entity> e = entityManager.getEntity(testEntity);
 			if (e == nullptr)
 				testEntity = Uuid();
 			else {
-				TestEntity* te = dynamic_cast<TestEntity*>(e);
-				imgui::Text("Health: %d / %d", te->getHealth(), te->getMaxHealth());
+				TestEntity& te = dynamic_cast<TestEntity&>(*e);
+				imgui::Text("Health: %d / %d", te.getHealth(), te.getMaxHealth());
 			}
 		}
 		imgui::End();
@@ -418,7 +414,7 @@ void TestScene::runImGui() {
 		if (imgui::Button("Break!"))
 			for (auto& k : terrainManager.getChunks()) {
 				Vector2i off = k.first*chunkSize;
-				Chunk* c = k.second;
+				shared_ptr<Chunk> c = k.second;
 				for (int i = 0; i < chunkSize; i++)
 					for (int j = 0; j < chunkSize; j++) {
 						if (c->getBlock(Vector2i(i, j)) == nullptr)
@@ -515,8 +511,8 @@ void TestScene::runImGui() {
 		Vector2d posC = TerrainManager::convertScreenPixelToWorldCoord(pos);
 		Vector2i chunkId = TerrainManager::convertWorldCoordToChunkId(posB);
 		Vector2i inChunkC = TerrainManager::convertWorldCoordToInChunkCoord(posB);
-		Chunk* c = terrainManager.getChunk(chunkId);
-		Block* b = terrainManager.getBlock(posB);
+		shared_ptr<Chunk> c = terrainManager.getChunk(chunkId);
+		shared_ptr<Block> b = terrainManager.getBlock(posB);
 		imgui::Text("  OnScreen Pos: (%d, %d)", pos.x, pos.y);
 		imgui::Text("  World Pos: (%.3lf, %.3lf)", posC.x, posC.y);
 		imgui::Text("  DegreeAngle: %.3lf", gameIO.degreeAngle);

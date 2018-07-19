@@ -80,7 +80,7 @@ void PartlcleSystem::getRenderList(VertexArray& verts) {
 
 				Vector2i chunk = TerrainManager::convertWorldCoordToChunkId(Vector2i(e->getPosition().x, e->getPosition().y));
 				Vector2i inCc = TerrainManager::convertWorldCoordToInChunkCoord(Vector2i(e->getPosition().x, e->getPosition().y));
-				Chunk* c = terrainManager.getChunk(chunk);
+				shared_ptr<Chunk> c = terrainManager.getChunk(chunk);
 
 				Uint8 mask;
 				if (c != nullptr)

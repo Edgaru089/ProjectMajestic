@@ -21,14 +21,14 @@ public:
 	void _pushTriangleVertexes(VertexArray& verts) override;
 
 	const bool requestEntityCollisionCallback() override { return true; }
-	void _onCollideEntity(Entity* e) override;
+	void _onCollideEntity(shared_ptr<Entity> e) override;
 
 	const double getGravityAclc() override { return 2.0; }
 
 	Vector2d getSize() override { return Vector2d(0.2, 0.2); }
 
 	void _updateLogic() override;
-	void _onCollision(Block* block) override;
+	void _onCollision(shared_ptr<Block> block) override;
 
 private:
 

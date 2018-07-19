@@ -9,12 +9,12 @@ class ItemAllocator {
 public:
 	virtual ~ItemAllocator() {}
 	void initalaize();
-	Item* allocate(string id, Dataset& slot, bool hasFocus = false);
+	shared_ptr<Item> allocate(string id, Dataset& slot, bool hasFocus = false);
 private:
-	map<string, function<Item*(Dataset&)>> allocs;
+	map<string, function<shared_ptr<Item>(Dataset&)>> allocs;
 };
 
 ItemAllocator itemAllocator;
 
 template<typename ItemType>
-Item* allocItem(Dataset& slot) { return new ItemType(slot); }
+shared_ptr<Item> allocItem(Dataset& slot) { return make_shared<ItemType>(slot); }

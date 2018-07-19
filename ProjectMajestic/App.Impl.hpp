@@ -35,6 +35,7 @@ void App::initalaize() {
 
 	text.loadFromFile("lang.list");
 
+	hasLog = false;
 }
 
 
@@ -48,8 +49,6 @@ void App::onRender(RenderWindow& win) {
 
 ////////////////////////////////////////
 void App::runImGui() {
-
-	static bool hasLog = true;
 
 	//////////////////// Log Window ////////////////////
 	if (hasLog) {

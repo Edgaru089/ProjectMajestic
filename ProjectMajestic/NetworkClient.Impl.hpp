@@ -69,7 +69,7 @@ void NetworkClient::notifyParticleEmit(ParticleEmitTrace trace) {
 
 
 ////////////////////////////////////////
-void NetworkClient::notifyEntityInsert(Uuid id, Entity* entity) {
+void NetworkClient::notifyEntityInsert(Uuid id, shared_ptr<Entity> entity) {
 	handler.onInsertEntity(id, entity);
 }
 

@@ -29,7 +29,7 @@ public:
 
 	void notifyParticleEmit(ParticleEmitTrace trace);
 
-	void notifyEntityInsert(Uuid id, Entity* entity);
+	void notifyEntityInsert(Uuid id, shared_ptr<Entity> entity);
 
 	void notifyEntityKill(Uuid id);
 

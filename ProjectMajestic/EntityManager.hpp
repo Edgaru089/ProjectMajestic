@@ -19,14 +19,14 @@ public:
 
 public:
 
-	Uuid insert(Entity* entitiy, Vector2d position);
+	Uuid insert(shared_ptr<Entity> entitiy, Vector2d position);
 
 	// Does not call Entity::onCreate()
-	void insert(Uuid id, Entity * entity);
+	void insert(Uuid id, shared_ptr<Entity> entity);
 
-	Entity* getEntity(Uuid id);
+	shared_ptr<Entity> getEntity(Uuid id);
 
-	map<Uuid, Entity*>& getEntityMapList() { return entities; }
+	map<Uuid, shared_ptr<Entity>>& getEntityMapList() { return entities; }
 
 public:
 
@@ -35,7 +35,7 @@ public:
 
 private:
 
-	map<Uuid, Entity*> entities;
+	map<Uuid, shared_ptr<Entity>> entities;
 
 };
 

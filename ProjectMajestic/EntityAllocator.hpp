@@ -7,12 +7,12 @@ class Entity;
 class EntityAllocator {
 public:
 	void initalaize();
-	Entity* allocate(string id);
+	shared_ptr<Entity> allocate(string id);
 private:
-	map<string, function<Entity*(void)>> allocs;
+	map<string, function<shared_ptr<Entity>(void)>> allocs;
 };
 
 EntityAllocator entityAllocator;
 
 template<typename EntityType>
-Entity* allocEntity() { return new EntityType(); }
+shared_ptr<EntityType> allocEntity() { return make_shared<EntityType>(); }

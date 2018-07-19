@@ -28,7 +28,7 @@ void BlockAllocator::initalaize() {
 
 
 ////////////////////////////////////////
-Block* BlockAllocator::allocate(string id) {
+shared_ptr<Block> BlockAllocator::allocate(string id) {
 	auto i = allocs.find(id);
 	if (i == allocs.end())
 		return nullptr;

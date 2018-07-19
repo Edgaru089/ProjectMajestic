@@ -66,7 +66,7 @@ void ChunkClient::parseChunkData(Packet & packet) {
 void ChunkClient::compressChunkData(Vector2i chunkId, Packet & packet) {
 	AUTOLOCKABLE(terrainManager);
 
-	Chunk* c = terrainManager.getChunk(chunkId);
+	shared_ptr<Chunk> c = terrainManager.getChunk(chunkId);
 	Vector2i offset = TerrainManager::convertChunkToWorldCoord(chunkId, Vector2i(0, 0));
 	if (c == nullptr) {
 		packet << INT_MIN << INT_MAX;
@@ -116,7 +116,7 @@ void ChunkClient::parseBlockData(Packet & packet) {
 	AUTOLOCKABLE(terrainManager);
 	Vector2i chunkId = TerrainManager::convertWorldCoordToChunkId(coord),
 		inChunk = TerrainManager::convertWorldCoordToInChunkCoord(coord);
-	Chunk* c = terrainManager.getChunk(chunkId);
+	shared_ptr<Chunk> c = terrainManager.getChunk(chunkId);
 
 	string id;
 	int light;
@@ -138,7 +138,7 @@ void ChunkClient::compressBlockData(Vector2i coord, Packet & packet) {
 	AUTOLOCKABLE(terrainManager);
 	Vector2i chunkId = TerrainManager::convertWorldCoordToChunkId(coord),
 		inChunk = TerrainManager::convertWorldCoordToInChunkCoord(coord);
-	Chunk* c = terrainManager.getChunk(chunkId);
+	shared_ptr<Chunk> c = terrainManager.getChunk(chunkId);
 
 	if (c == nullptr) {
 		packet << INT_MIN << INT_MAX;

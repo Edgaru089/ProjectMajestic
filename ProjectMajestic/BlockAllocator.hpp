@@ -8,12 +8,12 @@ class BlockAllocator {
 public:
 	virtual ~BlockAllocator() {}
 	void initalaize();
-	Block* allocate(string id);
+	shared_ptr<Block> allocate(string id);
 private:
-	map<string, function<Block*(void)>> allocs;
+	map<string, function<shared_ptr<Block>(void)>> allocs;
 };
 
 BlockAllocator blockAllocator;
 
 template<typename BlockType>
-Block* alloc() { return new BlockType(); }
+shared_ptr<Block> alloc() { return make_shared<BlockType>(); }

@@ -64,7 +64,7 @@ void NetworkServer::notifyParitlcEmit(ParticleEmitTrace trace) {
 
 
 ////////////////////////////////////////
-void NetworkServer::notifyEntityInsert(Uuid id, Entity* entity) {
+void NetworkServer::notifyEntityInsert(Uuid id, shared_ptr<Entity> entity) {
 	AUTOLOCK(handlerLock);
 	for (auto handler : handlers) {
 		handler->onInsertEntity(id, entity);

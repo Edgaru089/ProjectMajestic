@@ -28,7 +28,7 @@ void EntityAllocator::initalaize() {
 
 
 ////////////////////////////////////////
-Entity* EntityAllocator::allocate(string id) {
+shared_ptr<Entity> EntityAllocator::allocate(string id) {
 	auto i = allocs.find(id);
 	if (i == allocs.end())
 		return nullptr;

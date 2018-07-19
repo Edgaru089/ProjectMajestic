@@ -17,7 +17,7 @@ public:
 	const string getEntityId() override { return "laser_bullet"; }
 
 	void _updateLogic() override;
-	void _onCollideEntity(Entity* e) override;
+	void _onCollideEntity(shared_ptr<Entity> e) override;
 
 private:
 	set<Uuid> hitMobs;

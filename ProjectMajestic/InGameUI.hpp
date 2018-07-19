@@ -28,10 +28,8 @@ public:
 
 public:
 
-	void changeUI(InGameUI* gui) {
+	void changeUI(shared_ptr<InGameUI> gui) {
 		lock();
-		if (curUI != nullptr)
-			delete curUI;
 		curUI = gui;
 		unlock();
 	}
@@ -41,7 +39,7 @@ private:
 
 	void _runInventoryUI();
 
-	InGameUI* curUI;
+	shared_ptr<InGameUI> curUI;
 
 };
 

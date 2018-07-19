@@ -9,7 +9,7 @@
 
 ////////////////////////////////////////
 void RpgEntity::shoot(double force, Vector2d position, double degree) {
-	RpgEntity* e = new RpgEntity;
+	shared_ptr<RpgEntity> e = make_shared<RpgEntity>();
 	e->force = force;
 	e->accelerateVector(16.0, degree);
 	entityManager.insert(e, position + Vector2d(.0, e->getSize().y / 2.0));
@@ -17,7 +17,7 @@ void RpgEntity::shoot(double force, Vector2d position, double degree) {
 
 
 ////////////////////////////////////////
-void RpgEntity::_onCollision(Block* block) {
+void RpgEntity::_onCollision(shared_ptr<Block> block) {
 	if (!isAlive())
 		return;
 	if (!block->isSolid())
@@ -28,15 +28,15 @@ void RpgEntity::_onCollision(Block* block) {
 
 
 ////////////////////////////////////////
-void RpgEntity::_onCollideEntity(Entity* e) {
+void RpgEntity::_onCollideEntity(shared_ptr<Entity> e) {
 	if (!isAlive())
 		return;
-	Mob* mob = dynamic_cast<Mob*>(e);
-	if (mob == nullptr)
-		return;
-
-	entityManager.explode(getCenterPos(), force);
-	kill();
+	try {
+		Mob& mob = dynamic_cast<Mob&>(*e);
+		entityManager.explode(getCenterPos(), force);
+		kill();
+	}
+	catch (bad_cast) {}
 }
 
 

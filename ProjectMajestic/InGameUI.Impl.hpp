@@ -8,8 +8,6 @@
 
 ////////////////////////////////////////
 InGameUIManager::~InGameUIManager() {
-	if (curUI != nullptr)
-		delete curUI;
 }
 
 
@@ -22,7 +20,6 @@ void InGameUIManager::updateLogic() {
 
 	if (logicIO.keyboardState[Keyboard::Escape] == LogicIO::JustPressed ||
 		logicIO.keyboardState[Keyboard::E] == LogicIO::JustPressed) {
-		delete curUI;
 		curUI = nullptr;
 	}
 
@@ -115,7 +112,7 @@ void PlayerInventoryUI::ImGuiInventorySlot(Dataset& slotData, int pushId) {
 	TextureInfo info = textureManager.getTextureInfo(slotData["item_name"].getDataString());
 	if (!info.vaild)
 		info = textureManager.getTextureInfo("ui_transparent_32px");
-	Item* item = nullptr;
+	shared_ptr<Item> item = nullptr;
 	if (slotName.size() > 5)
 		item = itemAllocator.allocate(slotName.substr(5), slotData);
 

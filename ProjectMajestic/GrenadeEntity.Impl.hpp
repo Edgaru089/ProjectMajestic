@@ -6,19 +6,22 @@
 
 
 ////////////////////////////////////////
-void GrenadeEntity::_onCollideEntity(Entity* e) {
+void GrenadeEntity::_onCollideEntity(shared_ptr<Entity> e) {
 	if (!isAlive())
 		return;
-	if (dynamic_cast<Mob*>(e) != nullptr)
-		if (e->getUuid() != localPlayer->getUuid()) {
+	try {
+		Mob& mob = dynamic_cast<Mob&>(*e);
+		if (mob.getUuid() != localPlayer->getUuid()) {
 			entityManager.explode(getCenterPos(), grenadeDamage);
 			kill();
 		}
+	}
+	catch (bad_cast) {}
 }
 
 
 ////////////////////////////////////////
-void GrenadeEntity::_onCollision(Block* b) {
+void GrenadeEntity::_onCollision(shared_ptr<Block> b) {
 	if (!isAlive())
 		return;
 	if (b->isSolid()) {

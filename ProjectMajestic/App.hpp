@@ -23,6 +23,7 @@ public:
 
 	void onStop();
 
+	bool hasLog;
 private:
 
 	Clock logicDeltaClock;
