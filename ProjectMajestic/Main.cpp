@@ -20,6 +20,7 @@ using namespace std;
 
 void threadRendering() {
 	static Clock imguiDeltaClock;
+	Clock renderMetricsClock;
 	ImGui::SFML::Update(win, imguiDeltaClock.restart());
 	win.setActive(true);
 	while (isReady) {
@@ -30,19 +31,21 @@ void threadRendering() {
 
 		renderLock.lock();
 
+		renderMetricsClock.restart();
 		win.setActive(true);
 		win.clear();
 
 		logicDataLock.lock();
 		app->onRender(win);
-		logicDataLock.unlock();
-
+		appRenderTime = renderMetricsClock.restart();
 		app->runImGui();
-
-		logicDataLock.lock();
+		runImGuiTime = renderMetricsClock.restart();
 		win.setView(View(FloatRect(0, 0, win.getSize().x, win.getSize().y)));
 		ImGui::SFML::Render(win);
+		imGuiRenderTime = renderMetricsClock.restart();
 		ImGui::SFML::Update(win, imguiDeltaClock.restart());
+		imGuiUpdateTime = renderMetricsClock.restart();
+		renderThreadTickTime = appRenderTime + runImGuiTime + imGuiRenderTime + imGuiUpdateTime;
 		logicDataLock.unlock();
 
 		win.display();
@@ -53,7 +56,7 @@ void threadRendering() {
 			frameCounterClock.restart();
 			framePerSecond = frameCounter;
 			frameCounter = 0;
-			win.setTitle(StringParser::toStringFormatted("%s | Async | TPS: %d, EPS: %d, FPS: %d", projectCode.c_str(), logicTickPerSecond, eventTickPerSecond, framePerSecond));
+			win.setTitle(StringParser::toStringF("%s | Async | TPS: %d, EPS: %d, FPS: %d", projectCode.c_str(), logicTickPerSecond, eventTickPerSecond, framePerSecond));
 		}
 		frameCounter++;
 	}
@@ -62,12 +65,13 @@ void threadRendering() {
 void threadLogicUpdate(int ticksPerSecond) {
 	Time tickTime = seconds(1.0f / ticksPerSecond);
 	Clock logicCycleClock;
+	Clock logicMetricsClock;
 	desktopUpdate.restart();
 	while (isReady && win.isOpen()) {
 		logicDataLock.lock();
-
+		logicMetricsClock.restart();
 		app->updateLogic(win);
-
+		logicThreadTickTime = logicMetricsClock.restart();
 		logicDataLock.unlock();
 
 		Time t;
@@ -264,7 +268,7 @@ int main(int argc, char* argv[]) {
 			eventTickPerSecond = eventTickCounter;
 			eventTickCounter = 0;
 #ifndef USE_ASYNC_RENDERING
-			win.setTitle(StringParser::toStringFormatted("%s | Mono-Thread | FPS: %d", projectCode.c_str(), eventTickPerSecond));
+			win.setTitle(StringParser::toStringF("%s | Mono-Thread | FPS: %d", projectCode.c_str(), eventTickPerSecond));
 #endif
 		}
 		eventTickCounter++;

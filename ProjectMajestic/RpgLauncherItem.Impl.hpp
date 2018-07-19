@@ -6,6 +6,7 @@
 
 ////////////////////////////////////////
 void RpgLauncherItem::_onShoot() {
-	RpgEntity::shoot();
+	RpgEntity::shoot(RpgExplodeForce, localPlayer->getEyePosition(),
+					 gameIO.degreeAngle + (rand01() - 0.5)*bulletUnaccuracyDegree());
 }
 

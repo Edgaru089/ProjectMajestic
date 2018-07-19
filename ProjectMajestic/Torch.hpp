@@ -6,7 +6,7 @@
 class Torch :public Block {
 public:
 
-	Torch() { datasets["light_id"].setType(Data::Uuid); }
+	Torch() {}
 
 	const string getBlockId() override { return "torch"; }
 	bool isSolid() override { return false; }

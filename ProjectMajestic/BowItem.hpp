@@ -11,7 +11,7 @@ public:
 		if (slotDataset["bow_start_time"].getDataInt() == 0)
 			return textureManager.getTextureInfo("item_bow");
 		else
-			return textureManager.getTextureInfo(StringParser::toStringFormatted("item_bow_pulling_%d",
+			return textureManager.getTextureInfo(StringParser::toStringF("item_bow_pulling_%d",
 				min(3, 1 + (programRunTimeClock.getElapsedTime().asMilliseconds()
 					- slotDataset["bow_start_time"].getDataInt()) / 400)));
 	}

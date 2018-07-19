@@ -11,10 +11,31 @@ class StringParser {
 public:
 
 	template<typename... Args>
-	static const string toStringFormatted(string format, Args... args) {
+	static const string toStringF(string format, Args... args) {
 		char buffer[8192];
 		sprintf(buffer, format.c_str(), args...);
 		return string(buffer);
+	}
+
+	//把所有pair.first替换成pair.second
+	static const string replaceSubString(string source, initializer_list<pair<string, string>> replace) {
+		string dest;
+
+		for (pair<string, string> i : replace) {
+			dest = ""s;
+			for (int j = 0; j < source.size();) {
+				if (source.substr(j, i.first.size()) == i.first) {
+					j += i.first.size();
+					dest += i.second;
+				}
+				else {
+					dest += source[j];
+					j++;
+				}
+			}
+			source = dest;
+		}
+		return source;
 	}
 
 	//将各种整数/浮点数转换为字符串

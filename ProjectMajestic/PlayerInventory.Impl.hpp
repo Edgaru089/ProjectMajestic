@@ -22,6 +22,10 @@ PlayerInventory::PlayerInventory() {
 	slots[0][3].setData("count", 1);
 	slots[0][4].setData("item_name", "item_barrett"s);
 	slots[0][4].setData("count", 1);
+	slots[0][5].setData("item_name", "item_emx3"s);
+	slots[0][5].setData("count", 1);
+	slots[0][6].setData("item_name", "item_vtx65"s);
+	slots[0][6].setData("count", 1);
 	slots[0][7].setData("item_name", "block_torch"s);
 	slots[0][7].setData("count", 1);
 	slots[0][8].setData("item_name", "block_ladder"s);
@@ -39,6 +43,10 @@ PlayerInventory::PlayerInventory() {
 	slots[1][4].setData("count", 12);
 	slots[1][5].setData("item_name", "item_barrett_ammo"s);
 	slots[1][5].setData("count", 6);
+	slots[1][6].setData("item_name", "item_emx3_ammo"s);
+	slots[1][6].setData("count", 6);
+	slots[1][7].setData("item_name", "item_vtx65_ammo"s);
+	slots[1][7].setData("count", 6);
 
 	slots[2][0].setData("item_name", "item_grenade"s);
 	slots[2][0].setData("count", 8);
@@ -133,7 +141,7 @@ void PlayerInventory::runImGui() {
 		ImVec2(0.5f, 1.0f));
 	imgui::SetNextWindowSize(ImVec2(size.x, 0.0f), ImGuiCond_Always);
 	imgui::Begin("BottomInventoryExtend", nullptr,
-				 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
+				 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings);
 
 	const string& name = slots[0][cursorId]["item_name"].getDataString();
 	imgui::Text(text.get(name + ".name"));

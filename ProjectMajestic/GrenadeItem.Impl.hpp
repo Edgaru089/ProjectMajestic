@@ -13,7 +13,7 @@ void GrenadeItem::_onRightReleased() {
 		slotDataset["item_name"].getDataString() = ""s;
 	
 	GrenadeEntity* e = new GrenadeEntity;
-	e->accelerateVector(5.0, gameIO.degreeAngle);
+	e->accelerateVector(8.0, gameIO.degreeAngle);
 	entityManager.insert(e, localPlayer->getEyePosition() + Vector2d(.0, e->getSize().y / 2.0));
 }
 

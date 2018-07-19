@@ -3,12 +3,13 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
-#include <mutex>
 #include <atomic>
-#include <map>
-#include <list>
 #include <vector>
 #include <queue>
+#include <mutex>
+#include <list>
+#include <map>
+#include <set>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
@@ -30,8 +31,9 @@ using namespace sf;
 
 USING_NAMESPACE;
 
+// Compile Flags
 //#define USE_DEFAULT_WINMAIN_ENTRYPOINT
-//#define USE_ASYNC_RENDERING
+#define USE_ASYNC_RENDERING
 //#define USE_DISCRETE_GPU
 
 #define OUTPUT_LOG_TO_STDOUT
@@ -45,6 +47,7 @@ USING_NAMESPACE;
 #define AUTOLOCKTYPE(type, a) lock_guar1d<type> __type_lock(a)
 #define AUTOLOCKABLE(a) lock_guard<Lockable> __lockable_lock(a)
 #define AUTOLOCKABLE_NAMED(a, name) lock_guard<Lockable> name(a)
+#define AUTOPTR(type) shared_ptr<type>
 typedef Vector2<double> Vector2d;
 typedef sf::Rect<Uint32> UintRect;
 typedef sf::Rect<double> DoubleRect;
@@ -70,6 +73,8 @@ mutex renderLock, logicDataLock;
 atomic_bool isProgramRunning;
 int logicTickPerSecond, logicTickCounter, framePerSecond, frameCounter, eventTickPerSecond, eventTickCounter;
 Clock logicTickCounterClock, frameCounterClock, eventTickCounterClock;
+Time logicThreadTickTime;
+Time appRenderTime, runImGuiTime, imGuiRenderTime, imGuiUpdateTime, renderThreadTickTime;
 Clock programRunTimeClock;  //Nerer resets; started as time (for this process) begins
 atomic_bool isReady;
 mt19937 randomEngine((random_device())());
@@ -156,7 +161,7 @@ double rand01() {
 	return uniform_real_distribution<double>(0.0, 1.0)(randomEngine);
 }
 
-// [x, y]
+// [x, y)
 int rand(int x, int y) {
 	return x + rand01()*(y - x);
 }

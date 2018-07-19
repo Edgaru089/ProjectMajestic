@@ -7,7 +7,7 @@
 
 ////////////////////////////////////////
 void TerrainProvider::setup(Vector2u chunkCount, int spawnCount) {
-	terrainManager.clear();
+	terrainManager.clearChunks();
 
 	this->chunkCount = chunkCount;
 	this->spawnCount = spawnCount;

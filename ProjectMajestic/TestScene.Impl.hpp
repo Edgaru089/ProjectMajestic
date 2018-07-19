@@ -75,8 +75,8 @@ void TestScene::postWindowInitalaize(RenderWindow& win) {
 											 13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
 										 //imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("source_han_sans").c_str(),
 											 //16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
-										 //imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("font_msyh").c_str(),
-											 //16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
+	imgui::GetIO().Fonts->AddFontFromFileTTF("C:/Windows/Fonts/Dengb.ttf",
+											 13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
 	imgui::SFML::UpdateFontTexture();
 
 	prov.setup(Vector2u(3, 2), 5);
@@ -92,6 +92,8 @@ void TestScene::start(RenderWindow & win) {
 	entityManager.insert(localPlayer, Vector2d(prov.getSpawnPoints()[0]) + Vector2d(0.5, 1 - 1e-7));
 
 	gameIO.ruleExplosionDamagesTerrain = true;
+	showDebugInfo = false;
+	showExtraImGuiWindows = true;
 
 	role = Server;
 }
@@ -310,6 +312,12 @@ void TestScene::updateLogic(RenderWindow & win) {
 
 		// Keyboard controls
 		if (!imgui::GetIO().WantCaptureKeyboard &&
+			logicIO.keyboardState[Keyboard::F1] == LogicIO::JustPressed)
+			showExtraImGuiWindows = !showExtraImGuiWindows;
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			logicIO.keyboardState[Keyboard::F3] == LogicIO::JustPressed)
+			showDebugInfo = !showDebugInfo;
+		if (!imgui::GetIO().WantCaptureKeyboard &&
 			(logicIO.keyboardState[Keyboard::A] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustPressed))
 			localPlayer->moveLeft(true);
 		if (logicIO.keyboardState[Keyboard::A] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustReleased)
@@ -334,7 +342,8 @@ void TestScene::updateLogic(RenderWindow & win) {
 			localPlayer->crouch(true);
 		if (logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustReleased)
 			localPlayer->crouch(false);
-		if (Keyboard::isKeyPressed(Keyboard::Space))
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			Keyboard::isKeyPressed(Keyboard::Space))
 			localPlayer->jump();
 
 		terrainManager.updateLogic();
@@ -381,92 +390,165 @@ void TestScene::runImGui() {
 	AUTOLOCKABLE_NAMED(particleSystem, psl);
 	AUTOLOCKABLE_NAMED(entityManager, eml);
 
-	imgui::Begin("TestEntity");
-	if (testEntity == Uuid::nil())
-		imgui::Text("TextEntity == nullptr");
-	else {
-		Entity* e = entityManager.getEntity(testEntity);
-		if (e == nullptr)
-			testEntity = Uuid();
+	if (showExtraImGuiWindows) {
+		imgui::Begin("TestEntity");
+		if (testEntity == Uuid::nil())
+			imgui::Text("TextEntity == nullptr");
 		else {
-			TestEntity* te = dynamic_cast<TestEntity*>(e);
-			imgui::Text("Health: %d / %d", te->getHealth(), te->getMaxHealth());
+			Entity* e = entityManager.getEntity(testEntity);
+			if (e == nullptr)
+				testEntity = Uuid();
+			else {
+				TestEntity* te = dynamic_cast<TestEntity*>(e);
+				imgui::Text("Health: %d / %d", te->getHealth(), te->getMaxHealth());
+			}
 		}
+		imgui::End();
+
+		imgui::Begin("Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+		imgui::ShowFontSelector("Fonts");
+		imgui::Text(u8"Innovation In China 中国智造，惠及全球 1234567890");
+		static char langFile[128] = { "lang-zh-Hans.list" };
+		if (imgui::InputText("Language File", langFile, sizeof(langFile), ImGuiInputTextFlags_EnterReturnsTrue))
+			text.loadFromFile(langFile);
+		static float value = renderIO.gameScaleFactor;
+		imgui::SliderFloat("GameScaleFactor", &value, 16, 64);
+		renderIO.gameScaleFactor = value;
+		imgui::Checkbox("Explosion damages terrain", &gameIO.ruleExplosionDamagesTerrain);
+		if (imgui::Button("Break!"))
+			for (auto& k : terrainManager.getChunks()) {
+				Vector2i off = k.first*chunkSize;
+				Chunk* c = k.second;
+				for (int i = 0; i < chunkSize; i++)
+					for (int j = 0; j < chunkSize; j++) {
+						if (c->getBlock(Vector2i(i, j)) == nullptr)
+							continue;
+						if (c->getBlock(Vector2i(i, j))->getBlockId() != "bedrock")
+							terrainManager.breakBlock(off + Vector2i(i, j));
+					}
+			}
+		imgui::SameLine();
+		if (imgui::Button("Update lighting"))
+			terrainManager.requestLightingUpdate();
+		imgui::Image(*textureManager.getBindingTexture());
+		imgui::End();
+
+		imgui::ShowDemoWindow();
+
+		imgui::Begin("Server", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+		static int ports;
+		imgui::InputInt("Port", &ports);
+		imgui::SameLine();
+		if (!networkServer.isListening()) {
+			if (imgui::Button("Start"))
+				networkServer.startListen(ports);
+		}
+		else {
+			if (imgui::Button("Stop"))
+				networkServer.stopServer();
+		}
+		imgui::End();
+
+		imgui::Begin("Client", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+		static int portc;
+		static char ip[256];
+		imgui::InputText("Ip Address", ip, 256);
+		imgui::InputInt("Port", &portc);
+		imgui::SameLine();
+		if (imgui::Button("Kill player")) {
+			if (localPlayer != nullptr) {
+				localPlayer->kill();
+				localPlayer = nullptr;
+			}
+		}
+		if (!networkClient.isConnected()) {
+			if (imgui::Button("Connect"))
+				networkClient.connect(IpAddress(ip), portc);
+		}
+		else {
+			if (imgui::Button("Get Chunk Count")) {
+				networkClient.getChunkCount();
+			}
+			imgui::SameLine();
+			if (imgui::Button("Clear Terrain")) {
+				terrainManager.clearChunks();
+			}
+			imgui::SameLine();
+			if (imgui::Button("Reload Terrain")) {
+				networkClient.reloadAllChunks();
+			}
+		}
+		imgui::End();
 	}
-	imgui::End();
 
-	imgui::Begin("Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-	imgui::ShowFontSelector("Fonts");
-	imgui::Text(u8"Innovation In China 中国智造，惠及全球 1234567890");
-	static float value = renderIO.gameScaleFactor;
-	imgui::SliderFloat("GameScaleFactor", &value, 16, 64);
-	renderIO.gameScaleFactor = value;
-	imgui::Checkbox("Explosion damages terrain", &gameIO.ruleExplosionDamagesTerrain);
-	if (imgui::Button("Break!"))
-		for (auto& k : terrainManager.getChunks()) {
-			Vector2i off = k.first*chunkSize;
-			Chunk* c = k.second;
-			for (int i = 0; i < chunkSize; i++)
-				for (int j = 0; j < chunkSize; j++) {
-					if (c->getBlock(Vector2i(i, j)) == nullptr)
-						continue;
-					if (c->getBlock(Vector2i(i, j))->getBlockId() != "bedrock")
-						terrainManager.breakBlock(off + Vector2i(i, j));
-				}
-		}
-	imgui::SameLine();
-	if (imgui::Button("Update lighting"))
-		terrainManager.requestLightingUpdate();
-	imgui::Image(*textureManager.getBindingTexture());
-	imgui::End();
+	if (showDebugInfo) {
+		ENTER_IMGUI_DEBUG;
 
-	imgui::ShowDemoWindow();
-
-	ENTER_IMGUI_DEBUG;
-
-	imgui::Text("%s %s / Version %d.%d.%d %s / Compile Time %s",
-				projectCode.c_str(), projectSuffix.c_str(), majorVersion, minorVersion, patchVersion, releaseStage.c_str(), compileTime.c_str());
+		imgui::Text("%s %s / Version %d.%d.%d %s / Compile Time %s",
+					projectCode.c_str(), projectSuffix.c_str(), majorVersion, minorVersion, patchVersion, releaseStage.c_str(), compileTime.c_str());
 #ifdef USE_ASYNC_RENDERING
-	imgui::Text("State: Async-Rendering, TPS: %d, EPS: %d, FPS: %d", logicTickPerSecond, eventTickPerSecond, framePerSecond);
+		imgui::Text("State: Async-Rendering, TPS: %d, EPS: %d, FPS: %d", logicTickPerSecond, eventTickPerSecond, framePerSecond);
 #else
-	imgui::Text("State: Mono-Thread, FPS: %d", eventTickPerSecond);
+		imgui::Text("State: Mono-Thread, FPS: %d", eventTickPerSecond);
 #endif // USE_ASYNC_RENDERING
-	imgui::Text("Local Role: %s", role == Server ? "Server" : "Client");
-	imgui::Text("Entity Count: %d", entityManager.getEntityMapList().size());
-	imgui::Text("Particle Count: %d", particleSystem.getParticleList().size());
+		imgui::Text("Local Role: %s", role == Server ? "Server" : "Client");
+		imgui::Text("Entity Count: %d", entityManager.getEntityMapList().size());
+		imgui::Text("Particle Count: %d", particleSystem.getParticleList().size());
 
-	imgui::Text("PlayerEntity Info");
-	if (localPlayer != nullptr) {
-		imgui::Text("  Uuid: {%s}", localPlayer->getUuid().toString().c_str());
-		imgui::Text("  Position: (%.3lf, %.3lf)", localPlayer->getPosition().x, localPlayer->getPosition().y);
-		imgui::Text("  Velocity: (%.3lf, %.3lf)", localPlayer->getVelocity().x, localPlayer->getVelocity().y);
-		imgui::Text("  EyePosition: (%.3lf, %.3lf)", localPlayer->getEyePosition().x, localPlayer->getEyePosition().y);
-		imgui::Text("  IsOnGround: %s", localPlayer->isOnGround() ? "True" : "False");
-		imgui::Text("  IsOnLadder: %s", localPlayer->isOnLadder() ? "True" : "False");
-		imgui::Text("  IsCrouched: %s", localPlayer->isCrouched() ? "True" : "False");
-		imgui::Text("  WantStandup: %s", localPlayer->isStuck() ? "True" : "False");
-	}
-	else
-		imgui::Text("  localPlayer == nullptr");
+		imgui::Text("PlayerEntity Info");
+		if (localPlayer != nullptr) {
+			imgui::Text("  Uuid: {%s}", localPlayer->getUuid().toString().c_str());
+			imgui::Text("  Position: (%.3lf, %.3lf)", localPlayer->getPosition().x, localPlayer->getPosition().y);
+			imgui::Text("  Velocity: (%.3lf, %.3lf)", localPlayer->getVelocity().x, localPlayer->getVelocity().y);
+			imgui::Text("  EyePosition: (%.3lf, %.3lf)", localPlayer->getEyePosition().x, localPlayer->getEyePosition().y);
+			imgui::Text("  IsOnGround: %s", localPlayer->isOnGround() ? "True" : "False");
+			imgui::Text("  IsOnLadder: %s", localPlayer->isOnLadder() ? "True" : "False");
+			imgui::Text("  IsCrouched: %s", localPlayer->isCrouched() ? "True" : "False");
+			imgui::Text("  WantStandup: %s", localPlayer->isStuck() ? "True" : "False");
+		}
+		else
+			imgui::Text("  localPlayer == nullptr");
 
-	imgui::Text("Mouse Cursor Info");
-	Vector2i pos = Mouse::getPosition(win);
-	Vector2i posB = TerrainManager::convertScreenPixelToWorldBlockCoord(pos);
-	Vector2d posC = TerrainManager::convertScreenPixelToWorldCoord(pos);
-	Vector2i chunkId = TerrainManager::convertWorldCoordToChunkId(posB);
-	Vector2i inChunkC = TerrainManager::convertWorldCoordToInChunkCoord(posB);
-	Chunk* c = terrainManager.getChunk(chunkId);
-	Block* b = terrainManager.getBlock(posB);
-	imgui::Text("  OnScreen Pos: (%d, %d)", pos.x, pos.y);
-	imgui::Text("  World Pos: (%.3lf, %.3lf)", posC.x, posC.y);
-	imgui::Text("  DegreeAngle: %.3lf", gameIO.degreeAngle);
-	imgui::Text("  World Block Pos: (%d, %d)", posB.x, posB.y);
-	imgui::Text("  InChunk Pos: Chunk(%d, %d), InChunk(%d, %d)", chunkId.x, chunkId.y, inChunkC.x, inChunkC.y);
-	imgui::Text("  BlockType: %s", b == nullptr ? "nullptr" : b->getBlockId().c_str());
-	if (c != nullptr)
-		imgui::Text("  Light Level: %d", c->lightLevel[inChunkC.x][inChunkC.y]);
-	if (b != nullptr) {
-		for (auto& i : b->getDataset().getDatasets()) {
+		imgui::Text("Mouse Cursor Info");
+		Vector2i pos = Mouse::getPosition(win);
+		Vector2i posB = TerrainManager::convertScreenPixelToWorldBlockCoord(pos);
+		Vector2d posC = TerrainManager::convertScreenPixelToWorldCoord(pos);
+		Vector2i chunkId = TerrainManager::convertWorldCoordToChunkId(posB);
+		Vector2i inChunkC = TerrainManager::convertWorldCoordToInChunkCoord(posB);
+		Chunk* c = terrainManager.getChunk(chunkId);
+		Block* b = terrainManager.getBlock(posB);
+		imgui::Text("  OnScreen Pos: (%d, %d)", pos.x, pos.y);
+		imgui::Text("  World Pos: (%.3lf, %.3lf)", posC.x, posC.y);
+		imgui::Text("  DegreeAngle: %.3lf", gameIO.degreeAngle);
+		imgui::Text("  World Block Pos: (%d, %d)", posB.x, posB.y);
+		imgui::Text("  InChunk Pos: Chunk(%d, %d), InChunk(%d, %d)", chunkId.x, chunkId.y, inChunkC.x, inChunkC.y);
+		imgui::Text("  BlockType: %s", b == nullptr ? "nullptr" : b->getBlockId().c_str());
+		if (c != nullptr)
+			imgui::Text("  Light Level: %d", c->lightLevel[inChunkC.x][inChunkC.y]);
+		if (b != nullptr) {
+			for (auto& i : b->getDataset().getDatasets()) {
+				imgui::Text("  %s:", i.first.c_str()); imgui::SameLine();
+				if (i.second.getType() == Data::Integer)
+					imgui::Text("%d", i.second.getDataInt());
+				else if (i.second.getType() == Data::String)
+					imgui::Text("%s", i.second.getDataString().c_str());
+				else if (i.second.getType() == Data::Bool) {
+					if (i.second.getDataBool())
+						imgui::PushStyleColor(ImGuiCol_Text, Color::Green);
+					else
+						imgui::PushStyleColor(ImGuiCol_Text, Color::Red);
+					imgui::Text("%s", i.second.getDataBool() ? "true" : "false");
+					imgui::PopStyleColor();
+				}
+				else if (i.second.getType() == Data::Uuid)
+					imgui::Text("{%s}", i.second.getDataUuid().toString());
+			}
+		}
+
+		imgui::Text("Item In Hand");
+		imgui::Text("  CursorId: %d", playerInventory.cursorId);
+		Dataset& slot = playerInventory.slots[0][playerInventory.cursorId];
+		for (auto& i : slot.getDatasets()) {
 			imgui::Text("  %s:", i.first.c_str()); imgui::SameLine();
 			if (i.second.getType() == Data::Integer)
 				imgui::Text("%d", i.second.getDataInt());
@@ -483,93 +565,32 @@ void TestScene::runImGui() {
 			else if (i.second.getType() == Data::Uuid)
 				imgui::Text("{%s}", i.second.getDataUuid().toString());
 		}
-	}
 
-	imgui::Text("Item In Hand");
-	imgui::Text("  CursorId: %d", playerInventory.cursorId);
-	Dataset& slot = playerInventory.slots[0][playerInventory.cursorId];
-	for (auto& i : slot.getDatasets()) {
-		imgui::Text("  %s:", i.first.c_str()); imgui::SameLine();
-		if (i.second.getType() == Data::Integer)
-			imgui::Text("%d", i.second.getDataInt());
-		else if (i.second.getType() == Data::String)
-			imgui::Text("%s", i.second.getDataString().c_str());
-		else if (i.second.getType() == Data::Bool) {
-			if (i.second.getDataBool())
-				imgui::PushStyleColor(ImGuiCol_Text, Color::Green);
-			else
-				imgui::PushStyleColor(ImGuiCol_Text, Color::Red);
-			imgui::Text("%s", i.second.getDataBool() ? "true" : "false");
-			imgui::PopStyleColor();
+		imgui::Text("TerrainRender:  %d verts (%d tri)",
+					terrainListSize, terrainListSize / 3);
+		imgui::Text("TerrainLight:   %d verts (%d tri)",
+					terrainMaskSize, terrainMaskSize / 3);
+		imgui::Text("ParticleRender: %d verts (%d tri)",
+					particleListSize, particleListSize / 3);
+		imgui::Text("EntityRender:   %d verts (%d tri)",
+					entityListSize, entityListSize / 3);
+		imgui::Text("Total:          %d verts (%d tri)",
+					totalVertSize, totalVertSize / 3);
+
+		imgui::Text("Tick Time");
+		imgui::Text("  Render");
+		Time values[] = { appRenderTime, runImGuiTime, imGuiRenderTime, imGuiUpdateTime };
+		string names[] = { "App->OnRender() %6dMs", "App->RunImGui() %6dMs", "ImGui::Render() %6dMs", "ImGui::Update() %6dMs" };
+		for (int i = 0; i < 4; i++) {
+			imgui::Text(names[i].c_str(), values[i].asMicroseconds());
+			imgui::SameLine();
+			imgui::ProgressBar(1.0f, ImVec2(values[i].asMicroseconds() / 10.0f, 13.0f), "");
 		}
-		else if (i.second.getType() == Data::Uuid)
-			imgui::Text("{%s}", i.second.getDataUuid().toString());
-	}
-
-	imgui::Text("Light Sources"); imgui::SameLine();
-	auto& lights = terrainManager.getLightSources();
-	imgui::Text("Count: %d", lights.size());
-	for (auto& i : lights) {
-		imgui::Text("  {%08x.} (%d, %d) %d", i.first.sc1, i.second.first.x, i.second.first.y, i.second.second);
-	}
-
-	imgui::Text("TerrainRender:  %d verts (%d tri)",
-				terrainListSize, terrainListSize / 3);
-	imgui::Text("TerrainLight:   %d verts (%d tri)",
-				terrainMaskSize, terrainMaskSize / 3);
-	imgui::Text("ParticleRender: %d verts (%d tri)",
-				particleListSize, particleListSize / 3);
-	imgui::Text("EntityRender:   %d verts (%d tri)",
-				entityListSize, entityListSize / 3);
-	imgui::Text("Total:          %d verts (%d tri)",
-				totalVertSize, totalVertSize / 3);
-
-	LEAVE_IMGUI_DEBUG;
-
-	imgui::Begin("Server", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-	static int ports;
-	imgui::InputInt("Port", &ports);
-	imgui::SameLine();
-	if (!networkServer.isListening()) {
-		if (imgui::Button("Start"))
-			networkServer.startListen(ports);
-	}
-	else {
-		if (imgui::Button("Stop"))
-			networkServer.stopServer();
-	}
-	imgui::End();
-
-	imgui::Begin("Client", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-	static int portc;
-	static char ip[256];
-	imgui::InputText("Ip Address", ip, 256);
-	imgui::InputInt("Port", &portc);
-	imgui::SameLine();
-	if (imgui::Button("Kill player")) {
-		if (localPlayer != nullptr) {
-			localPlayer->kill();
-			localPlayer = nullptr;
-		}
-	}
-	if (!networkClient.isConnected()) {
-		if (imgui::Button("Connect"))
-			networkClient.connect(IpAddress(ip), portc);
-	}
-	else {
-		if (imgui::Button("Get Chunk Count")) {
-			networkClient.getChunkCount();
-		}
+		imgui::Text("App->UpdateLogic() %3dMs", logicThreadTickTime.asMicroseconds());
 		imgui::SameLine();
-		if (imgui::Button("Clear Terrain")) {
-			terrainManager.clear();
-		}
-		imgui::SameLine();
-		if (imgui::Button("Reload Terrain")) {
-			networkClient.reloadAllChunks();
-		}
+		imgui::ProgressBar(1.0f, ImVec2(logicThreadTickTime.asMicroseconds() / 10.0f, 16.0f), "");
+		LEAVE_IMGUI_DEBUG;
 	}
-	imgui::End();
 
 	uiManager.runImGui();
 

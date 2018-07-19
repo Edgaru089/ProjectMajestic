@@ -196,14 +196,13 @@ void TerrainManager::unloadChunk(Vector2i id) {
 
 
 ////////////////////////////////////////
-void TerrainManager::clear() {
+void TerrainManager::clearChunks() {
 	AUTOLOCKABLE(*this);
 	for (auto i : chunks) {
 		delete i.second;
 	}
 
 	chunks.clear();
-	lightSources.clear();
 }
 
 

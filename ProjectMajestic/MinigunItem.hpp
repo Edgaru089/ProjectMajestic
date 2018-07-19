@@ -11,6 +11,7 @@ public:
 
 	Time shootInterval() override { return milliseconds(100); } // 600 RPM
 	double bulletDamage() override { return 2.0; }
+	double bulletUnaccuracyDegree() override { return 4.0; }
 	Time reloadTime() override { return seconds(3.5f); }
 	int roundsPerMagazine() override { return 150; }
 	string magazineItemName() override { return "item_minigun_ammo"; }

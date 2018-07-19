@@ -2,11 +2,13 @@
 
 #include "GunItem.hpp"
 #include "BulletEntity.hpp"
+#include "TextSystem.hpp"
 
 
 ////////////////////////////////////////
 void GunItem::_onShoot() {
-	BulletEntity::shoot(bulletDamage(), bulletSpeed());
+	BulletEntity::shoot(bulletDamage(), bulletSpeed(), bulletKnockbackFactor(), localPlayer->getEyePosition(),
+						gameIO.degreeAngle + (rand01() - 0.5)*bulletUnaccuracyDegree());
 }
 
 
@@ -54,15 +56,15 @@ void GunItem::updateLogic() {
 ////////////////////////////////////////
 void GunItem::_pushExtraImguiItemsToDashboard() {
 	if (isReloading()) {
-		imgui::Text("Reloading %d%%",
+		imgui::Text(text.get("gunhud.reloading"),
 			(programRunTimeClock.getElapsedTime().asMilliseconds() - startReloadTimeMill()) * 100 / reloadTime().asMilliseconds());
 		imgui::PushStyleColor(ImGuiCol_PlotHistogram, Color(240, 240, 240));
 		imgui::ProgressBar((float)(programRunTimeClock.getElapsedTime().asMilliseconds() - startReloadTimeMill()) / reloadTime().asMilliseconds(),
-						   ImVec2(-1, 12));
+						   ImVec2(-1, 12), "");
 		imgui::PopStyleColor();
 	}
 	else {
-		imgui::Text("Ammo %d / %d", roundsLeft(), roundsPerMagazine());
+		imgui::Text(text.get("gunhud.ammo"), roundsLeft(), roundsPerMagazine());
 		imgui::PushStyleColor(ImGuiCol_PlotHistogram, Color(240 - 240 * (float)roundsLeft() / roundsPerMagazine(),
 															0,
 															240 * (float)roundsLeft() / roundsPerMagazine()));

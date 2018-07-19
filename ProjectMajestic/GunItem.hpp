@@ -12,6 +12,8 @@ public:
 	virtual Time shootInterval() = 0;
 	virtual double bulletDamage() = 0;
 	virtual double bulletSpeed() { return 25.0; }
+	virtual double bulletUnaccuracyDegree() { return 2.0; }
+	virtual double bulletKnockbackFactor() { return 1.0; }
 	virtual Time reloadTime() = 0;
 	virtual int roundsPerMagazine() = 0;
 	virtual string magazineItemName() = 0; // "item_xxx"

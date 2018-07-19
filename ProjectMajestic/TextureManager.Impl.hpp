@@ -73,6 +73,7 @@ void TextureManager::bindTexture() {
 
 	texture = new Texture();
 	texture->loadFromImage(*image);
+	delete image;
 
 	mlog << "[TextureManager] Binding done." << dlog;
 }

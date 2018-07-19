@@ -25,6 +25,7 @@
 #include "Item.Impl.hpp"
 #include "ItemAllocator.Impl.hpp"
 #include "ItemEntity.Impl.hpp"
+#include "LaserBullet.Impl.hpp"
 #include "NetworkClient.Impl.hpp"
 #include "NetworkHandler.Impl.hpp"
 #include "NetworkServer.Impl.hpp"
@@ -38,4 +39,5 @@
 #include "TerrainProvider.Impl.hpp"
 #include "TestScene.Impl.hpp"
 #include "TextureManager.Impl.hpp"
+#include "VTX65.Impl.hpp"
 

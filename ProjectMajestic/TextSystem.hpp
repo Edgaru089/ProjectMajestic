@@ -6,14 +6,17 @@
 #include <SFML/System.hpp>
 
 #include "LogSystem.hpp"
+#include "Main.hpp"
+#include "Lockable.hpp"
 
 using namespace std;
 using namespace sf;
 
-class TextSystem {
+class TextSystem :public Lockable {
 public:
 
 	bool loadFromFile(const string& filename) {
+		AUTOLOCKABLE(*this);
 		mlog << "[TextSystem] Loading langfile:" << filename << dlog;
 		ifstream fin(filename);
 		if (!fin.good()) {
@@ -21,7 +24,7 @@ public:
 			mlog << Log::Error << "             File Open Failed!" << dlog;
 		}
 
-		// UTF-8 Signature
+		// UTF-8 Signature (EF BB BF)
 		if (fin.get() == 0xEF)
 			fin.ignore(2);
 		else
@@ -35,13 +38,14 @@ public:
 				continue;
 			string id = str.substr(0, pos), cont = str.substr(pos + 1);
 			//mlog << "             Loaded object: " << id << " = " << cont << dlog;
-			langs.insert(make_pair(id, cont));
+			langs.insert(make_pair(id, StringParser::replaceSubString(cont, { { "\\n", "\n" } })));
 		}
 
 		return true;
 	}
 
 	const char* get(string id) {
+		AUTOLOCKABLE(*this);
 		auto i = langs.find(id);
 		if (i == langs.end())
 			return empty.c_str();
@@ -49,7 +53,17 @@ public:
 			return i->second.c_str();
 	}
 
+	const string& getstr(string id) {
+		AUTOLOCKABLE(*this);
+		auto i = langs.find(id);
+		if (i == langs.end())
+			return empty;
+		else
+			return i->second;
+	}
+
 	String getSfString(string id) {
+		AUTOLOCKABLE(*this);
 		auto i = langs.find(id);
 		if (i == langs.end())
 			return String();

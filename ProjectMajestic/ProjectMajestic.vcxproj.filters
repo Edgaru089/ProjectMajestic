@@ -85,6 +85,9 @@
     <Filter Include="Game\Items&amp;Blocks\Item\Guns">
       <UniqueIdentifier>{b0339b29-9700-4f4d-8a81-7b021f29e3fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Items&amp;Blocks\Item\Guns\Post">
+      <UniqueIdentifier>{68df724a-48ca-40b4-a4da-f1e2abe0f023}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imconfig.h">
@@ -416,6 +419,21 @@
     </ClInclude>
     <ClInclude Include="TextSystem.hpp">
       <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="LaserBullet.hpp">
+      <Filter>Game\Entities\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="LaserBullet.Impl.hpp">
+      <Filter>Game\Entities\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="EMX3.hpp">
+      <Filter>Game\Items&amp;Blocks\Item\Guns\Post</Filter>
+    </ClInclude>
+    <ClInclude Include="VTX65.hpp">
+      <Filter>Game\Items&amp;Blocks\Item\Guns\Post</Filter>
+    </ClInclude>
+    <ClInclude Include="VTX65.Impl.hpp">
+      <Filter>Game\Items&amp;Blocks\Item\Guns\Post</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

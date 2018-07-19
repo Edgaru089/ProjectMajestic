@@ -194,6 +194,7 @@
     <ClInclude Include="ChunkClient.Impl.hpp" />
     <ClInclude Include="ChunkProvider.hpp" />
     <ClInclude Include="Data.hpp" />
+    <ClInclude Include="EMX3.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="Entity.Impl.hpp" />
     <ClInclude Include="EntityAllocator.hpp" />
@@ -229,6 +230,8 @@
     <ClInclude Include="ItemEntity.hpp" />
     <ClInclude Include="ItemEntity.Impl.hpp" />
     <ClInclude Include="Ladder.hpp" />
+    <ClInclude Include="LaserBullet.hpp" />
+    <ClInclude Include="LaserBullet.Impl.hpp" />
     <ClInclude Include="Lockable.hpp" />
     <ClInclude Include="LogBlock.hpp" />
     <ClInclude Include="LogSystem.hpp" />
@@ -271,6 +274,8 @@
     <ClInclude Include="ThreadPool.hpp" />
     <ClInclude Include="Torch.hpp" />
     <ClInclude Include="Uuid.hpp" />
+    <ClInclude Include="VTX65.hpp" />
+    <ClInclude Include="VTX65.Impl.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.Impl.hpp" />

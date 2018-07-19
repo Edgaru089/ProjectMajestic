@@ -29,6 +29,8 @@ public:
 
 	const unsigned int maxImageWidth = 256;
 
+	~TextureManager() { if (texture != nullptr)delete texture; }
+
 	// Image is copied
 	void addImage(string id, Image& image);
 	void addImage(string id, string filename);

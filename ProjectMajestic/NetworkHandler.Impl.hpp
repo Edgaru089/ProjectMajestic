@@ -29,7 +29,7 @@ bool NetworkHandler::start(bool client) {
 	packet >> welcome >> peer.majorVersion >> peer.minorVersion >> peer.patchVersion >> peer.chunkSize;
 
 	if (peer.majorVersion != majorVersion || peer.minorVersion != minorVersion) {
-		logicIO.lastError = StringParser::toStringFormatted("Client/Server Version Mismatch, Local: %d.%d.%d, Remote: %d.%d.%d",
+		logicIO.lastError = StringParser::toStringF("Client/Server Version Mismatch, Local: %d.%d.%d, Remote: %d.%d.%d",
 															majorVersion, minorVersion, patchVersion, peer.majorVersion, peer.minorVersion, peer.patchVersion);
 		mlog << Log::Error << "[Network/Handshake Error] " << logicIO.lastError << dlog;
 		socket.disconnect();
@@ -37,7 +37,7 @@ bool NetworkHandler::start(bool client) {
 	}
 
 	if (peer.chunkSize != chunkSize) {
-		logicIO.lastError = StringParser::toStringFormatted("Client/Server Chunk Size Mismatch, Local: %d, Remote: %d",
+		logicIO.lastError = StringParser::toStringF("Client/Server Chunk Size Mismatch, Local: %d, Remote: %d",
 															chunkSize, peer.chunkSize);
 		mlog << Log::Error << "[Network/Handshake Error] " << logicIO.lastError << dlog;
 		socket.disconnect();

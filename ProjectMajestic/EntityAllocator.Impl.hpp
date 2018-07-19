@@ -10,6 +10,7 @@
 #include "ArrowEntity.hpp"
 #include "BulletEntity.hpp"
 #include "GrenadeEntity.hpp"
+#include "LaserBullet.hpp"
 
 #define REGISTER_ENTITY_TYPE(type) allocs.insert(make_pair(type().getEntityId(), allocEntity<type>))
 
@@ -22,6 +23,7 @@ void EntityAllocator::initalaize() {
 	REGISTER_ENTITY_TYPE(ArrowEntity);
 	REGISTER_ENTITY_TYPE(BulletEntity);
 	REGISTER_ENTITY_TYPE(GrenadeEntity);
+	REGISTER_ENTITY_TYPE(LaserBullet);
 }
 
 

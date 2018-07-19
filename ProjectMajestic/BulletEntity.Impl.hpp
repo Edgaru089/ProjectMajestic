@@ -6,9 +6,10 @@
 
 
 ////////////////////////////////////////
-void BulletEntity::shoot(double damage, double speed, Vector2d position, double degree) {
+void BulletEntity::shoot(double damage, double speed, double knockbackFactor, Vector2d position, double degree) {
 	BulletEntity* b = new BulletEntity;
 	b->damage = damage;
+	b->knockback = knockbackFactor;
 	b->accelerateVector(speed, degree);
 	entityManager.insert(b, position + Vector2d(.0, b->getSize().y / 2.0));
 }
@@ -21,7 +22,7 @@ void BulletEntity::_onCollideEntity(Entity* e) {
 	if (e->getUuid() != localPlayer->getUuid()) {
 		Mob* mob = dynamic_cast<Mob*>(e);
 		if (mob != nullptr) {
-			mob->harm(damage, getPosition());
+			mob->harm(damage, getPosition(), knockback);
 			kill();
 		}
 	}

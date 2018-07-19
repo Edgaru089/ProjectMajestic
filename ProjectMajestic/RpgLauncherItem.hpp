@@ -17,7 +17,8 @@ public:
 	void _onShoot() override;
 
 	Time shootInterval() override { return milliseconds(1); }  // Does not matter; there's only one round after all
-	double bulletDamage() override { return .0; }                // Also doesn't matter
+	double bulletDamage() override { return .0; }              // Also doesn't matter
+	double bulletUnaccuracyDegree() override { return 6.0; }
 	Time reloadTime() override { return seconds(5.0f); }
 	int roundsPerMagazine() override { return 1; }
 	string magazineItemName() override { return "item_rpg_ammo"; }

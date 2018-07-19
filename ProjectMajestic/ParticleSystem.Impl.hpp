@@ -144,7 +144,7 @@ void PartlcleSystem::emitSmoke(Vector2d position,
 		swap(angleBegin, angleEnd);
 	position += Vector2d(.0, size.y / 2.0);
 	for (int i = 0; i < count; i++) {
-		TextureInfo texture = textureManager.getTextureInfo(StringParser::toStringFormatted(
+		TextureInfo texture = textureManager.getTextureInfo(StringParser::toStringF(
 			"particle_smoke_%d",
 			rand(1, 8)));
 

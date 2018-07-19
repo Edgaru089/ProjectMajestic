@@ -90,7 +90,7 @@ bool AssetManager::loadListFile(string filename) {
 			//LogMessage m;
 			//m << "               Loaded " << assetType << " asset: " << id << "@" << file;
 			//if (rect != IntRect(0, 0, 0, 0))
-			//	m << StringParser::toStringFormatted(" Off[%d, %d] %dx%d]", rect.left, rect.top, rect.width, rect.height);
+			//	m << StringParser::toStringF(" Off[%d, %d] %dx%d]", rect.left, rect.top, rect.width, rect.height);
 			//m.logout(dlog);
 
 			assets.insert(make_pair(id, Asset(id, file, assetType, rect)));

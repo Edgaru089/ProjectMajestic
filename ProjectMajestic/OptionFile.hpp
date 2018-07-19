@@ -47,7 +47,7 @@ public:
 	bool saveToFile(string filename) {
 		fout.open(filename);
 		for (const pair<string, Option>& i : options)
-			fileLines[i.second.line] = StringParser::toStringFormatted("%s=%s", i.first.c_str(), i.second.value.c_str());
+			fileLines[i.second.line] = StringParser::toStringF("%s=%s", i.first.c_str(), i.second.value.c_str());
 		for (string& i : fileLines)
 			fout << i << '\n';
 		fout.flush();
@@ -63,11 +63,11 @@ public:
 		map<string, Option>::iterator i = options.find(key);
 		if (i == options.end()) {
 			options.insert(pair<string, Option>(key, Option(fileLines.size(), key, value)));
-			fileLines.push_back(StringParser::toStringFormatted("%s=%s", key.c_str(), value.c_str()));
+			fileLines.push_back(StringParser::toStringF("%s=%s", key.c_str(), value.c_str()));
 		}
 		else {
 			i->second.value = value;
-			fileLines[i->second.line] = StringParser::toStringFormatted("%s=%s", i->first.c_str(), i->second.value.c_str());
+			fileLines[i->second.line] = StringParser::toStringF("%s=%s", i->first.c_str(), i->second.value.c_str());
 		}
 	}
 

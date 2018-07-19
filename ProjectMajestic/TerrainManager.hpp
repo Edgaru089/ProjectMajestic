@@ -35,11 +35,8 @@ public:
 	Vector2i getChunkCount() { return chunkCount; }
 
 	vector<Vector2i>& getSpawnpoints() { return spawns; }
-	
-	// First: pos(global coords); Second: strength
-	map<Uuid, pair<Vector2i, int>>& getLightSources() { return lightSources; }
 
-	void clear();
+	void clearChunks();
 
 	Chunk* getChunk(Vector2i chunkId);
 	map<Vector2i, Chunk*, Vector2Less<int>>& getChunks() { return chunks; }
@@ -67,7 +64,6 @@ private:
 
 
 	map<Vector2i, Chunk*, Vector2Less<int>> chunks;
-	map<Uuid, pair<Vector2i, int>> lightSources; // First: pos(global coords); Second: strength
 
 	bool wantUpdateLight;
 

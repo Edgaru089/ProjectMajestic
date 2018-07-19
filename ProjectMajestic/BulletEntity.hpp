@@ -9,6 +9,7 @@ public:
 
 	static void shoot(double damage = 5,
 					  double speed = 25.0,
+					  double knockbackFactor = 1.0,
 					  Vector2d position = localPlayer->getEyePosition(),
 					  double degree = gameIO.degreeAngle);
 
@@ -18,12 +19,12 @@ public:
 	const string getEntityId() override { return "bullet"; }
 
 	const bool requestEntityCollisionCallback() override { return true; }
-	void _onCollideEntity(Entity* e) override;
+	virtual void _onCollideEntity(Entity* e) override;
+	virtual void _onCollision(Block* block) override;
 
-	virtual void _onCollision(Block* block);
-
-private:
+protected:
 
 	double damage;
+	double knockback;
 
 };

@@ -40,6 +40,8 @@ private:
 
 	Uuid testEntity;
 
+	bool showDebugInfo;
+	bool showExtraImGuiWindows;
 
 	Vector2i mouseWorldCoord;
 
