@@ -26,7 +26,7 @@ public:
 	Vector2d getSize() override { return Vector2d(0.2, 0.2); }
 
 	void _updateLogic() override;
-	void _onCollision(shared_ptr<Block> block) override;
+	void _onCollision(shared_ptr<Block> block, CollisionBoxEdge whichEntityEdge) override;
 
 private:
 

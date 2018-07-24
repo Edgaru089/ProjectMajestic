@@ -47,6 +47,10 @@ USING_NAMESPACE;
 #define AUTOLOCKTYPE(type, a) lock_guar1d<type> __type_lock(a)
 #define AUTOLOCKABLE(a) lock_guard<Lockable> __lockable_lock(a)
 #define AUTOLOCKABLE_NAMED(a, name) lock_guard<Lockable> name(a)
+#define AUTOLOCK_ALL_SYSTEM \
+AUTOLOCKABLE_NAMED(terrainManager, tml);\
+AUTOLOCKABLE_NAMED(particleSystem, psl);\
+AUTOLOCKABLE_NAMED(entityManager, eml)
 #define AUTOPTR(type) shared_ptr<type>
 typedef Vector2<double> Vector2d;
 typedef sf::Rect<Uint32> UintRect;

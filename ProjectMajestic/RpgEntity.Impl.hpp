@@ -17,7 +17,7 @@ void RpgEntity::shoot(double force, Vector2d position, double degree) {
 
 
 ////////////////////////////////////////
-void RpgEntity::_onCollision(shared_ptr<Block> block) {
+void RpgEntity::_onCollision(shared_ptr<Block> block, CollisionBoxEdge) {
 	if (!isAlive())
 		return;
 	if (!block->isSolid())

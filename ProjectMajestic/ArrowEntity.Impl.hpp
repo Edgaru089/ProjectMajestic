@@ -61,7 +61,7 @@ void ArrowEntity::_pushTriangleVertexes(VertexArray& verts) {
 
 
 ////////////////////////////////////////
-void ArrowEntity::_onCollision(shared_ptr<Block> block) {
+void ArrowEntity::_onCollision(shared_ptr<Block> block, CollisionBoxEdge) {
 	if (inEntity() || inWall())
 		return;
 	if (!block->isSolid())

@@ -12,7 +12,7 @@ void Chunk::updateLogic() {
 	for (auto& i : blocks)
 		for (shared_ptr<Block> j : i)
 			if (j != nullptr)
-				j->_updateLogic();
+				j->updateLogic();
 }
 
 

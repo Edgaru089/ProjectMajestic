@@ -20,7 +20,7 @@ public:
 
 	const bool requestEntityCollisionCallback() override { return true; }
 	virtual void _onCollideEntity(shared_ptr<Entity> e) override;
-	virtual void _onCollision(shared_ptr<Block> block) override;
+	virtual void _onCollision(shared_ptr<Block> block, CollisionBoxEdge) override;
 
 protected:
 

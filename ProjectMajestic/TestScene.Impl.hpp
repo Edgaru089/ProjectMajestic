@@ -101,9 +101,7 @@ void TestScene::start(RenderWindow & win) {
 
 ////////////////////////////////////////
 void TestScene::onRender(RenderWindow & win) {
-	AUTOLOCKABLE_NAMED(terrainManager, tml);
-	AUTOLOCKABLE_NAMED(particleSystem, psl);
-	AUTOLOCKABLE_NAMED(entityManager, eml);
+	AUTOLOCK_ALL_SYSTEM;
 
 	// Place screen offset calculations here to obtain maxinum synchronization
 	if (localPlayer != nullptr) {
@@ -231,9 +229,7 @@ void TestScene::_sendMouseReleasedToHandItem(Mouse::Button button) {
 
 ////////////////////////////////////////
 void TestScene::updateLogic(RenderWindow & win) {
-	AUTOLOCKABLE_NAMED(terrainManager, tml);
-	AUTOLOCKABLE_NAMED(particleSystem, psl);
-	AUTOLOCKABLE_NAMED(entityManager, eml);
+	AUTOLOCK_ALL_SYSTEM;
 
 	if (localPlayer != nullptr) {
 		Vector2d mouseBlock = TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win));
@@ -357,9 +353,7 @@ void TestScene::updateLogic(RenderWindow & win) {
 
 ////////////////////////////////////////
 void TestScene::handleEvent(RenderWindow & win, Event & event) {
-	AUTOLOCKABLE_NAMED(terrainManager, tml);
-	AUTOLOCKABLE_NAMED(particleSystem, psl);
-	AUTOLOCKABLE_NAMED(entityManager, eml);
+	AUTOLOCK_ALL_SYSTEM;
 
 	if (event.type == Event::MouseWheelScrolled) {
 		if (Mouse::isButtonPressed(Mouse::Left))
@@ -382,9 +376,7 @@ void TestScene::handleEvent(RenderWindow & win, Event & event) {
 
 ////////////////////////////////////////
 void TestScene::runImGui() {
-	AUTOLOCKABLE_NAMED(terrainManager, tml);
-	AUTOLOCKABLE_NAMED(particleSystem, psl);
-	AUTOLOCKABLE_NAMED(entityManager, eml);
+	AUTOLOCK_ALL_SYSTEM;
 
 	if (showExtraImGuiWindows) {
 		imgui::Begin("TestEntity");
@@ -579,12 +571,16 @@ void TestScene::runImGui() {
 		string names[] = { "App->OnRender() %6dMs", "App->RunImGui() %6dMs", "ImGui::Render() %6dMs", "ImGui::Update() %6dMs" };
 		for (int i = 0; i < 4; i++) {
 			imgui::Text(names[i].c_str(), values[i].asMicroseconds());
-			imgui::SameLine();
-			imgui::ProgressBar(1.0f, ImVec2(values[i].asMicroseconds() / 10.0f, 13.0f), "");
+			if (values[i] != Time::Zero) {
+				imgui::SameLine();
+				imgui::ProgressBar(1.0f, ImVec2(values[i].asMicroseconds() / 10.0f, 13.0f), "");
+			}
 		}
 		imgui::Text("App->UpdateLogic() %3dMs", logicThreadTickTime.asMicroseconds());
-		imgui::SameLine();
-		imgui::ProgressBar(1.0f, ImVec2(logicThreadTickTime.asMicroseconds() / 10.0f, 16.0f), "");
+		if (logicThreadTickTime != Time::Zero) {
+			imgui::SameLine();
+			imgui::ProgressBar(1.0f, ImVec2(logicThreadTickTime.asMicroseconds() / 10.0f, 13.0f), "");
+		}
 		LEAVE_IMGUI_DEBUG;
 	}
 

@@ -38,6 +38,8 @@ public:
 
 	virtual bool isSolid() { return true; }
 
+	void updateLogic();
+
 	// Zerom means none
 	virtual int getLightStrength() { return 0; }
 

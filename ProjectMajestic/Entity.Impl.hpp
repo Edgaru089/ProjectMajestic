@@ -70,7 +70,7 @@ void Entity::_moveX(double amount) {
 					//mlog << "       Block: (" << blockCoord.x << ", " << blockCoord.y << "), Pos: (" << i.x << ", " << i.y << ") --> (" << ix.x << ", " << ix.y << ")" << dlog;
 				}
 				b->_onCollision(this);
-				_onCollision(b);
+				_onCollision(b, Right);
 			}
 
 			if (flag) {
@@ -110,7 +110,7 @@ void Entity::_moveX(double amount) {
 					//mlog << "       Block: (" << blockCoord.x << ", " << blockCoord.y << "), Pos: (" << i.x << ", " << i.y << ") --> (" << ix.x << ", " << ix.y << ")" << dlog;
 				}
 				b->_onCollision(this);
-				_onCollision(b);
+				_onCollision(b, Left);
 			}
 
 			if (flag) {
@@ -175,7 +175,7 @@ void Entity::_moveY(double amount) {
 						onGround = true;
 				}
 				b->_onCollision(this);
-				_onCollision(b);
+				_onCollision(b, Bottom);
 			}
 
 			if (flag) {
@@ -215,7 +215,7 @@ void Entity::_moveY(double amount) {
 					//mlog << "       Block: (" << blockCoord.x << ", " << blockCoord.y << "), Pos: (" << i.x << ", " << i.y << ") --> (" << ix.x << ", " << ix.y << ")" << dlog;
 				}
 				b->_onCollision(this);
-				_onCollision(b);
+				_onCollision(b, Top);
 			}
 
 			if (flag) {
@@ -238,10 +238,6 @@ void Entity::updateLogic() {
 	if (!alive)
 		return;
 
-	// Collision detection with terrain on move
-	_moveX(vecX * logicIO.deltaTime.asSeconds());
-	_moveY(vecY * logicIO.deltaTime.asSeconds());
-
 	if (onGround) {
 		double minusVecX = getFrictionDeaclc()*logicIO.deltaTime.asSeconds();
 		if (vecX > 0) {
@@ -263,6 +259,10 @@ void Entity::updateLogic() {
 		if (vecX < 0)
 			angle += 180;
 	}
+
+	// Collision detection with terrain on move
+	_moveX(vecX * logicIO.deltaTime.asSeconds());
+	_moveY(vecY * logicIO.deltaTime.asSeconds());
 
 	if (role == Server /* || getEntityId() == "player" */)
 		_updateLogic();

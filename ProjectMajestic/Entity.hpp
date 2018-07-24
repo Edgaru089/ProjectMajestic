@@ -86,8 +86,16 @@ public:
 
 	virtual void _onCreate() {}
 	virtual void _updateLogic() {}
-	virtual void _onCollision(shared_ptr<Block> block) {}
 	virtual void _onKill() {}
+
+	enum CollisionBoxEdge {
+		Left,
+		Top,
+		Right,
+		Bottom
+	};
+
+	virtual void _onCollision(shared_ptr<Block> block, CollisionBoxEdge whichEntityEdge) {}
 
 protected:
 

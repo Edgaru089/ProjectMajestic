@@ -31,7 +31,7 @@ void BulletEntity::_onCollideEntity(shared_ptr<Entity> e) {
 
 
 ////////////////////////////////////////
-void BulletEntity::_onCollision(shared_ptr<Block> b) {
+void BulletEntity::_onCollision(shared_ptr<Block> b, CollisionBoxEdge) {
 	if (!isAlive())
 		return;
 	if (b->isSolid())

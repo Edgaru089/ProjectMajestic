@@ -21,6 +21,13 @@ DoubleRect Block::getHitbox() {
 
 
 ////////////////////////////////////////
+void Block::updateLogic() {
+	if (role == Server)
+		_updateLogic();
+}
+
+
+////////////////////////////////////////
 void Block::onDestroy(Entity * destoryer, bool drop) {
 
 	if (drop) {
