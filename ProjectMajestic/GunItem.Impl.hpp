@@ -71,16 +71,15 @@ void GunItem::_pushExtraImguiItemsToDashboard() {
 		imgui::ProgressBar((float)roundsLeft() / roundsPerMagazine(), ImVec2(-1, 12), "");
 		imgui::PopStyleColor();
 	}
-	//if (shootInterval() > milliseconds(800)) {  // Long shoot interval - bolt action
-		// Display load progress bar
+	// Display load progress bar
 	imgui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, -1));
 	imgui::PushStyleColor(ImGuiCol_PlotHistogram, Color(192, 192, 192));
-	imgui::ProgressBar(min(1.0f, (float)(programRunTimeClock.getElapsedTime().asMilliseconds() -
-										 lastShootTimeMill()) /
-						   shootInterval().asMilliseconds()), ImVec2(-1, 4), "");
+	imgui::ProgressBar(roundsLeft() != 0 ?
+					   min(1.0f, (float)(programRunTimeClock.getElapsedTime().asMilliseconds() - lastShootTimeMill()) / shootInterval().asMilliseconds()) :
+					   .0f,
+					   ImVec2(-1, 4), "");
 	imgui::PopStyleColor();
 	imgui::PopStyleVar();
-//}
 }
 
 

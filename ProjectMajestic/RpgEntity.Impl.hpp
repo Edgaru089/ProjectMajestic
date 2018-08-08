@@ -8,10 +8,10 @@
 
 
 ////////////////////////////////////////
-void RpgEntity::shoot(double force, Vector2d position, double degree) {
+void RpgEntity::shoot(double force, Vector2d position, double degree, double speed) {
 	shared_ptr<RpgEntity> e = make_shared<RpgEntity>();
 	e->force = force;
-	e->accelerateVector(16.0, degree);
+	e->accelerateVector(speed, degree);
 	entityManager.insert(e, position + Vector2d(.0, e->getSize().y / 2.0));
 }
 
@@ -30,6 +30,8 @@ void RpgEntity::_onCollision(shared_ptr<Block> block, CollisionBoxEdge) {
 ////////////////////////////////////////
 void RpgEntity::_onCollideEntity(shared_ptr<Entity> e) {
 	if (!isAlive())
+		return;
+	if (e->getUuid() == localPlayer->getUuid())
 		return;
 	try {
 		Mob& mob = dynamic_cast<Mob&>(*e);

@@ -235,25 +235,19 @@ void TerrainManager::setBlock(Vector2i coord, string blockId, bool isForced) {
 
 
 ////////////////////////////////////////
-void TerrainManager::breakBlock(Vector2i pos, Entity * breaker, bool isForced) {
+void TerrainManager::breakBlock(Vector2i pos, Entity * breaker) {
 	AUTOLOCKABLE(*this);
-	if (!isForced || role == Server) {
-		networkClient.notifyBlockBreak(pos);
-		networkServer.notifyBlockBreak(pos);
-	}
-	if (isForced || role == Server) {
-		auto i = chunks.find(convertWorldCoordToChunkId(pos));
-		if (i == chunks.end()) // Chunk not loaded
-			return;
+	auto i = chunks.find(convertWorldCoordToChunkId(pos));
+	if (i == chunks.end()) // Chunk not loaded
+		return;
 
-		shared_ptr<Chunk> c = i->second;
-		shared_ptr<Block> b = c->getBlock(convertWorldCoordToInChunkCoord(pos));
-		if (b != nullptr) {
-			b->onDestroy(breaker, role == Server);
-			if (b->getLightStrength() > 0)
-				wantUpdateLight = true;
-			c->setBlock(convertWorldCoordToInChunkCoord(pos), nullptr); // nullptr means empty
-		}
+	shared_ptr<Chunk> c = i->second;
+	shared_ptr<Block> b = c->getBlock(convertWorldCoordToInChunkCoord(pos));
+	if (b != nullptr) {
+		b->onDestroy(breaker);
+		if (b->getLightStrength() > 0)
+			wantUpdateLight = true;
+		setBlock(pos, ""); // nullptr means empty
 	}
 }
 

@@ -26,10 +26,10 @@ PlayerInventory::PlayerInventory() {
 	slots[0][5].setData("count", 1);
 	slots[0][6].setData("item_name", "item_vtx65"s);
 	slots[0][6].setData("count", 1);
-	slots[0][7].setData("item_name", "block_torch"s);
+	slots[0][7].setData("item_name", "item_mrm36"s);
 	slots[0][7].setData("count", 1);
-	slots[0][8].setData("item_name", "block_ladder"s);
-	slots[0][8].setData("count", 5);
+	slots[0][8].setData("item_name", "block_torch"s);
+	slots[0][8].setData("count", 1);
 
 	slots[1][0].setData("item_name", "item_minigun_ammo"s);
 	slots[1][0].setData("count", 8);
@@ -47,6 +47,8 @@ PlayerInventory::PlayerInventory() {
 	slots[1][6].setData("count", 6);
 	slots[1][7].setData("item_name", "item_vtx65_ammo"s);
 	slots[1][7].setData("count", 6);
+	slots[1][8].setData("item_name", "item_mrm36_ammo"s);
+	slots[1][8].setData("count", 8);
 
 	slots[2][0].setData("item_name", "item_grenade"s);
 	slots[2][0].setData("count", 8);
@@ -66,6 +68,9 @@ PlayerInventory::PlayerInventory() {
 	slots[2][7].setData("count", 8);
 	slots[2][8].setData("item_name", "item_grenade"s);
 	slots[2][8].setData("count", 8);
+
+	slots[3][0].setData("item_name", "block_ladder"s);
+	slots[3][0].setData("count", 5);
 }
 
 

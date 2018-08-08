@@ -20,7 +20,7 @@ public:
 	const bool requestSpeicalRendering() override { return true; }
 	void _pushTriangleVertexes(VertexArray& verts) override;
 
-	const bool requestEntityCollisionCallback() override { return true; }
+	const bool requestEntityCollisionCallback() override { return !(inWall() || inEntity()); }
 	void _onCollideEntity(shared_ptr<Entity> e) override;
 
 	const double getGravityAclc() override { return 2.0; }

@@ -24,6 +24,7 @@ void EntityManager::updateLogic() {
 			i = entities.erase(i);
 		}
 		else {
+			//threadPool.enqueue([=]() {i->second->updateLogic(); });
 			i->second->updateLogic();
 			i++;
 		}
@@ -147,6 +148,7 @@ Uuid EntityManager::insert(shared_ptr<Entity> entity, Vector2d position) {
 	entities.insert(make_pair(id, entity));
 	unlock();
 	entity->onCreate();
+	networkClient.notifyEntityInsert(id, entity);
 	networkServer.notifyEntityInsert(id, entity);
 	return id;
 }
@@ -156,9 +158,14 @@ Uuid EntityManager::insert(shared_ptr<Entity> entity, Vector2d position) {
 void EntityManager::insert(Uuid id, shared_ptr<Entity> entity) {
 	entity->setUuid(id);
 	lock();
-	entities.insert(make_pair(id, entity));
+	auto i = entities.find(id);
+	if (i != entities.end())
+		entities.insert(make_pair(id, entity));
+	else
+		i->second = entity;
 	unlock();
-	entity->onCreate();
+	if (role == Server)
+		entity->onCreate();
 }
 
 

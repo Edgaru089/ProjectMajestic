@@ -25,7 +25,7 @@
 //		https://github.com/progschj/ThreadPool
 
 //	Modified - Added the global variable defination and #pragma once sencence
-//	And the ThreadPool object initalaizes with 2*hardware_concurrentcy workers by default.
+//	And the ThreadPool object initalaizes with hardware_concurrentcy workers by default.
 
 
 #pragma once
@@ -42,7 +42,7 @@
 
 class ThreadPool {
 public:
-	ThreadPool(size_t threads = 2 * thread::hardware_concurrency());
+	ThreadPool(size_t threads = thread::hardware_concurrency());
 	template<class F, class... Args>
 	auto enqueue(F&& f, Args&&... args)
 		->std::future<typename std::result_of<F(Args...)>::type>;
@@ -125,5 +125,5 @@ inline ThreadPool::~ThreadPool()
 }
 
 
-//ThreadPool threadPool;
+ThreadPool threadPool;
 

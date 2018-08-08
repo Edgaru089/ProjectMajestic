@@ -37,8 +37,6 @@ public:
 
 	void getSpawnpoints();
 
-	void getLightSources();
-
 	void getChunkData(Vector2i chunkId);
 
 	void sendChunkData(Vector2i chunkId);
@@ -57,8 +55,6 @@ public:
 
 	void onSetBlock(Vector2i coord, string blockId);
 
-	void onBreakBlock(Vector2i coord);
-
 	void onPlaceBlock(Vector2i coord, string blockId);
 
 private:
@@ -68,7 +64,9 @@ private:
 
 	TcpSocket socket;
 	atomic_bool connected;
-	recursive_mutex socketLock;
+
+	queue<Packet> messageQueue;
+	recursive_mutex queueLock;
 
 	PeerInfo peer;
 

@@ -79,6 +79,8 @@ int logicTickPerSecond, logicTickCounter, framePerSecond, frameCounter, eventTic
 Clock logicTickCounterClock, frameCounterClock, eventTickCounterClock;
 Time logicThreadTickTime;
 Time appRenderTime, runImGuiTime, imGuiRenderTime, imGuiUpdateTime, renderThreadTickTime;
+Clock renderClock;
+Time renderTime=microseconds(16667);
 Clock programRunTimeClock;  //Nerer resets; started as time (for this process) begins
 atomic_bool isReady;
 mt19937 randomEngine((random_device())());
@@ -165,9 +167,9 @@ double rand01() {
 	return uniform_real_distribution<double>(0.0, 1.0)(randomEngine);
 }
 
-// [x, y)
+// [x, y]
 int rand(int x, int y) {
-	return x + rand01()*(y - x);
+	return uniform_int_distribution<int>(x, y)(randomEngine);
 }
 
 

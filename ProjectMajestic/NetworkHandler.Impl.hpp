@@ -78,6 +78,8 @@ bool NetworkHandler::start(bool client) {
 
 	connected = true;
 
+	socket.setBlocking(false);
+
 	launchThread();
 
 	return true;
@@ -115,11 +117,9 @@ Packet packetName; \
 packetName << command
 
 #define CHECKED_SEND(packetName)\
-socketLock.lock();\
-Socket::Status stat = socket.send(pack);\
-socketLock.unlock();\
-if (stat == Socket::Disconnected)\
-connected = false
+queueLock.lock();\
+messageQueue.push(packetName);\
+queueLock.unlock()
 
 #define CHECKED_SEND_COMMAND(command)\
 PACKET_COMMAND(pack,command);\
@@ -134,165 +134,173 @@ void NetworkHandler::_messageLoopThread() {
 	Uint16 port = socket.getRemotePort();
 
 	while (connected && (stat = socket.receive(pack)) != Socket::Disconnected) {
-		if (stat != Socket::Done)
+		if (stat == Socket::Partial)
 			continue;
+		if (stat != Socket::NotReady) {
+			string command;
+			pack >> command;
 
-		string command;
-		pack >> command;
+			if (command != "ENTITY")
+				mlog << "[NetworkHandler] Received command: " << command << dlog;
 
-		// PART I --- UNDERLYING API
-		BEGIN_IF_COMMAND("GETCHUNKCNT") {
-			Packet ret;
-			ret << "CHUNKCNT" << terrainManager.getChunkCount().x << terrainManager.getChunkCount().y;
-			socket.send(ret);
-		}
-		IF_COMMAND("CHUNKCNT") {
-			Vector2i cnt;
-			pack >> cnt.x >> cnt.y;
-			terrainManager.setChunkCount(cnt);
-		}
-		IF_COMMAND("GETPLAYER") {
-			PACKET_COMMAND(ret, "PLAYER");
-			if (localPlayer != nullptr)
-				ret << localPlayer->getUuid() << localPlayer->getPlayerName();
-			else
-				ret << Uuid::nil() << ""s;
-			CHECKED_SEND(ret);
-		}
-		IF_COMMAND("PLAYER") {
-			pack >> peer.peerUuid >> peer.peerPlayername;
-		}
-		IF_COMMAND("GETSPAWN") {
-			PACKET_COMMAND(ret, "SPAWN");
-			terrainManager.lock();
-			ret << (unsigned long long)terrainManager.getSpawnpoints().size();
-			for (auto& i : terrainManager.getSpawnpoints())
-				ret << i.x << i.y;
-			terrainManager.unlock();
-			CHECKED_SEND(ret);
-		}
-		IF_COMMAND("SPAWN") {
-			unsigned long long size;
-			pack >> size;
-			terrainManager.lock();
-			for (int i = 1; i <= size; i++) {
-				Vector2i pos;
-				pack >> pos.x >> pos.y;
-				terrainManager.getSpawnpoints().push_back(pos);
+			// PART I --- UNDERLYING API
+			BEGIN_IF_COMMAND("GETCHUNKCNT") {
+				Packet ret;
+				ret << "CHUNKCNT" << terrainManager.getChunkCount().x << terrainManager.getChunkCount().y;
+				socket.send(ret);
 			}
-			terrainManager.getSpawnpoints().shrink_to_fit();
-			terrainManager.unlock();
-		}
-		IF_COMMAND("GETCHUNK") {
-			Vector2i chunkId;
-			pack >> chunkId.x >> chunkId.y;
-			sendChunkData(chunkId);
-		}
-		IF_COMMAND("CHUNKDATA") {
-			ChunkClient::parseChunkData(pack);
-		}
-		IF_COMMAND("GETBLOCK") {
-			Vector2i coord;
-			pack >> coord.x >> coord.y;
-			sendBlockData(coord);
-		}
-		IF_COMMAND("BLOCKDATA") {
-			ChunkClient::parseBlockData(pack);
-		}
-
-		// PART II --- CLIENT CONTROLS
-		IF_COMMAND("PARTICLE") {
-			// Does the same thing; it is left for ParticleSystem::emit to tell whether to
-			// present locally or to send across the network
-			ParticleEmitTrace log;
-			pack >> log;
-			AUTOLOCKABLE(particleSystem);
-			particleSystem.emitTraced(log);
-		}
-		IF_COMMAND("SETBLOCK") {
-			// Same as above; just call
-			Vector2i coord;
-			string id;
-			pack >> coord.x >> coord.y >> id;
-			AUTOLOCKABLE(terrainManager);
-			terrainManager.setBlock(coord, id, true);
-		}
-		IF_COMMAND("BREAKBLOCK") {
-			// Same as above; just call
-			Vector2i coord;
-			pack >> coord.x >> coord.y;
-			AUTOLOCKABLE(terrainManager);
-			terrainManager.breakBlock(coord, nullptr, true);
-		}
-		IF_COMMAND("PLACEBLOCK") {
-			// Same as above; just call
-			Vector2i coord;
-			string id;
-			pack >> coord.x >> coord.y >> id;
-			AUTOLOCKABLE(terrainManager);
-			terrainManager.placeBlock(coord, id, nullptr, true);
-		}
-		IF_COMMAND("INSENTITY") {
-			Uuid id;
-			string str;
-			Vector2d pos, vel;
-			pack >> id >> str;
-			pack >> pos.x >> pos.y >> vel.x >> vel.y;
-			shared_ptr<Entity> e = entityAllocator.allocate(str);
-			if (e != nullptr) {
-				e->setUuid(id);
-				e->setPosition(pos);
-				e->setVelocity(vel);
-				pack >> e->getDataset();
-				AUTOLOCKABLE(entityManager);
-				entityManager.insert(id, e);
+			IF_COMMAND("CHUNKCNT") {
+				Vector2i cnt;
+				pack >> cnt.x >> cnt.y;
+				terrainManager.setChunkCount(cnt);
 			}
-		}
-		IF_COMMAND("DELENTITY") {
-			Uuid id;
-			pack >> id;
-			entityManager.lock();
-			shared_ptr<Entity> e = entityManager.getEntity(id);
-			if (e != nullptr)
-				e->kill();
-			entityManager.unlock();
-		}
-		IF_COMMAND("ENTITY") {
-			vector<Uuid> ids;
-			vector<string> eids;
-			vector<Vector2d> pos, vec;
-			vector<Dataset> datas;
-			unsigned long long cnt;
+			IF_COMMAND("GETPLAYER") {
+				PACKET_COMMAND(ret, "PLAYER");
+				if (localPlayer != nullptr)
+					ret << localPlayer->getUuid() << localPlayer->getPlayerName();
+				else
+					ret << Uuid::nil() << ""s;
+				CHECKED_SEND(ret);
+			}
+			IF_COMMAND("PLAYER") {
+				pack >> peer.peerUuid >> peer.peerPlayername;
+			}
+			IF_COMMAND("GETSPAWN") {
+				PACKET_COMMAND(ret, "SPAWN");
+				terrainManager.lock();
+				ret << (unsigned long long)terrainManager.getSpawnpoints().size();
+				for (auto& i : terrainManager.getSpawnpoints())
+					ret << i.x << i.y;
+				terrainManager.unlock();
+				CHECKED_SEND(ret);
+			}
+			IF_COMMAND("SPAWN") {
+				unsigned long long size;
+				pack >> size;
+				terrainManager.lock();
+				for (int i = 1; i <= size; i++) {
+					Vector2i pos;
+					pack >> pos.x >> pos.y;
+					terrainManager.getSpawnpoints().push_back(pos);
+				}
+				terrainManager.getSpawnpoints().shrink_to_fit();
+				terrainManager.unlock();
+			}
+			IF_COMMAND("GETCHUNK") {
+				Vector2i chunkId;
+				pack >> chunkId.x >> chunkId.y;
+				sendChunkData(chunkId);
+			}
+			IF_COMMAND("CHUNKDATA") {
+				ChunkClient::parseChunkData(pack);
+			}
+			IF_COMMAND("GETBLOCK") {
+				Vector2i coord;
+				pack >> coord.x >> coord.y;
+				sendBlockData(coord);
+			}
+			IF_COMMAND("BLOCKDATA") {
+				ChunkClient::parseBlockData(pack);
+			}
 
-			pack >> cnt;
-			ids.resize(cnt); eids.resize(cnt); pos.resize(cnt); vec.resize(cnt); datas.resize(cnt);
-			for (int i = 0; i < cnt; i++)
-				pack >> ids[i] >> eids[i] >> pos[i].x >> pos[i].y >> vec[i].x >> vec[i].y >> datas[i];
+			// PART II --- CLIENT CONTROLS
+			IF_COMMAND("PARTICLE") {
+				// Does the same thing; it is left for ParticleSystem::emit to tell whether to
+				// present locally or to send across the network
+				ParticleEmitTrace log;
+				pack >> log;
+				AUTOLOCKABLE(particleSystem);
+				particleSystem.emitTraced(log);
+			}
+			IF_COMMAND("SETBLOCK") {
+				// Same as above; just call
+				Vector2i coord;
+				string id;
+				pack >> coord.x >> coord.y >> id;
+				AUTOLOCKABLE(terrainManager);
+				terrainManager.setBlock(coord, id, true);
+			}
+			IF_COMMAND("PLACEBLOCK") {
+				// Same as above; just call
+				Vector2i coord;
+				string id;
+				pack >> coord.x >> coord.y >> id;
+				AUTOLOCKABLE(terrainManager);
+				terrainManager.placeBlock(coord, id, nullptr, true);
+			}
+			IF_COMMAND("INSENTITY") {
+				Uuid id;
+				string str;
+				Vector2d pos, vel;
+				pack >> id >> str;
+				pack >> pos.x >> pos.y >> vel.x >> vel.y;
+				shared_ptr<Entity> e = entityAllocator.allocate(str);
+				if (e != nullptr) {
+					e->setUuid(id);
+					e->setPosition(pos);
+					e->setVelocity(vel);
+					pack >> e->getDataset();
+					AUTOLOCKABLE(entityManager);
+					entityManager.insert(id, e);
+				}
+			}
+			IF_COMMAND("DELENTITY") {
+				Uuid id;
+				pack >> id;
+				entityManager.lock();
+				shared_ptr<Entity> e = entityManager.getEntity(id);
+				if (e != nullptr)
+					e->kill();
+				entityManager.unlock();
+			}
+			IF_COMMAND("ENTITY") {
+				vector<Uuid> ids;
+				vector<string> eids;
+				vector<Vector2d> pos, vec;
+				vector<Dataset> datas;
+				unsigned long long cnt;
 
-			entityManager.lock();
-			for (int i = 0; i < cnt; i++) {
-				shared_ptr<Entity> e = entityManager.getEntity(ids[i]);
-				if (e == nullptr) {
-					// Allocate a new entity
-					shared_ptr<Entity> ex = entityAllocator.allocate(eids[i]);
-					if (ex != nullptr) {
-						ex->setUuid(ids[i]);
-						ex->setPosition(pos[i]);
-						ex->setVelocity(vec[i]);
-						ex->getDataset() = datas[i];
-						ex->setData("remote", true);
-						entityManager.insert(ids[i], ex);
+				pack >> cnt;
+				ids.resize(cnt); eids.resize(cnt); pos.resize(cnt); vec.resize(cnt); datas.resize(cnt);
+				for (int i = 0; i < cnt; i++)
+					pack >> ids[i] >> eids[i] >> pos[i].x >> pos[i].y >> vec[i].x >> vec[i].y >> datas[i];
+
+				entityManager.lock();
+				for (int i = 0; i < cnt; i++) {
+					shared_ptr<Entity> e = entityManager.getEntity(ids[i]);
+					if (e == nullptr) {
+						// Allocate a new entity
+						shared_ptr<Entity> ex = entityAllocator.allocate(eids[i]);
+						if (ex != nullptr) {
+							ex->setUuid(ids[i]);
+							ex->setPosition(pos[i]);
+							ex->setVelocity(vec[i]);
+							ex->getDataset() = datas[i];
+							ex->setData("remote", true);
+							ex->setData("last_update", programRunTimeClock.getElapsedTime().asMilliseconds());
+							ex->alive = true;
+							entityManager.insert(ids[i], ex);
+						}
+					}
+					else {
+						e->setPosition(pos[i]);
+						e->setVelocity(vec[i]);
+						e->getDataset() = datas[i];
+						e->setData("remote", true);
+						e->setData("last_update", programRunTimeClock.getElapsedTime().asMilliseconds());
 					}
 				}
-				else {
-					e->setPosition(pos[i]);
-					e->setVelocity(vec[i]);
-					e->getDataset() = datas[i];
-					e->setData("remote", true);
-				}
+				entityManager.unlock();
 			}
-			entityManager.unlock();
 		}
+
+		// Send queue contents
+		queueLock.lock();
+		while (!messageQueue.empty()) {
+			while ((stat = socket.send(messageQueue.front())) == Socket::Partial || stat == Socket::NotReady);
+			messageQueue.pop();
+		}
+		queueLock.unlock();
 
 	}
 	dlog.logf(Log::Info, "[NetworkHandler] Peer %s:%d disconnected.", ip.toString().c_str(), port);
@@ -312,14 +320,6 @@ void NetworkHandler::getChunkCount() {
 void NetworkHandler::getSpawnpoints() {
 	CHECK_CONNECT;
 	CHECKED_SEND_COMMAND("GETSPAWN");
-}
-
-
-////////////////////////////////////////
-void NetworkHandler::getLightSources() {
-	mlog << "[NetworkHandler] Requesting light sources" << dlog;
-	CHECK_CONNECT;
-	CHECKED_SEND_COMMAND("GETLIGHTS");
 }
 
 
@@ -437,15 +437,6 @@ void NetworkHandler::onSetBlock(Vector2i coord, string blockId) {
 	CHECK_CONNECT;
 	PACKET_COMMAND(pack, "SETBLOCK");
 	pack << coord.x << coord.y << blockId;
-	CHECKED_SEND(pack);
-}
-
-
-////////////////////////////////////////
-void NetworkHandler::onBreakBlock(Vector2i coord) {
-	CHECK_CONNECT;
-	PACKET_COMMAND(pack, "BREAKBLOCK");
-	pack << coord.x << coord.y;
 	CHECKED_SEND(pack);
 }
 

@@ -10,7 +10,8 @@ public:
 
 	static void shoot(double force = RpgExplodeForce,
 					  Vector2d position = localPlayer->getEyePosition(),
-					  double degree = gameIO.degreeAngle);
+					  double degree = gameIO.degreeAngle,
+					  double speed = 16.0);
 
 public:
 

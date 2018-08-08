@@ -89,6 +89,7 @@ void TestScene::start(RenderWindow & win) {
 
 	localPlayer = make_shared<PlayerEntity>();
 	localPlayer->setIsLocalPlayer(true);
+	localPlayer->setHealth(localPlayer->getMaxHealth());
 	entityManager.insert(localPlayer, Vector2d(prov.getSpawnPoints()[0]) + Vector2d(0.5, 1 - 1e-7));
 
 	gameIO.ruleExplosionDamagesTerrain = true;
@@ -272,8 +273,9 @@ void TestScene::updateLogic(RenderWindow & win) {
 	if (logicIO.mouseState[Mouse::Right] == LogicIO::JustReleased)
 		_sendMouseReleasedToHandItem(Mouse::Right);
 	if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Middle] == LogicIO::JustPressed)) {
-		if (localPlayer == nullptr) {
+		if (!localPlayer->isAlive()) {
 			localPlayer = make_shared<PlayerEntity>();
+			localPlayer->setHealth(localPlayer->getMaxHealth());
 			localPlayer->setIsLocalPlayer(true);
 			entityManager.insert(localPlayer, TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win)));
 		}
@@ -396,7 +398,7 @@ void TestScene::runImGui() {
 		imgui::Begin("Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 		imgui::ShowFontSelector("Fonts");
 		imgui::Text(u8"Innovation In China 中国智造，惠及全球 1234567890");
-		static char langFile[128] = { "lang-zh-Hans.list" };
+		static char langFile[128] = {"lang-zh-Hans.list"};
 		if (imgui::InputText("Language File", langFile, sizeof(langFile), ImGuiInputTextFlags_EnterReturnsTrue))
 			text.loadFromFile(langFile);
 		static float value = renderIO.gameScaleFactor;
@@ -567,8 +569,8 @@ void TestScene::runImGui() {
 
 		imgui::Text("Tick Time");
 		imgui::Text("  Render");
-		Time values[] = { appRenderTime, runImGuiTime, imGuiRenderTime, imGuiUpdateTime };
-		string names[] = { "App->OnRender() %6dMs", "App->RunImGui() %6dMs", "ImGui::Render() %6dMs", "ImGui::Update() %6dMs" };
+		Time values[] = {appRenderTime, runImGuiTime, imGuiRenderTime, imGuiUpdateTime};
+		string names[] = {"App->OnRender() %6dMs", "App->RunImGui() %6dMs", "ImGui::Render() %6dMs", "ImGui::Update() %6dMs"};
 		for (int i = 0; i < 4; i++) {
 			imgui::Text(names[i].c_str(), values[i].asMicroseconds());
 			if (values[i] != Time::Zero) {

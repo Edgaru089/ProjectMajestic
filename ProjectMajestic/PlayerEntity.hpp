@@ -2,12 +2,13 @@
 
 #include "Main.hpp"
 #include "Entity.hpp"
+#include "Mob.hpp"
 
 
 class ItemEntity;
 
 
-class PlayerEntity :public Entity {
+class PlayerEntity :public Mob {
 public:
 
 	const string getEntityId() override { return "player"; }
@@ -18,6 +19,8 @@ public:
 		else
 			return 0.0;
 	}
+
+	const int getMaxHealth() override { return 100; }
 
 	const double getMaxSpeed() {
 		if (!crouched())
@@ -54,6 +57,7 @@ public:
 	void _pushTriangleVertexes(VertexArray& arr) override;
 
 	void _updateLogic() override;
+	//void _onKill() override;
 
 public:
 

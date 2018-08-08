@@ -36,7 +36,6 @@ void NetworkClient::reloadAllChunks() {
 		for (int j = terrainManager.getChunkCount().y - 1; j >= 0; j--) {
 			handler.getChunkData(Vector2i(i, j));
 		}
-	handler.getLightSources();
 }
 
 
@@ -83,12 +82,6 @@ void NetworkClient::notifyEntityKill(Uuid id) {
 ////////////////////////////////////////
 void NetworkClient::notifyBlockSet(Vector2i coord, string blockId) {
 	handler.onSetBlock(coord, blockId);
-}
-
-
-////////////////////////////////////////
-void NetworkClient::notifyBlockBreak(Vector2i coord) {
-	handler.onBreakBlock(coord);
 }
 
 

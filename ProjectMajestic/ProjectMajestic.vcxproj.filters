@@ -435,6 +435,12 @@
     <ClInclude Include="VTX65.Impl.hpp">
       <Filter>Game\Items&amp;Blocks\Item\Guns\Post</Filter>
     </ClInclude>
+    <ClInclude Include="MRM36.hpp">
+      <Filter>Game\Items&amp;Blocks\Item\Guns\Post</Filter>
+    </ClInclude>
+    <ClInclude Include="MRM36.Impl.hpp">
+      <Filter>Game\Items&amp;Blocks\Item\Guns\Post</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImGui\imgui.cpp">

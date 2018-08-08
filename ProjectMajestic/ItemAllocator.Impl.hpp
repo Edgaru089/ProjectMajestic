@@ -13,6 +13,7 @@
 #include "Barrett.hpp"
 #include "EMX3.hpp"
 #include "VTX65.hpp"
+#include "MRM36.hpp"
 
 #define REGISTER_ITEM_TYPE(type) allocs.insert(make_pair(type(data).getItemId(), allocItem<type>))
 
@@ -34,6 +35,8 @@ void ItemAllocator::initalaize() {
 	REGISTER_ITEM_TYPE(EMX3Ammo);
 	REGISTER_ITEM_TYPE(VTX65);
 	REGISTER_ITEM_TYPE(VTX65Ammo);
+	REGISTER_ITEM_TYPE(MRM36);
+	REGISTER_ITEM_TYPE(MRM36Ammo);
 }
 
 

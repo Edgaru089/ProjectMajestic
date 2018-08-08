@@ -44,6 +44,6 @@ void Block::onDestroy(Entity * destoryer, bool drop) {
 
 		entityManager.insert(e, Vector2d(TerrainManager::convertChunkToWorldCoord(chunk, inChunkPos)) + Vector2d(0.5, 0.8));
 	}
-
-	_onDestroy(destoryer);
+	if (role == Server)
+		_onDestroy(destoryer);
 }

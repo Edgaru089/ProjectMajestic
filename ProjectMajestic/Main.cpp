@@ -23,6 +23,7 @@ void threadRendering() {
 	Clock renderMetricsClock;
 	ImGui::SFML::Update(win, imguiDeltaClock.restart());
 	win.setActive(true);
+	renderClock.restart();
 	while (isReady) {
 		if (!win.isOpen()) {
 			sleep(milliseconds(5));
@@ -48,9 +49,12 @@ void threadRendering() {
 		renderThreadTickTime = appRenderTime + runImGuiTime + imGuiRenderTime + imGuiUpdateTime;
 		logicDataLock.unlock();
 
+		frameCounter++;
 		win.display();
 
 		renderLock.unlock();
+
+		renderTime = renderClock.restart();
 
 		if (frameCounterClock.getElapsedTime() >= seconds(1.0f)) {
 			frameCounterClock.restart();
@@ -58,12 +62,15 @@ void threadRendering() {
 			frameCounter = 0;
 			win.setTitle(StringParser::toStringF("%s | Async | TPS: %d, EPS: %d, FPS: %d", projectCode.c_str(), logicTickPerSecond, eventTickPerSecond, framePerSecond));
 		}
-		frameCounter++;
 	}
 }
 
 void threadLogicUpdate(int ticksPerSecond) {
-	Time tickTime = seconds(1.0f / ticksPerSecond);
+	Time tickTime;
+	if (ticksPerSecond != 0)
+		tickTime = seconds(1.0f / ticksPerSecond);
+	else
+		tickTime = Time::Zero;
 	Clock logicCycleClock;
 	Clock logicMetricsClock;
 	desktopUpdate.restart();
@@ -81,8 +88,8 @@ void threadLogicUpdate(int ticksPerSecond) {
 			logicTickCounter = 0;
 		}
 		logicTickCounter++;
-		if ((t = logicCycleClock.getElapsedTime()) < tickTime)
-			sleep(tickTime - t);
+		if ((t = logicCycleClock.getElapsedTime()) < (tickTime == Time::Zero ? renderTime : tickTime))
+			sleep((tickTime == Time::Zero ? renderTime : tickTime) - t);
 		logicCycleClock.restart();
 	}
 }
@@ -178,12 +185,13 @@ int main(int argc, char* argv[]) {
 	mlog << Log::Warning << "Async Rendering/Logic Update Enabled. Unstable. Aware." << dlog << Log::Info;
 	win.setActive(false);
 	thread render(threadRendering);
-	thread logic(threadLogicUpdate, 60);
+	thread logic(threadLogicUpdate, 90);
 #else
 	Clock imguiDeltaClock;
 #endif
 
-	Time eventTickTime = seconds(1.0f / 60);
+	//Time eventTickTime = seconds(1.0f / 60);
+	Time eventTickTime = microseconds(11111);
 	Clock eventCycleClock;
 	while (win.isOpen() && isReady) {
 
@@ -196,8 +204,8 @@ int main(int argc, char* argv[]) {
 
 			if ((ImGui::GetIO().WantCaptureKeyboard &&
 				(event.type == Event::KeyPressed || event.type == Event::KeyReleased || event.type == Event::TextEntered)) ||
-				(ImGui::GetIO().WantCaptureMouse && (event.type == Event::MouseButtonPressed || event.type ==
-				Event::MouseButtonReleased || event.type == Event::MouseMoved))) {
+				 (ImGui::GetIO().WantCaptureMouse && (event.type == Event::MouseButtonPressed || event.type ==
+													  Event::MouseButtonReleased || event.type == Event::MouseMoved))) {
 				logicDataLock.unlock();
 				continue;
 			}
@@ -254,7 +262,7 @@ int main(int argc, char* argv[]) {
 		app->updateLogic(win);
 
 		app->onRender(win);
-		
+
 		app->runImGui();
 
 		win.setView(View(FloatRect(0, 0, win.getSize().x, win.getSize().y)));
@@ -275,12 +283,12 @@ int main(int argc, char* argv[]) {
 
 #ifdef USE_ASYNC_RENDERING
 		Time t;
-		if ((t = eventCycleClock.getElapsedTime()) < eventTickTime)
-			sleep(eventTickTime - t);
+		if ((t = eventCycleClock.getElapsedTime()) < (eventTickTime == Time::Zero ? renderTime : eventTickTime))
+			sleep((eventTickTime == Time::Zero ? renderTime : eventTickTime) - t);
 #endif
 		eventCycleClock.restart();
 
-	}
+		}
 	win.close();
 	mlog << "Shutdown In Progress..." << dlog;
 	app->onStop();
@@ -297,7 +305,7 @@ int main(int argc, char* argv[]) {
 	isProgramRunning = false;
 
 	return EXIT_SUCCESS;
-}
+	}
 
 
 #include "ImplList.hpp"

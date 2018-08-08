@@ -49,7 +49,7 @@ public:
 public:
 
 	// Destroy/Break a block
-	void breakBlock(Vector2i pos, Entity * breaker = nullptr, bool isForced = false);
+	void breakBlock(Vector2i pos, Entity * breaker = nullptr);
 
 	// Place a block
 	// Does nothing if the block isn't empty

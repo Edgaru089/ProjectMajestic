@@ -75,7 +75,7 @@ void ArrowEntity::_onCollision(shared_ptr<Block> block, CollisionBoxEdge) {
 
 ////////////////////////////////////////
 void ArrowEntity::_onCollideEntity(shared_ptr<Entity> e) {
-	if (inEntity() || inWall())
+	if (inEntity() || inWall() || e->getUuid() == localPlayer->getUuid())
 		return;
 	try {
 		Mob& mob = dynamic_cast<Mob&>(*e);

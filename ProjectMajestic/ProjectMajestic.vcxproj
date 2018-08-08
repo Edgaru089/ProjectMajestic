@@ -239,6 +239,8 @@
     <ClInclude Include="Main.hpp" />
     <ClInclude Include="MinigunItem.hpp" />
     <ClInclude Include="Mob.hpp" />
+    <ClInclude Include="MRM36.hpp" />
+    <ClInclude Include="MRM36.Impl.hpp" />
     <ClInclude Include="NetworkClient.hpp" />
     <ClInclude Include="NetworkClient.Impl.hpp" />
     <ClInclude Include="NetworkHandler.hpp" />

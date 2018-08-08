@@ -35,8 +35,6 @@ public:
 
 	void notifyBlockSet(Vector2i coord, string blockId);
 
-	void notifyBlockBreak(Vector2i coord);
-
 	void notifyBlockPlace(Vector2i coord, string blockId);
 
 private:

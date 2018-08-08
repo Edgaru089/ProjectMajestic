@@ -26,6 +26,7 @@
 #include "ItemAllocator.Impl.hpp"
 #include "ItemEntity.Impl.hpp"
 #include "LaserBullet.Impl.hpp"
+#include "MRM36.Impl.hpp"
 #include "NetworkClient.Impl.hpp"
 #include "NetworkHandler.Impl.hpp"
 #include "NetworkServer.Impl.hpp"

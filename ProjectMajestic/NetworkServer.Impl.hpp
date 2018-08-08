@@ -91,15 +91,6 @@ void NetworkServer::notifyBlockSet(Vector2i coord, string id) {
 
 
 ////////////////////////////////////////
-void NetworkServer::notifyBlockBreak(Vector2i coord) {
-	AUTOLOCK(handlerLock);
-	for (auto handler : handlers) {
-		handler->onBreakBlock(coord);
-	}
-}
-
-
-////////////////////////////////////////
 void NetworkServer::notifyBlockPlace(Vector2i coord, string id) {
 	AUTOLOCK(handlerLock);
 	for (auto handler : handlers) {
