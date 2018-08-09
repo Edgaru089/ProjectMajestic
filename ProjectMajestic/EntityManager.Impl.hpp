@@ -2,8 +2,6 @@
 #include "EntityManager.hpp"
 #include "ParticleSystem.hpp"
 #include "Mob.hpp"
-#include "NetworkClient.hpp"
-#include "NetworkServer.hpp"
 #include <typeinfo>
 
 
@@ -17,12 +15,8 @@ void EntityManager::initalaize() {
 void EntityManager::updateLogic() {
 	AUTOLOCKABLE(*this);
 	for (auto i = entities.begin(); i != entities.end();) {
-		if (i->second == nullptr || !i->second->isAlive()) {
-			if (i->second != nullptr) {
-				networkServer.notifyEntityKill(i->second->getUuid());
-			}
+		if (i->second == nullptr || !i->second->isAlive())
 			i = entities.erase(i);
-		}
 		else {
 			//threadPool.enqueue([=]() {i->second->updateLogic(); });
 			i->second->updateLogic();
@@ -35,9 +29,6 @@ void EntityManager::updateLogic() {
 				if (j.first != i.first&&j.second->getHitbox().intersects(i.second->getHitbox()))
 					i.second->_onCollideEntity(j.second);
 	}
-
-	if (role == Client)
-		networkClient.syncPlayerPos();
 }
 
 
@@ -148,8 +139,6 @@ Uuid EntityManager::insert(shared_ptr<Entity> entity, Vector2d position) {
 	entities.insert(make_pair(id, entity));
 	unlock();
 	entity->onCreate();
-	networkClient.notifyEntityInsert(id, entity);
-	networkServer.notifyEntityInsert(id, entity);
 	return id;
 }
 

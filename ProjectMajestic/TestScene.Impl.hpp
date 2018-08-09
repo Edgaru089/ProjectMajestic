@@ -8,8 +8,6 @@
 #include "EntityManager.hpp"
 #include "TestEntity.hpp"
 #include "ParticleSystem.hpp"
-#include "NetworkServer.hpp"
-#include "NetworkClient.hpp"
 #include "EntityAllocator.hpp"
 #include "InGameUI.hpp"
 #include "PlayerInventory.hpp"
@@ -424,51 +422,6 @@ void TestScene::runImGui() {
 		imgui::End();
 
 		imgui::ShowDemoWindow();
-
-		imgui::Begin("Server", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-		static int ports;
-		imgui::InputInt("Port", &ports);
-		imgui::SameLine();
-		if (!networkServer.isListening()) {
-			if (imgui::Button("Start"))
-				networkServer.startListen(ports);
-		}
-		else {
-			if (imgui::Button("Stop"))
-				networkServer.stopServer();
-		}
-		imgui::End();
-
-		imgui::Begin("Client", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-		static int portc;
-		static char ip[256];
-		imgui::InputText("Ip Address", ip, 256);
-		imgui::InputInt("Port", &portc);
-		imgui::SameLine();
-		if (imgui::Button("Kill player")) {
-			if (localPlayer != nullptr) {
-				localPlayer->kill();
-				localPlayer = nullptr;
-			}
-		}
-		if (!networkClient.isConnected()) {
-			if (imgui::Button("Connect"))
-				networkClient.connect(IpAddress(ip), portc);
-		}
-		else {
-			if (imgui::Button("Get Chunk Count")) {
-				networkClient.getChunkCount();
-			}
-			imgui::SameLine();
-			if (imgui::Button("Clear Terrain")) {
-				terrainManager.clearChunks();
-			}
-			imgui::SameLine();
-			if (imgui::Button("Reload Terrain")) {
-				networkClient.reloadAllChunks();
-			}
-		}
-		imgui::End();
 	}
 
 	if (showDebugInfo) {

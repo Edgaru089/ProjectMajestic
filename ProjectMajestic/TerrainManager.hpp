@@ -44,7 +44,7 @@ public:
 
 	// SetBlock() doesn't call the block's OnDestroy() function
 	// Use PlaceBlock() when player places a block
-	void setBlock(Vector2i coord, string blockId, bool isForced = false);
+	void setBlock(Vector2i coord, string blockId);
 
 public:
 

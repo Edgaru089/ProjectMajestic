@@ -132,8 +132,7 @@ public:
 			  Time liveTimeBegin,
 			  Time liveTimeEnd,
 			  Vector2d size = Vector2d(0.2, 0.2),
-			  double gravity = 2.8,
-			  bool isForced = false);
+			  double gravity = 2.8);
 
 	// Emit <Count> particles with the texture <Texture> with a size of the entire
 	// texture divided by <sizeDivisor> at a random position in rectangle <Range>
@@ -149,8 +148,7 @@ public:
 			  Time liveTimeBegin,
 			  Time liveTimeEnd,
 			  Vector2d size = Vector2d(0.2, 0.2),
-			  double gravity = 2.8,
-			  bool isForced = false);
+			  double gravity = 2.8);
 
 	// Emit <Count> particles with the texture <Texture> with a size of the entire
 	// texture divided by <sizeDivisor> at <Position> with <Speed> at an angle randomly seperated
@@ -169,8 +167,7 @@ public:
 			  Time liveTimeBegin,
 			  Time liveTimeEnd,
 			  Vector2d size = Vector2d(0.2, 0.2),
-			  double gravity = 2.8,
-			  bool isForced = false);
+			  double gravity = 2.8);
 
 	// Emit <Count> particles with the texture <Texture> with a size of the entire
 	// texture divided by <sizeDivisor> at a random position in rectangle <Range>
@@ -189,15 +186,7 @@ public:
 			  Time liveTimeBegin,
 			  Time liveTimeEnd,
 			  Vector2d size = Vector2d(0.2, 0.2),
-			  double gravity = 2.8,
-			  bool isForced = false);
-
-public:
-
-	// This emit is always forced, i.e., it is always presented locally and
-	// never sent across the network on a client, and both presented and sent
-	// to the clients on a server.
-	void emitTraced(const ParticleEmitTrace& log);
+			  double gravity = 2.8);
 
 private:
 

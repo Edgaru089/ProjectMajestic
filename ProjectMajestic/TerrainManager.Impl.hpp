@@ -220,17 +220,12 @@ shared_ptr<Block> TerrainManager::getBlock(Vector2i coord) {
 
 
 ////////////////////////////////////////
-void TerrainManager::setBlock(Vector2i coord, string blockId, bool isForced) {
+void TerrainManager::setBlock(Vector2i coord, string blockId) {
 	AUTOLOCKABLE(*this);
-	if (!isForced || role == Server) {
-		networkClient.notifyBlockSet(coord, blockId);
-		networkServer.notifyBlockSet(coord, blockId);
+	if (chunks.find(convertWorldCoordToChunkId(coord)) != chunks.end()) {
+		chunks[convertWorldCoordToChunkId(coord)]->setBlock(
+			convertWorldCoordToInChunkCoord(coord), blockAllocator.allocate(blockId));
 	}
-	if (isForced || role == Server)
-		if (chunks.find(convertWorldCoordToChunkId(coord)) != chunks.end()) {
-			chunks[convertWorldCoordToChunkId(coord)]->setBlock(
-				convertWorldCoordToInChunkCoord(coord), blockAllocator.allocate(blockId));
-		}
 }
 
 
@@ -255,11 +250,6 @@ void TerrainManager::breakBlock(Vector2i pos, Entity * breaker) {
 ////////////////////////////////////////
 void TerrainManager::placeBlock(Vector2i pos, string blockId, Entity * placer, bool isForced) {
 	AUTOLOCKABLE(*this);
-	if (!isForced || role == Server) {
-		networkClient.notifyBlockPlace(pos, blockId);
-		networkServer.notifyBlockPlace(pos, blockId);
-	}
-	if (isForced || role == Server) {
 		map<Vector2i, shared_ptr<Chunk>, Vector2Less<int>>::iterator i = chunks.find(convertWorldCoordToChunkId(pos));
 		if (i == chunks.end() || i->second == nullptr)
 			return;
@@ -270,7 +260,6 @@ void TerrainManager::placeBlock(Vector2i pos, string blockId, Entity * placer, b
 			if (b->getLightStrength() > 0)
 				wantUpdateLight = true;
 		}
-	}
 }
 
 

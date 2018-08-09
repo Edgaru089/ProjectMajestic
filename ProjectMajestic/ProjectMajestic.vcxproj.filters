@@ -43,9 +43,6 @@
     <Filter Include="Scenes">
       <UniqueIdentifier>{03923119-d2de-4b77-be81-558350c44c10}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Network">
-      <UniqueIdentifier>{5e00d7c5-9b06-4053-a3b1-fd421a7c4110}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Terrain\TerrainProvider">
       <UniqueIdentifier>{6046da30-c3c5-4287-ba16-a0e71a11224c}</UniqueIdentifier>
     </Filter>
@@ -213,12 +210,6 @@
     <ClInclude Include="TerrainProvider.Impl.hpp">
       <Filter>Game\Terrain\TerrainProvider</Filter>
     </ClInclude>
-    <ClInclude Include="ChunkClient.hpp">
-      <Filter>Game\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="ChunkClient.Impl.hpp">
-      <Filter>Game\Network</Filter>
-    </ClInclude>
     <ClInclude Include="AssetManager.hpp">
       <Filter>Game\Asset</Filter>
     </ClInclude>
@@ -257,24 +248,6 @@
     </ClInclude>
     <ClInclude Include="TestEntity.hpp">
       <Filter>Game\Entities\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="NetworkServer.hpp">
-      <Filter>Game\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="NetworkClient.hpp">
-      <Filter>Game\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="NetworkHandler.hpp">
-      <Filter>Game\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="NetworkHandler.Impl.hpp">
-      <Filter>Game\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="NetworkServer.Impl.hpp">
-      <Filter>Game\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="NetworkClient.Impl.hpp">
-      <Filter>Game\Network</Filter>
     </ClInclude>
     <ClInclude Include="Lockable.hpp">
       <Filter>Utilities</Filter>

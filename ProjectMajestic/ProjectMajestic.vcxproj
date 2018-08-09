@@ -190,8 +190,6 @@
     <ClInclude Include="ChestInventory.hpp" />
     <ClInclude Include="ChestInventory.Impl.hpp" />
     <ClInclude Include="Chunk.hpp" />
-    <ClInclude Include="ChunkClient.hpp" />
-    <ClInclude Include="ChunkClient.Impl.hpp" />
     <ClInclude Include="ChunkProvider.hpp" />
     <ClInclude Include="Data.hpp" />
     <ClInclude Include="EMX3.hpp" />
@@ -242,12 +240,6 @@
     <ClInclude Include="Mob.Impl.hpp" />
     <ClInclude Include="MRM36.hpp" />
     <ClInclude Include="MRM36.Impl.hpp" />
-    <ClInclude Include="NetworkClient.hpp" />
-    <ClInclude Include="NetworkClient.Impl.hpp" />
-    <ClInclude Include="NetworkHandler.hpp" />
-    <ClInclude Include="NetworkHandler.Impl.hpp" />
-    <ClInclude Include="NetworkServer.hpp" />
-    <ClInclude Include="NetworkServer.Impl.hpp" />
     <ClInclude Include="OptionFile.hpp" />
     <ClInclude Include="IO.hpp" />
     <ClInclude Include="OptionFileAdv.hpp" />
