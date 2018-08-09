@@ -11,6 +11,7 @@
 #include "EntityAllocator.hpp"
 #include "InGameUI.hpp"
 #include "PlayerInventory.hpp"
+#include "GamePausedUI.hpp"
 
 
 ////////////////////////////////////////
@@ -66,15 +67,15 @@ void TestScene::preWindowInitalaize() {
 
 void TestScene::postWindowInitalaize(RenderWindow& win) {
 	imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("font_minecraft").c_str(),
-											 16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
+		16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
 	imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("courier_new").c_str(),
-											 13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
+		13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
 	imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("courier_new_bold").c_str(),
-											 13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
-										 //imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("source_han_sans").c_str(),
-											 //16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
+		13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
+	//imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("source_han_sans").c_str(),
+		//16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
 	imgui::GetIO().Fonts->AddFontFromFileTTF("C:/Windows/Fonts/Dengb.ttf",
-											 13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
+		13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
 	imgui::SFML::UpdateFontTexture();
 
 	prov.setup(Vector2u(3, 2), 5);
@@ -116,7 +117,7 @@ void TestScene::onRender(RenderWindow & win) {
 	sp.setTextureRect(IntRect(0, 0, (win.getView().getSize().x + 2 * renderIO.gameScaleFactor * 1.5) / sp.getScale().x,
 		(win.getView().getSize().y + 2 * renderIO.gameScaleFactor * 1.5) / sp.getScale().y));
 	sp.setPosition(fmod(renderIO.gameScenePosOffset.x, renderIO.gameScaleFactor * 1.5) - renderIO.gameScaleFactor * 1.5,
-				   fmod(renderIO.gameScenePosOffset.y, renderIO.gameScaleFactor * 1.5) - renderIO.gameScaleFactor * 1.5);
+		fmod(renderIO.gameScenePosOffset.y, renderIO.gameScaleFactor * 1.5) - renderIO.gameScaleFactor * 1.5);
 	win.draw(sp);
 
 	renderIO.viewRect = FloatRect(-renderIO.gameScenePosOffset.x, -renderIO.gameScenePosOffset.y, win.getSize().x, win.getSize().y);
@@ -145,7 +146,7 @@ void TestScene::onRender(RenderWindow & win) {
 		if (i.second != nullptr)
 			win.draw(renderRect(i.second->getHitbox()*renderIO.gameScaleFactor));
 
-	Vector2i mousePos = TerrainManager::convertScreenPixelToWorldBlockCoord(Mouse::getPosition(win));
+	Vector2i mousePos = TerrainManager::convertScreenPixelToWorldBlockCoord(gameIO.mouse);
 	shared_ptr<Block> b = terrainManager.getBlock(mousePos);
 	if (b == nullptr) {
 		Vector2d center = Vector2d(mousePos.x + 0.5, mousePos.y + 0.5)*renderIO.gameScaleFactor;
@@ -176,14 +177,14 @@ void TestScene::onRender(RenderWindow & win) {
 		//verts.append(Vertex(Vector2f(eye.x - win.getSize().x / (float)renderIO.gameScaleFactor / 2.0f, eye.y) * (float)renderIO.gameScaleFactor, Color::White));
 		//verts.append(Vertex(Vector2f(eye.x + win.getSize().x / (float)renderIO.gameScaleFactor / 2.0f, eye.y) * (float)renderIO.gameScaleFactor, Color::White));
 		verts.append(Vertex(Vector2f(eye) * (float)renderIO.gameScaleFactor, Color::White));
-		verts.append(Vertex(Vector2f(TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win))) * (float)renderIO.gameScaleFactor, Color::White));
+		verts.append(Vertex(Vector2f(TerrainManager::convertScreenPixelToWorldCoord(gameIO.mouse)) * (float)renderIO.gameScaleFactor, Color::White));
 		verts.setPrimitiveType(PrimitiveType::Lines);
 		win.draw(verts);
 	}
 
 	win.setView(View(FloatRect(0, 0, win.getSize().x, win.getSize().y)));
 	VertexArray verts;
-	Vector2i pos = Mouse::getPosition(win);
+	Vector2i pos = gameIO.mouse;
 	//verts.append(Vertex(Vector2f(pos.x, 0)));
 	//verts.append(Vertex(Vector2f(pos.x, win.getView().getSize().y)));
 	//verts.append(Vertex(Vector2f(0, pos.y)));
@@ -230,124 +231,153 @@ void TestScene::_sendMouseReleasedToHandItem(Mouse::Button button) {
 void TestScene::updateLogic(RenderWindow & win) {
 	AUTOLOCK_ALL_SYSTEM;
 
-	if (localPlayer != nullptr) {
-		Vector2d mouseBlock = TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win));
-		Vector2d eyePos = localPlayer->getEyePosition();
-		gameIO.degreeAngle = atan((mouseBlock.y - eyePos.y) / (mouseBlock.x - eyePos.x)) * 180.0 / PI;
-		if (mouseBlock.x - eyePos.x < 0)
-			gameIO.degreeAngle += 180.0;
-		if (gameIO.degreeAngle > 360.0)
-			gameIO.degreeAngle -= 360.0;
-		if (gameIO.degreeAngle < 0.0)
-			gameIO.degreeAngle += 360.0;
-	}
-
-	// Manage keys and game/player controls
-	// Mouse controls
-	if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Left] == LogicIO::JustPressed))
-		if (!_sendMousePressedToHandItem(Mouse::Left))
-			terrainManager.breakBlock(TerrainManager::convertScreenPixelToWorldBlockCoord(Mouse::getPosition(win)));
-	if (logicIO.mouseState[Mouse::Left] == LogicIO::JustReleased)
-		_sendMouseReleasedToHandItem(Mouse::Left);
-	if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Right] == LogicIO::JustPressed)) {
-		const string& str = playerInventory.slots[0][playerInventory.cursorId]["item_name"].getDataString();
-		bool sendRightClick = true;
-		Vector2i coord = TerrainManager::convertScreenPixelToWorldBlockCoord(Mouse::getPosition(win));
-		shared_ptr<Block> b = terrainManager.getBlock(coord);
-		if (str != "") {
-			if (str.substr(0, 6) == "block_")
-				terrainManager.placeBlock(coord, str.substr(6));
-			else if (str.substr(0, 5) == "item_") {
-				shared_ptr<Item> item = itemAllocator.allocate(str.substr(5), playerInventory.slots[0][playerInventory.cursorId]);
-				if (item != nullptr)
-					sendRightClick = !item->_onRightPressed();
-			}
-		}
-		if (sendRightClick) {
-			if (b != nullptr)
-				b->_onRightClick();
-		}
-	}
-	if (logicIO.mouseState[Mouse::Right] == LogicIO::JustReleased)
-		_sendMouseReleasedToHandItem(Mouse::Right);
-	if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Middle] == LogicIO::JustPressed)) {
-		if (!localPlayer->isAlive()) {
-			localPlayer = make_shared<PlayerEntity>();
-			localPlayer->setHealth(localPlayer->getMaxHealth());
-			localPlayer->setIsLocalPlayer(true);
-			entityManager.insert(localPlayer, TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win)));
+	static auto handleKeyState = [&](LogicIO::KeyState& state, bool isDown) {
+		if (isDown) {
+			if (state == LogicIO::Released || state == LogicIO::JustReleased)
+				state = LogicIO::JustPressed;
+			else
+				state = LogicIO::Pressed;
 		}
 		else {
-			if (testEntity == Uuid()) {
-				shared_ptr<TestEntity> te = make_shared<TestEntity>();
-				te->setHealth(te->getMaxHealth());
-				testEntity = entityManager.insert(te, TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win)));
+			if (state == LogicIO::Pressed || state == LogicIO::JustPressed)
+				state = LogicIO::JustReleased;
+			else
+				state = LogicIO::Released;
+		}
+	};
+
+	if (uiManager.getCurrentUI() == nullptr || !uiManager.getCurrentUI()->isBlocking()) {
+		// Update key states
+		// Keyboard
+		for (int i = 0; i < Keyboard::KeyCount; i++)
+			handleKeyState(logicIO.keyboardState[i], Keyboard::isKeyPressed((Keyboard::Key)i));
+		// Mouse
+		for (int i = 0; i < Mouse::ButtonCount; i++)
+			handleKeyState(logicIO.mouseState[i], Mouse::isButtonPressed((Mouse::Button)i));
+
+		gameIO.mouse = Mouse::getPosition(win);
+
+		if (localPlayer != nullptr) {
+			Vector2d mouseBlock = TerrainManager::convertScreenPixelToWorldCoord(gameIO.mouse);
+			Vector2d eyePos = localPlayer->getEyePosition();
+			gameIO.degreeAngle = atan((mouseBlock.y - eyePos.y) / (mouseBlock.x - eyePos.x)) * 180.0 / PI;
+			if (mouseBlock.x - eyePos.x < 0)
+				gameIO.degreeAngle += 180.0;
+			if (gameIO.degreeAngle > 360.0)
+				gameIO.degreeAngle -= 360.0;
+			if (gameIO.degreeAngle < 0.0)
+				gameIO.degreeAngle += 360.0;
+		}
+
+		// Manage keys and game/player controls
+		// Mouse controls
+		if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Left] == LogicIO::JustPressed))
+			if (!_sendMousePressedToHandItem(Mouse::Left))
+				terrainManager.breakBlock(TerrainManager::convertScreenPixelToWorldBlockCoord(gameIO.mouse));
+		if (logicIO.mouseState[Mouse::Left] == LogicIO::JustReleased)
+			_sendMouseReleasedToHandItem(Mouse::Left);
+		if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Right] == LogicIO::JustPressed)) {
+			const string& str = playerInventory.slots[0][playerInventory.cursorId]["item_name"].getDataString();
+			bool sendRightClick = true;
+			Vector2i coord = TerrainManager::convertScreenPixelToWorldBlockCoord(gameIO.mouse);
+			shared_ptr<Block> b = terrainManager.getBlock(coord);
+			if (str != "") {
+				if (str.substr(0, 6) == "block_")
+					terrainManager.placeBlock(coord, str.substr(6));
+				else if (str.substr(0, 5) == "item_") {
+					shared_ptr<Item> item = itemAllocator.allocate(str.substr(5), playerInventory.slots[0][playerInventory.cursorId]);
+					if (item != nullptr)
+						sendRightClick = !item->_onRightPressed();
+				}
+			}
+			if (sendRightClick) {
+				if (b != nullptr)
+					b->_onRightClick();
+			}
+		}
+		if (logicIO.mouseState[Mouse::Right] == LogicIO::JustReleased)
+			_sendMouseReleasedToHandItem(Mouse::Right);
+		if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Middle] == LogicIO::JustPressed)) {
+			if (!localPlayer->isAlive()) {
+				localPlayer = make_shared<PlayerEntity>();
+				localPlayer->setHealth(localPlayer->getMaxHealth());
+				localPlayer->setIsLocalPlayer(true);
+				entityManager.insert(localPlayer, TerrainManager::convertScreenPixelToWorldCoord(gameIO.mouse));
 			}
 			else {
-				shared_ptr<TestEntity> te = make_shared<TestEntity>();
-				te->setHealth(te->getMaxHealth());
-				entityManager.insert(te, TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win)));
-			}
-				//entityManager.explode(TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win)),
+				if (testEntity == Uuid()) {
+					shared_ptr<TestEntity> te = make_shared<TestEntity>();
+					te->setHealth(te->getMaxHealth());
+					testEntity = entityManager.insert(te, TerrainManager::convertScreenPixelToWorldCoord(gameIO.mouse));
+				}
+				else {
+					shared_ptr<TestEntity> te = make_shared<TestEntity>();
+					te->setHealth(te->getMaxHealth());
+					entityManager.insert(te, TerrainManager::convertScreenPixelToWorldCoord(gameIO.mouse));
+				}
+				//entityManager.explode(TerrainManager::convertScreenPixelToWorldCoord(gameIO.mouse),
 				//					  12.0, false);
-			//particleSystem.emitSmoke(TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win)));
+			//particleSystem.emitSmoke(TerrainManager::convertScreenPixelToWorldCoord(gameIO.mouse));
 			//for (int i = 1; i <= 1000; i++) {
 			//	// Tile Drop
 			//	ItemEntity* e = new ItemEntity("block_stone");
 			//	// Give a random velocity
 			//	e->accelerateVector(1.0, 180 + rand() % 180);
 
-			//	entityManager.insert(e, Vector2d(TerrainManager::convertScreenPixelToWorldCoord(Mouse::getPosition(win))) + Vector2d(0.5, 0.8));
+			//	entityManager.insert(e, Vector2d(TerrainManager::convertScreenPixelToWorldCoord(gameIO.mouse)) + Vector2d(0.5, 0.8));
 			//}
+			}
 		}
+
+		// Keyboard controls
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			logicIO.keyboardState[Keyboard::F1] == LogicIO::JustPressed)
+			showExtraImGuiWindows = !showExtraImGuiWindows;
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			logicIO.keyboardState[Keyboard::F3] == LogicIO::JustPressed)
+			app->hasLog = showDebugInfo = !showDebugInfo;
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			(logicIO.keyboardState[Keyboard::A] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustPressed))
+			localPlayer->moveLeft(true);
+		if (logicIO.keyboardState[Keyboard::A] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustReleased)
+			localPlayer->moveLeft(false);
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			(logicIO.keyboardState[Keyboard::D] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Right] == LogicIO::JustPressed))
+			localPlayer->moveRight(true);
+		if (logicIO.keyboardState[Keyboard::D] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Right] == LogicIO::JustReleased)
+			localPlayer->moveRight(false);
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			(Keyboard::isKeyPressed(Keyboard::W) || Keyboard::isKeyPressed(Keyboard::Up)))
+			localPlayer->ascendLadder(true);
+		if (logicIO.keyboardState[Keyboard::W] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Up] == LogicIO::JustReleased)
+			localPlayer->ascendLadder(false);
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			(Keyboard::isKeyPressed(Keyboard::S) || Keyboard::isKeyPressed(Keyboard::Down)))
+			localPlayer->decendLadder(true);
+		if (logicIO.keyboardState[Keyboard::S] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Down] == LogicIO::JustReleased)
+			localPlayer->decendLadder(false);
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			(logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustPressed))
+			localPlayer->crouch(true);
+		if (logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustReleased)
+			localPlayer->crouch(false);
+		if (!imgui::GetIO().WantCaptureKeyboard &&
+			Keyboard::isKeyPressed(Keyboard::Space))
+			localPlayer->jump();
+
+		terrainManager.updateLogic();
+		particleSystem.updateLogic();
+		entityManager.updateLogic();
+		playerInventory.updateLogic();
 	}
+	else // Excilpty handle the Escape key to support escaping from pause screen using Esc key
+		handleKeyState(logicIO.keyboardState[Keyboard::Escape], Keyboard::isKeyPressed(Keyboard::Escape));
 
-	// Keyboard controls
-	if (!imgui::GetIO().WantCaptureKeyboard &&
-		logicIO.keyboardState[Keyboard::F1] == LogicIO::JustPressed)
-		showExtraImGuiWindows = !showExtraImGuiWindows;
-	if (!imgui::GetIO().WantCaptureKeyboard &&
-		logicIO.keyboardState[Keyboard::F3] == LogicIO::JustPressed)
-		app->hasLog = showDebugInfo = !showDebugInfo;
-	if (!imgui::GetIO().WantCaptureKeyboard &&
-		(logicIO.keyboardState[Keyboard::A] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustPressed))
-		localPlayer->moveLeft(true);
-	if (logicIO.keyboardState[Keyboard::A] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustReleased)
-		localPlayer->moveLeft(false);
-	if (!imgui::GetIO().WantCaptureKeyboard &&
-		(logicIO.keyboardState[Keyboard::D] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Right] == LogicIO::JustPressed))
-		localPlayer->moveRight(true);
-	if (logicIO.keyboardState[Keyboard::D] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Right] == LogicIO::JustReleased)
-		localPlayer->moveRight(false);
-	if (!imgui::GetIO().WantCaptureKeyboard &&
-		(Keyboard::isKeyPressed(Keyboard::W) || Keyboard::isKeyPressed(Keyboard::Up)))
-		localPlayer->ascendLadder(true);
-	if (logicIO.keyboardState[Keyboard::W] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Up] == LogicIO::JustReleased)
-		localPlayer->ascendLadder(false);
-	if (!imgui::GetIO().WantCaptureKeyboard &&
-		(Keyboard::isKeyPressed(Keyboard::S) || Keyboard::isKeyPressed(Keyboard::Down)))
-		localPlayer->decendLadder(true);
-	if (logicIO.keyboardState[Keyboard::S] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Down] == LogicIO::JustReleased)
-		localPlayer->decendLadder(false);
-	if (!imgui::GetIO().WantCaptureKeyboard &&
-		(logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustPressed))
-		localPlayer->crouch(true);
-	if (logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustReleased)
-		localPlayer->crouch(false);
-	if (!imgui::GetIO().WantCaptureKeyboard &&
-		Keyboard::isKeyPressed(Keyboard::Space))
-		localPlayer->jump();
-
-	terrainManager.updateLogic();
-	particleSystem.updateLogic();
-	entityManager.updateLogic();
-	playerInventory.updateLogic();
 	uiManager.updateLogic();
-
 	if (logicIO.keyboardState[Keyboard::E] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard)
 		uiManager.changeUI(make_shared<PlayerInventoryUI>());
 	if (logicIO.keyboardState[Keyboard::Escape] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard)
-		uiManager.changeUI(make_shared<PlayerInventoryUI>());
+		uiManager.changeUI(make_shared<GamePausedUI>());
 }
 
 
@@ -396,7 +426,7 @@ void TestScene::runImGui() {
 		imgui::Begin("Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 		imgui::ShowFontSelector("Fonts");
 		imgui::Text(u8"Innovation In China 中国智造，惠及全球 1234567890");
-		static char langFile[128] = {"lang-zh-Hans.list"};
+		static char langFile[128] = { "lang-zh-Hans.list" };
 		if (imgui::InputText("Language File", langFile, sizeof(langFile), ImGuiInputTextFlags_EnterReturnsTrue))
 			text.loadFromFile(langFile);
 		static float value = renderIO.gameScaleFactor;
@@ -428,7 +458,7 @@ void TestScene::runImGui() {
 		ENTER_IMGUI_DEBUG;
 
 		imgui::Text("%s %s / Version %d.%d.%d %s / Compile Time %s",
-					projectCode.c_str(), projectSuffix.c_str(), majorVersion, minorVersion, patchVersion, releaseStage.c_str(), compileTime.c_str());
+			projectCode.c_str(), projectSuffix.c_str(), majorVersion, minorVersion, patchVersion, releaseStage.c_str(), compileTime.c_str());
 #ifdef USE_ASYNC_RENDERING
 		imgui::Text("State: Async-Rendering, TPS: %d, EPS: %d, FPS: %d", logicTickPerSecond, eventTickPerSecond, framePerSecond);
 #else
@@ -453,7 +483,7 @@ void TestScene::runImGui() {
 			imgui::Text("  localPlayer == nullptr");
 
 		imgui::Text("Mouse Cursor Info");
-		Vector2i pos = Mouse::getPosition(win);
+		Vector2i pos = gameIO.mouse;
 		Vector2i posB = TerrainManager::convertScreenPixelToWorldBlockCoord(pos);
 		Vector2d posC = TerrainManager::convertScreenPixelToWorldCoord(pos);
 		Vector2i chunkId = TerrainManager::convertWorldCoordToChunkId(posB);
@@ -510,20 +540,20 @@ void TestScene::runImGui() {
 		}
 
 		imgui::Text("TerrainRender:  %d verts (%d tri)",
-					terrainListSize, terrainListSize / 3);
+			terrainListSize, terrainListSize / 3);
 		imgui::Text("TerrainLight:   %d verts (%d tri)",
-					terrainMaskSize, terrainMaskSize / 3);
+			terrainMaskSize, terrainMaskSize / 3);
 		imgui::Text("ParticleRender: %d verts (%d tri)",
-					particleListSize, particleListSize / 3);
+			particleListSize, particleListSize / 3);
 		imgui::Text("EntityRender:   %d verts (%d tri)",
-					entityListSize, entityListSize / 3);
+			entityListSize, entityListSize / 3);
 		imgui::Text("Total:          %d verts (%d tri)",
-					totalVertSize, totalVertSize / 3);
+			totalVertSize, totalVertSize / 3);
 
 		imgui::Text("Tick Time");
 		imgui::Text("  Render");
-		Time values[] = {appRenderTime, runImGuiTime, imGuiRenderTime, imGuiUpdateTime};
-		string names[] = {"App->OnRender() %6dMs", "App->RunImGui() %6dMs", "ImGui::Render() %6dMs", "ImGui::Update() %6dMs"};
+		Time values[] = { appRenderTime, runImGuiTime, imGuiRenderTime, imGuiUpdateTime };
+		string names[] = { "App->OnRender() %6dMs", "App->RunImGui() %6dMs", "ImGui::Render() %6dMs", "ImGui::Update() %6dMs" };
 		for (int i = 0; i < 4; i++) {
 			imgui::Text(names[i].c_str(), values[i].asMicroseconds());
 			if (values[i] != Time::Zero) {

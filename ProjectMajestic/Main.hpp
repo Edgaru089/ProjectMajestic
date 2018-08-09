@@ -81,7 +81,6 @@ Time logicThreadTickTime;
 Time appRenderTime, runImGuiTime, imGuiRenderTime, imGuiUpdateTime, renderThreadTickTime;
 Clock renderClock;
 Time renderTime=microseconds(16667);
-Clock programRunTimeClock;  //Nerer resets; started as time (for this process) begins
 atomic_bool isReady;
 mt19937 randomEngine((random_device())());
 

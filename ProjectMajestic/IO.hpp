@@ -37,6 +37,7 @@ struct LogicIO {
 
 	// State of all the keys (pressed or released) in the last frame
 	// Set by SFML coding (Keyboard::Key or Mouse::Button)
+	// HACK Handled by game scene for pausing issues
 	KeyState keyboardState[Keyboard::KeyCount];
 	KeyState mouseState[Mouse::ButtonCount];
 
@@ -44,6 +45,9 @@ struct LogicIO {
 
 // Handled by game scene (GameScene or TestScene)
 struct GameIO {
+
+	// On-screen position of the mouse cursor
+	Vector2i mouse;
 
 	// Offset angle from the X-axis to the line between the player and the cursor
 	// in clockwise pattern

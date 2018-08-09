@@ -5,12 +5,16 @@
 
 class InGameUI {
 public:
+	virtual const string getUIId() = 0;
+	virtual const bool isBlocking() { return false; }
 
 	virtual void runImGui() = 0;
 
 	virtual string windowTitle() = 0;
 	virtual bool showInventory() = 0;
 
+	virtual void _onOpen() {}
+	virtual void _onClose() {}
 };
 
 
@@ -30,16 +34,19 @@ public:
 
 	void changeUI(shared_ptr<InGameUI> gui) {
 		lock();
-		curUI = gui;
+		wantChange = true;
+		wantChangeUI = gui;
 		unlock();
 	}
 
+	shared_ptr<InGameUI> getCurrentUI() { return curUI; }
 
 private:
 
 	void _runInventoryUI();
 
-	shared_ptr<InGameUI> curUI;
+	atomic_bool wantChange;
+	shared_ptr<InGameUI> curUI, wantChangeUI;
 
 };
 
@@ -48,6 +55,7 @@ InGameUIManager uiManager;
 
 class PlayerInventoryUI :public InGameUI {
 public:
+	const string getUIId() override { return "player_inventory_ui"; }
 
 	static void ImGuiInventorySlot(Dataset& slotData, int pushId = -1);
 

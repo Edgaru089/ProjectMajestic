@@ -14,6 +14,14 @@ InGameUIManager::~InGameUIManager() {
 ////////////////////////////////////////
 void InGameUIManager::updateLogic() {
 	AUTOLOCKABLE(*this);
+	if (wantChange) {
+		if (curUI != nullptr)
+			curUI->_onClose();
+		curUI = wantChangeUI;
+		if (curUI != nullptr)
+			curUI->_onOpen();
+		wantChange = false;
+	}
 
 	if (curUI == nullptr)
 		return;
@@ -22,7 +30,6 @@ void InGameUIManager::updateLogic() {
 		logicIO.keyboardState[Keyboard::E] == LogicIO::JustPressed) {
 		curUI = nullptr;
 	}
-
 }
 
 
@@ -37,46 +44,47 @@ void InGameUIManager::runImGui() {
 	imgui::PushStyleColor(ImGuiCol_Button, Color::Transparent);
 	imgui::PushStyleColor(ImGuiCol_ButtonHovered, Color(255, 255, 255, 64));
 	imgui::PushStyleColor(ImGuiCol_ButtonActive, Color(255, 255, 255, 48));
+	imgui::PushStyleColor(ImGuiCol_FrameBg, Color(0, 0, 0, 128));
+	imgui::PushStyleColor(ImGuiCol_PopupBg, Color(0, 0, 0, 128));
 	imgui::PushStyleColor(ImGuiCol_TitleBgActive, imgui::GetStyleColorVec4(ImGuiCol_PopupBg));
+	imgui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.0f);
 	imgui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 	GImGui->ModalWindowDarkeningRatio = 1.0f;
 	ImGui::OpenPopup(curUI->windowTitle().c_str());
+
+	curUI->runImGui();
+
 	imgui::SetNextWindowPos(
 		ImVec2(imgui::GetIO().DisplaySize.x / 2.0f, imgui::GetIO().DisplaySize.y / 2.0f),
 		ImGuiCond_Always,
 		ImVec2(0.5f, 0.5f));
-	if (imgui::BeginPopupModal(curUI->windowTitle().c_str(), nullptr,
-							   ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove)) {
-
-		curUI->runImGui();
-
-		if (curUI->showInventory()) {
-			imgui::PopStyleVar();
-			imgui::Separator();
-			imgui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+	if (curUI->showInventory()) {
+		if (imgui::BeginPopupModal(curUI->windowTitle().c_str(), nullptr,
+			ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove)) {
 
 			_runInventoryUI();
-		}
 
-		// Cursor item
-		TextureInfo info = textureManager.getTextureInfo(playerInventory.slotCursor["item_name"].getDataString());
-		if (info.vaild) {
-			ImVec2 pos = imgui::GetIO().MousePos;
-			imgui::GetOverlayDrawList()->AddImage((ImTextureID)info.texture->getNativeHandle(),
-												  ImVec2(pos.x - 16, pos.y - 16), ImVec2(pos.x + 16, pos.y + 16),
-												  ImVec2(info.textureRect.left / (float)info.texture->getSize().x,
-														 info.textureRect.top / (float)info.texture->getSize().y),
-												  ImVec2((info.textureRect.left + info.textureRect.width) / (float)info.texture->getSize().x, (
-													  info.textureRect.top + info.textureRect.height) / (float)info.texture->getSize().y));
-			pos.x -= 16 + 3 - 2; pos.y -= 16 + 3;
-			if (playerInventory.slotCursor["count"].getDataInt() != 1)
-				imgui::GetOverlayDrawList()->AddText(pos, ImU32(0xFFFFFFFF), StringParser::toString(playerInventory.slotCursor["count"].getDataInt()).c_str());
-		}
+			// Cursor item
+			TextureInfo info = textureManager.getTextureInfo(playerInventory.slotCursor["item_name"].getDataString());
+			if (info.vaild) {
+				ImVec2 pos = imgui::GetIO().MousePos;
+				imgui::GetOverlayDrawList()->AddImage((ImTextureID)info.texture->getNativeHandle(),
+					ImVec2(pos.x - 16, pos.y - 16), ImVec2(pos.x + 16, pos.y + 16),
+					ImVec2(info.textureRect.left / (float)info.texture->getSize().x,
+						info.textureRect.top / (float)info.texture->getSize().y),
+					ImVec2((info.textureRect.left + info.textureRect.width) / (float)info.texture->getSize().x, (
+						info.textureRect.top + info.textureRect.height) / (float)info.texture->getSize().y));
+				pos.x -= 16 + 3 - 2; pos.y -= 16 + 3;
+				if (playerInventory.slotCursor["count"].getDataInt() != 1)
+					imgui::GetOverlayDrawList()->AddText(pos, ImU32(0xFFFFFFFF), StringParser::toString(playerInventory.slotCursor["count"].getDataInt()).c_str());
+			}
 
-		imgui::EndPopup();
+			imgui::EndPopup();
+		}
 	}
-	imgui::PopStyleColor(5);
-	imgui::PopStyleVar();
+
+	imgui::PopStyleColor(7);
+	imgui::PopStyleVar(2);
 }
 
 
@@ -93,7 +101,7 @@ void InGameUIManager::_runInventoryUI() {
 			PlayerInventoryUI::ImGuiInventorySlot(playerInventory.slots[i][j], 1677216 + i * 9 + j);
 		}
 	}
-	imgui::Separator();
+	imgui::Dummy(ImVec2(.0f, 6.0f));
 	for (int j = 0; j < 9; j++) {
 		if (j != 0)
 			imgui::SameLine();
@@ -140,7 +148,7 @@ void PlayerInventoryUI::ImGuiInventorySlot(Dataset& slotData, int pushId) {
 	}
 
 	if (info.id != "ui_transparent_32px") {
-		if (FloatRect(imgui::GetItemRectMin(), imgui::GetItemRectSize()).contains(Vector2f(Mouse::getPosition(win)))) {
+		if (FloatRect(imgui::GetItemRectMin(), imgui::GetItemRectSize()).contains(Vector2f(gameIO.mouse))) {
 			if (logicIO.mouseState[Mouse::Right] == LogicIO::JustPressed) {
 				if (cursorName == "") {
 					// Spilt half

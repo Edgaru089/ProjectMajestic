@@ -15,6 +15,7 @@
 #include "EntityAllocator.Impl.hpp"
 #include "EntityManager.Impl.hpp"
 #include "FallingSand.Impl.hpp"
+#include "GamePausedUI.Impl.hpp"
 #include "GameScene.Impl.hpp"
 #include "Gravel.Impl.hpp"
 #include "GrenadeEntity.Impl.hpp"

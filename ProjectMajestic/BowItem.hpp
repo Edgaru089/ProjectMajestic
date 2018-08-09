@@ -12,11 +12,15 @@ public:
 			return textureManager.getTextureInfo("item_bow");
 		else
 			return textureManager.getTextureInfo(StringParser::toStringF("item_bow_pulling_%d",
-				min(3, 1 + (programRunTimeClock.getElapsedTime().asMilliseconds()
-					- slotDataset["bow_start_time"].getDataInt()) / 400)));
+				min(3, 1 + loadedTimeMilli() / 400)));
 	}
 
+	void updateLogic() override;
 	bool _onRightPressed() override;
 	void _onRightReleased() override;
+
+private:
+
+	int& loadedTimeMilli() { return slotDataset["bow_loaded_time"].getDataInt(); }
 
 };

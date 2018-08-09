@@ -423,6 +423,12 @@
     <ClInclude Include="Mob.Impl.hpp">
       <Filter>Game\Entities\Entities</Filter>
     </ClInclude>
+    <ClInclude Include="GamePausedUI.hpp">
+      <Filter>Game\GameGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GamePausedUI.Impl.hpp">
+      <Filter>Game\GameGUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImGui\imgui.cpp">

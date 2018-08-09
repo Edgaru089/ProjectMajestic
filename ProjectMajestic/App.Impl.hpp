@@ -91,39 +91,7 @@ void App::updateLogic(RenderWindow& win) {
 
 	logicIO.deltaTime = logicDeltaClock.restart();
 
-	// Update key states
-	// Keyboard
-	for (int i = 0; i < Keyboard::KeyCount; i++) {
-		bool state = Keyboard::isKeyPressed((Keyboard::Key)i);
-		if (state) {
-			if (logicIO.keyboardState[i] == LogicIO::Released || logicIO.keyboardState[i] == LogicIO::JustReleased)
-				logicIO.keyboardState[i] = LogicIO::JustPressed;
-			else
-				logicIO.keyboardState[i] = LogicIO::Pressed;
-		}
-		else {
-			if (logicIO.keyboardState[i] == LogicIO::Pressed || logicIO.keyboardState[i] == LogicIO::JustPressed)
-				logicIO.keyboardState[i] = LogicIO::JustReleased;
-			else
-				logicIO.keyboardState[i] = LogicIO::Released;
-		}
-	}
-	// Mouse
-	for (int i = 0; i < Mouse::ButtonCount; i++) {
-		bool state = Mouse::isButtonPressed((Mouse::Button)i);
-		if (state) {
-			if (logicIO.mouseState[i] == LogicIO::Released || logicIO.mouseState[i] == LogicIO::JustReleased)
-				logicIO.mouseState[i] = LogicIO::JustPressed;
-			else
-				logicIO.mouseState[i] = LogicIO::Pressed;
-		}
-		else {
-			if (logicIO.mouseState[i] == LogicIO::Pressed || logicIO.mouseState[i] == LogicIO::JustPressed)
-				logicIO.mouseState[i] = LogicIO::JustReleased;
-			else
-				logicIO.mouseState[i] = LogicIO::Released;
-		}
-	}
+	// Keystate handled by game scene for pausing game issues
 
 	currentScene->updateLogic(win);
 

@@ -31,11 +31,11 @@ public:
 
 protected:
 
-	int& lastShootTimeMill() { return slotDataset["last_shoot_time"].getDataInt(); }
+	int& shootCooldownMill() { return slotDataset["shoot_cooldown"].getDataInt(); }
 	bool& isShooting() { return slotDataset["is_shooting"].getDataBool(); };
 	int& roundsLeft() { return slotDataset["rounds_left"].getDataInt(); }
-	int& startReloadTimeMill() { return slotDataset["load_time"].getDataInt(); }
-	bool isReloading() { return startReloadTimeMill() != 0; }
+	int& reloadedTimeMill() { return slotDataset["reloaded_time"].getDataInt(); }
+	bool& isReloading() { return slotDataset["is_reloading"].getDataBool(); }
 
 };
 
