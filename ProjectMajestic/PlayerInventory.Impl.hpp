@@ -28,26 +28,26 @@ PlayerInventory::PlayerInventory() {
 	slots[0][6].setData("count", 1);
 	slots[0][7].setData("item_name", "item_mrm36"s);
 	slots[0][7].setData("count", 1);
-	slots[0][8].setData("item_name", "block_torch"s);
+	slots[0][8].setData("item_name", "item_sg55"s);
 	slots[0][8].setData("count", 1);
 
 	slots[1][0].setData("item_name", "item_minigun_ammo"s);
 	slots[1][0].setData("count", 8);
 	slots[1][1].setData("item_name", "item_rpg_ammo"s);
 	slots[1][1].setData("count", 16);
-	slots[1][2].setData("item_name", "item_rpg_ammo"s);
-	slots[1][2].setData("count", 16);
-	slots[1][3].setData("item_name", "item_arrow"s);
-	slots[1][3].setData("count", 64);
-	slots[1][4].setData("item_name", "item_m16a4_ammo"s);
-	slots[1][4].setData("count", 12);
-	slots[1][5].setData("item_name", "item_barrett_ammo"s);
+	slots[1][2].setData("item_name", "item_arrow"s);
+	slots[1][2].setData("count", 64);
+	slots[1][3].setData("item_name", "item_m16a4_ammo"s);
+	slots[1][3].setData("count", 12);
+	slots[1][4].setData("item_name", "item_barrett_ammo"s);
+	slots[1][4].setData("count", 6);
+	slots[1][5].setData("item_name", "item_emx3_ammo"s);
 	slots[1][5].setData("count", 6);
-	slots[1][6].setData("item_name", "item_emx3_ammo"s);
+	slots[1][6].setData("item_name", "item_vtx65_ammo"s);
 	slots[1][6].setData("count", 6);
-	slots[1][7].setData("item_name", "item_vtx65_ammo"s);
-	slots[1][7].setData("count", 6);
-	slots[1][8].setData("item_name", "item_mrm36_ammo"s);
+	slots[1][7].setData("item_name", "item_mrm36_ammo"s);
+	slots[1][7].setData("count", 4);
+	slots[1][8].setData("item_name", "item_sg55_ammo"s);
 	slots[1][8].setData("count", 8);
 
 	slots[2][0].setData("item_name", "item_grenade"s);
@@ -71,6 +71,8 @@ PlayerInventory::PlayerInventory() {
 
 	slots[3][0].setData("item_name", "block_ladder"s);
 	slots[3][0].setData("count", 5);
+	slots[3][1].setData("item_name", "block_torch"s);
+	slots[3][1].setData("count", 1);
 }
 
 

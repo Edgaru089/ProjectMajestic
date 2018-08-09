@@ -5,24 +5,24 @@
 
 ////////////////////////////////////////
 Particle::Particle(TextureInfo texture, double sizeDivisor, Time liveTime, Vector2d onScreenSize, double gravity, double airFriction) {
-	wholeText = texture;
-	size = onScreenSize;
+	this->wholeText = texture;
+	this->size = onScreenSize;
 	this->gravity = gravity;
 	this->airFriction = airFriction;
 
-	Vector2i size;
-	int posX, posY;
+	Vector2d size;
+	double posX, posY;
 	if (!isSame(sizeDivisor, 1.0)) {
-		size = Vector2i(Vector2d(texture.textureRect.width, texture.textureRect.height) / sizeDivisor);
-		posX = rand() % (texture.textureRect.width - size.x) + texture.textureRect.left;
-		posY = rand() % (texture.textureRect.height - size.y) + texture.textureRect.top;
+		size = Vector2d(Vector2d(texture.textureRect.width, texture.textureRect.height) / sizeDivisor);
+		posX = rand01() * (texture.textureRect.width - size.x) + texture.textureRect.left;
+		posY = rand01() * (texture.textureRect.height - size.y) + texture.textureRect.top;
 	}
 	else {
-		size = Vector2i(texture.textureRect.width, texture.textureRect.height);
+		size = Vector2d(texture.textureRect.width, texture.textureRect.height);
 		posX = texture.textureRect.left;
 		posY = texture.textureRect.top;
 	}
-	
+
 	textureSubRect = IntRect(posX, posY, size.x, size.y);
 
 	this->liveTime = liveTime;
@@ -90,33 +90,33 @@ void PartlcleSystem::getRenderList(VertexArray& verts) {
 
 				// Left-Top
 				verts.append(Vertex(Vector2f(center.x - width / 2.0, center.y - height),
-									Color(mask, mask, mask),
-									Vector2f(tex.textureRect.left, tex.textureRect.top)
+					Color(mask, mask, mask),
+					Vector2f(tex.textureRect.left, tex.textureRect.top)
 				));
 				// Right-Top
 				verts.append(Vertex(Vector2f(center.x + width / 2.0, center.y - height),
-									Color(mask, mask, mask),
-									Vector2f(tex.textureRect.left + tex.textureRect.width, tex.textureRect.top)
+					Color(mask, mask, mask),
+					Vector2f(tex.textureRect.left + tex.textureRect.width, tex.textureRect.top)
 				));
 				// Left-Bottom
 				verts.append(Vertex(Vector2f(center.x - width / 2.0, center.y),
-									Color(mask, mask, mask),
-									Vector2f(tex.textureRect.left, tex.textureRect.top + tex.textureRect.height)
+					Color(mask, mask, mask),
+					Vector2f(tex.textureRect.left, tex.textureRect.top + tex.textureRect.height)
 				));
 				// Right-Top
 				verts.append(Vertex(Vector2f(center.x + width / 2.0, center.y - height),
-									Color(mask, mask, mask),
-									Vector2f(tex.textureRect.left + tex.textureRect.width, tex.textureRect.top)
+					Color(mask, mask, mask),
+					Vector2f(tex.textureRect.left + tex.textureRect.width, tex.textureRect.top)
 				));
 				// Left-Bottom
 				verts.append(Vertex(Vector2f(center.x - width / 2.0, center.y),
-									Color(mask, mask, mask),
-									Vector2f(tex.textureRect.left, tex.textureRect.top + tex.textureRect.height)
+					Color(mask, mask, mask),
+					Vector2f(tex.textureRect.left, tex.textureRect.top + tex.textureRect.height)
 				));
 				// Right-Bottom
 				verts.append(Vertex(Vector2f(center.x + width / 2.0, center.y),
-									Color(mask, mask, mask),
-									Vector2f(tex.textureRect.left + tex.textureRect.width, tex.textureRect.top + tex.textureRect.height)
+					Color(mask, mask, mask),
+					Vector2f(tex.textureRect.left + tex.textureRect.width, tex.textureRect.top + tex.textureRect.height)
 				));
 			}
 			e++;
@@ -125,15 +125,26 @@ void PartlcleSystem::getRenderList(VertexArray& verts) {
 }
 
 
-// TODO Network
 ////////////////////////////////////////
 void PartlcleSystem::emitSmoke(Vector2d position,
-							   double speed,
-							   double gravity,
-							   double airFriction,
-							   double angleBegin,
-							   double angleEnd,
-							   int count) {
+	double speed,
+	double gravity,
+	double airFriction,
+	double angleBegin,
+	double angleEnd,
+	int count) {
+	emitSmoke(DoubleRect(position.x, position.y, .0, .0), speed, gravity, airFriction, angleBegin, angleEnd, count);
+}
+
+
+////////////////////////////////////////
+void PartlcleSystem::emitSmoke(DoubleRect position,
+	double speed,
+	double gravity,
+	double airFriction,
+	double angleBegin,
+	double angleEnd,
+	int count) {
 	double sizeDivisor = 1.0;
 	Time liveTimeBegin = seconds(2), liveTimeEnd = seconds(4);
 	Vector2d size = Vector2d(0.4, 0.4);
@@ -142,7 +153,6 @@ void PartlcleSystem::emitSmoke(Vector2d position,
 		swap(liveTimeBegin, liveTimeEnd);
 	if (angleBegin > angleEnd)
 		swap(angleBegin, angleEnd);
-	position += Vector2d(.0, size.y / 2.0);
 	for (int i = 0; i < count; i++) {
 		TextureInfo texture = textureManager.getTextureInfo(StringParser::toStringF(
 			"particle_smoke_%d",
@@ -152,7 +162,7 @@ void PartlcleSystem::emitSmoke(Vector2d position,
 		double angle = angleBegin + (angleEnd - angleBegin)*rand01();
 
 		Particle p(texture, sizeDivisor, live, size, gravity, airFriction);
-		p.setPosition(position);
+		p.setPosition(Vector2d(position.left + position.width*rand01(), position.top + position.height*rand01()));
 		p.accelerateVector(speed * 1.2 * rand01(), angle);
 
 		parts.push_back(p);
@@ -163,7 +173,7 @@ void PartlcleSystem::emitSmoke(Vector2d position,
 ////////////////////////////////////////
 void PartlcleSystem::emitArrowGlow(Vector2d position) {
 	emit(position, textureManager.getTextureInfo("particle_arrow_glow"),
-		 1.0, 0.0, 1, milliseconds(250), milliseconds(250), Vector2d(0.3, 0.3), 0.0);
+		1.0, 0.0, 1, milliseconds(250), milliseconds(250), Vector2d(0.3, 0.3), 0.0);
 }
 
 
@@ -171,9 +181,9 @@ void PartlcleSystem::emitArrowGlow(Vector2d position) {
 void PartlcleSystem::emit(Vector2d position, TextureInfo texture, double sizeDivisor, double speed, int count, Time liveTimeBegin, Time liveTimeEnd, Vector2d size, double gravity, bool isForced) {
 	if (!isForced || role == Server) { // Networked
 		networkServer.notifyParitlcEmit(ParticleEmitTrace(position, texture.id, sizeDivisor,
-														  speed, count, 0, 360, liveTimeBegin, liveTimeEnd, size, gravity));
+			speed, count, 0, 360, liveTimeBegin, liveTimeEnd, size, gravity));
 		networkClient.notifyParticleEmit(ParticleEmitTrace(position, texture.id, sizeDivisor,
-														   speed, count, 0, 360, liveTimeBegin, liveTimeEnd, size, gravity));
+			speed, count, 0, 360, liveTimeBegin, liveTimeEnd, size, gravity));
 	}
 	if (isForced || role == Server) { // Present locally
 		if (liveTimeBegin > liveTimeEnd)
@@ -197,9 +207,9 @@ void PartlcleSystem::emit(Vector2d position, TextureInfo texture, double sizeDiv
 void PartlcleSystem::emit(DoubleRect range, TextureInfo texture, double sizeDivisor, double speed, int count, Time liveTimeBegin, Time liveTimeEnd, Vector2d size, double gravity, bool isForced) {
 	if (!isForced || role == Server) { // Networked
 		networkServer.notifyParitlcEmit(ParticleEmitTrace(range, texture.id, sizeDivisor,
-														  speed, count, 0, 360, liveTimeBegin, liveTimeEnd, size, gravity));
+			speed, count, 0, 360, liveTimeBegin, liveTimeEnd, size, gravity));
 		networkClient.notifyParticleEmit(ParticleEmitTrace(range, texture.id, sizeDivisor,
-														   speed, count, 0, 360, liveTimeBegin, liveTimeEnd, size, gravity));
+			speed, count, 0, 360, liveTimeBegin, liveTimeEnd, size, gravity));
 	}
 	if (isForced || role == Server) { // Present locally
 		if (liveTimeBegin > liveTimeEnd)
@@ -227,9 +237,9 @@ void PartlcleSystem::emit(DoubleRect range, TextureInfo texture, double sizeDivi
 void PartlcleSystem::emit(Vector2d position, TextureInfo texture, double sizeDivisor, double speed, int count, double angleBegin, double angleEnd, Time liveTimeBegin, Time liveTimeEnd, Vector2d size, double gravity, bool isForced) {
 	if (!isForced || role == Server) { // Networked
 		networkClient.notifyParticleEmit(ParticleEmitTrace(position, texture.id, sizeDivisor, speed, count,
-														   angleBegin, angleEnd, liveTimeBegin, liveTimeEnd, size, gravity));
+			angleBegin, angleEnd, liveTimeBegin, liveTimeEnd, size, gravity));
 		networkServer.notifyParitlcEmit(ParticleEmitTrace(position, texture.id, sizeDivisor, speed, count,
-														  angleBegin, angleEnd, liveTimeBegin, liveTimeEnd, size, gravity));
+			angleBegin, angleEnd, liveTimeBegin, liveTimeEnd, size, gravity));
 	}
 	if (isForced || role == Server) { // Present locally
 		if (liveTimeBegin > liveTimeEnd)
@@ -255,9 +265,9 @@ void PartlcleSystem::emit(Vector2d position, TextureInfo texture, double sizeDiv
 void PartlcleSystem::emit(DoubleRect range, TextureInfo texture, double sizeDivisor, double speed, int count, double angleBegin, double angleEnd, Time liveTimeBegin, Time liveTimeEnd, Vector2d size, double gravity, bool isForced) {
 	if (!isForced || role == Server) { // Networked
 		networkServer.notifyParitlcEmit(ParticleEmitTrace(range, texture.id, sizeDivisor, speed, count,
-														  angleBegin, angleEnd, liveTimeBegin, liveTimeEnd, size, gravity));
+			angleBegin, angleEnd, liveTimeBegin, liveTimeEnd, size, gravity));
 		networkClient.notifyParticleEmit(ParticleEmitTrace(range, texture.id, sizeDivisor, speed, count,
-														   angleBegin, angleEnd, liveTimeBegin, liveTimeEnd, size, gravity));
+			angleBegin, angleEnd, liveTimeBegin, liveTimeEnd, size, gravity));
 	}
 	if (isForced || role == Server) { // Present locally
 		if (liveTimeBegin > liveTimeEnd)

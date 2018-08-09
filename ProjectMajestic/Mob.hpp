@@ -41,6 +41,7 @@ public:
 		}
 	}
 
+	void kill() override;
 	int getHealth() { return health(); }
 	void setHealth(int health) { this->health() = health; }
 

@@ -112,6 +112,8 @@ public:
 				   double angleEnd = 360.0,
 				   int count = 16);
 
+	void emitSmoke(DoubleRect position, double speed, double gravity, double airFriction, double angleBegin, double angleEnd, int count);
+
 	void emitArrowGlow(Vector2d position);
 
 public:

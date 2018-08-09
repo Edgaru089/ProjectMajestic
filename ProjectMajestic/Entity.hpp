@@ -58,7 +58,7 @@ public:
 	}
 
 	const bool isAlive() { return alive; }
-	void kill() { alive = false; _onKill(); }
+	virtual void kill() { alive = false; _onKill(); }
 	double getRotation() { return angle; }
 
 	virtual Vector2d getSize() { return Vector2d(0.2, 0.2); }

@@ -239,6 +239,7 @@
     <ClInclude Include="Main.hpp" />
     <ClInclude Include="MinigunItem.hpp" />
     <ClInclude Include="Mob.hpp" />
+    <ClInclude Include="Mob.Impl.hpp" />
     <ClInclude Include="MRM36.hpp" />
     <ClInclude Include="MRM36.Impl.hpp" />
     <ClInclude Include="NetworkClient.hpp" />
@@ -264,6 +265,8 @@
     <ClInclude Include="RpgLauncherItem.hpp" />
     <ClInclude Include="RpgLauncherItem.Impl.hpp" />
     <ClInclude Include="Scene.hpp" />
+    <ClInclude Include="SG55.hpp" />
+    <ClInclude Include="SG55.Impl.hpp" />
     <ClInclude Include="Stone.hpp" />
     <ClInclude Include="StringParser.hpp" />
     <ClInclude Include="TerrainManager.hpp" />

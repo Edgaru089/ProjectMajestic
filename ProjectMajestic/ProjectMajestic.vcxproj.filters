@@ -441,6 +441,15 @@
     <ClInclude Include="MRM36.Impl.hpp">
       <Filter>Game\Items&amp;Blocks\Item\Guns\Post</Filter>
     </ClInclude>
+    <ClInclude Include="SG55.Impl.hpp">
+      <Filter>Game\Items&amp;Blocks\Item\Guns\Post</Filter>
+    </ClInclude>
+    <ClInclude Include="SG55.hpp">
+      <Filter>Game\Items&amp;Blocks\Item\Guns\Post</Filter>
+    </ClInclude>
+    <ClInclude Include="Mob.Impl.hpp">
+      <Filter>Game\Entities\Entities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImGui\imgui.cpp">
