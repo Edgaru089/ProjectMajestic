@@ -18,7 +18,7 @@ void LaserBullet::shoot(double damage, double speed, double knockbackFactor, Vec
 void LaserBullet::_updateLogic() {
 	//if (particleClock.getElapsedTime() > milliseconds(30)) {
 	//	particleClock.restart();
-	particleSystem.emit(getCenterPos(), textureManager.getTextureInfo("particle_laser_glow"), 1.0, .0, 1, seconds(.2f), seconds(.2f), Vector2d(.3, .3), .0);
+	particleSystem.emit(getCenterPos(), textureManager.getTextureInfo("particle_laser_glow"), 1.0, .0, 1, seconds(.2f), seconds(.2f), Vector2d(.25, .25), .0);
 //}
 }
 

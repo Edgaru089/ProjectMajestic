@@ -22,6 +22,8 @@ public:
 	void harmUnprotected(int amount, Vector2d from, double knockbackFactor = 1.0) {
 		// TODO Particles on harm
 		// TODO Knockback on harm
+		if (!alive)
+			return;
 		if (onGround)
 			if (from.x > getPosition().x)
 				accelerateVector(2.5 * knockbackFactor, 255);
