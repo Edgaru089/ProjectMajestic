@@ -246,6 +246,7 @@
     <ClInclude Include="Mob.Impl.hpp" />
     <ClInclude Include="MRM36.hpp" />
     <ClInclude Include="MRM36.Impl.hpp" />
+    <ClInclude Include="NovelGameSystem.hpp" />
     <ClInclude Include="OptionFile.hpp" />
     <ClInclude Include="IO.hpp" />
     <ClInclude Include="OptionFileAdv.hpp" />

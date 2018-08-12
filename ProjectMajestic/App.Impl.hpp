@@ -15,6 +15,8 @@
 ////////////////////////////////////////
 void App::initalaizePreWindow() {
 
+	Uuid::seed(random_device()());
+
 	sceneMapper["GameScene"] = new GameScene();
 	sceneMapper["TestScene"] = new TestScene();
 

@@ -17,8 +17,26 @@
 void TestScene::preWindowInitalaize() {
 	mlog << "[TestScene] PreWindowInitalaize Calling..." << dlog;
 
-	assetManager.loadListFile();
+	mlog << "[TestScene] Initalazing NovelGame..." << dlog;
+	novelGameSystem.preInitalaize();
+	novelGameSystem.loadScriptFromFile("novel_script.txt", "default");
 
+	mlog << "[TestScene] Loading Fonts..." << dlog;
+	//imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("font_minecraft").c_str(),
+	//	16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
+	//imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("courier_new").c_str(),
+	//	13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
+	//imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("courier_new_bold").c_str(),
+	//	13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
+	//imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("source_han_sans").c_str(),
+	//	16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
+	//imgui::GetIO().Fonts->AddFontFromFileTTF("C:/Windows/Fonts/Dengb.ttf",
+	//										 16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
+	mlog << "[TestScene] Updating Font Textures..." << dlog;
+	imgui::SFML::UpdateFontTexture();
+
+	mlog << "[TestScene] Initalaizing Systems..." << dlog;
+	assetManager.loadListFile();
 	textureManager.bindTexture();
 
 	blockAllocator.initalaize();
@@ -27,8 +45,6 @@ void TestScene::preWindowInitalaize() {
 
 	background.loadFromFile(assetManager.getAssetFilename("background_stone"));
 	background.setRepeated(true);
-
-	Uuid::seed(time(nullptr));
 
 	win.setKeyRepeatEnabled(false);
 
@@ -40,19 +56,7 @@ void TestScene::preWindowInitalaize() {
 void TestScene::postWindowInitalaize(RenderWindow& win) {
 	mlog << "[TestScene] PostWindowInitalaize Calling..." << dlog;
 
-	mlog << "[TestScene] Loading Fonts..." << dlog;
-	//imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("font_minecraft").c_str(),
-	//	16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
-	//imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("courier_new").c_str(),
-	//	13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
-	//imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("courier_new_bold").c_str(),
-	//	13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
-	//imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("source_han_sans").c_str(),
-	//	16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
-	imgui::GetIO().Fonts->AddFontFromFileTTF("C:/Windows/Fonts/Dengb.ttf",
-		16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
-	mlog << "[TestScene] Updating Font Textures..." << dlog;
-	imgui::SFML::UpdateFontTexture();
+	// There's nothing to do!
 
 	mlog << "[TestScene] PostWindowInitalaize Done." << dlog;
 }
@@ -74,8 +78,9 @@ void TestScene::start(RenderWindow & win) {
 	gameIO.ruleExplosionDamagesTerrain = true;
 	showDebugInfo = false;
 	showExtraImGuiWindows = false;
-	
+
 	uiManager.changeUI(nullptr);
+
 	mlog << "[TestScene] Scene Started!" << dlog;
 }
 
@@ -350,6 +355,8 @@ void TestScene::updateLogic(RenderWindow & win) {
 		particleSystem.updateLogic();
 		entityManager.updateLogic();
 		playerInventory.updateLogic();
+
+		novelGameSystem.updateLogic();
 	}
 	else // Excilpty handle the Escape key to support escaping from pause screen using Esc key
 		handleKeyState(logicIO.keyboardState[Keyboard::Escape], Keyboard::isKeyPressed(Keyboard::Escape));
@@ -427,8 +434,8 @@ void TestScene::runImGui() {
 					}
 			}
 		imgui::SameLine();
-		if (imgui::Button("Update lighting"))
-			terrainManager.requestLightingUpdate();
+		if (imgui::Button("Start NovelGame"))
+			novelGameSystem.start("default");
 		imgui::Image(*textureManager.getBindingTexture());
 		imgui::End();
 
@@ -553,6 +560,8 @@ void TestScene::runImGui() {
 	uiManager.runImGui();
 
 	playerInventory.runImGui();
+
+	novelGameSystem.runImGui();
 }
 
 

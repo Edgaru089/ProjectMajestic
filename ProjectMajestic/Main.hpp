@@ -80,7 +80,7 @@ Clock logicTickCounterClock, frameCounterClock, eventTickCounterClock;
 Time logicThreadTickTime;
 Time appRenderTime, runImGuiTime, imGuiRenderTime, imGuiUpdateTime, renderThreadTickTime;
 Clock renderClock;
-Time renderTime=microseconds(16667);
+Time renderTime = microseconds(16667);
 atomic_bool isReady;
 mt19937 randomEngine((random_device())());
 
@@ -171,12 +171,14 @@ int rand(int x, int y) {
 	return uniform_int_distribution<int>(x, y)(randomEngine);
 }
 
-
 template<typename Type1, typename Type2>
 Type2 min(const Type1& x, const Type2& y) { if (x < y)return x; else return y; }
 
 template<typename Type1, typename Type2>
 Type2 max(const Type1& x, const Type2& y) { if (x > y)return x; else return y; }
+
+string toupper(const string& str) { string copy = str; for (char& c : copy)c = toupper(c); return copy; }
+
 
 #define ENTER_IMGUI_DEBUG \
 imgui::PushStyleColor(ImGuiCol_ChildBg, Color(0, 0, 0, 0));\

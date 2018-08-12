@@ -9,6 +9,7 @@
 #include "TestEntity.hpp"
 #include "PlayerEntity.hpp"
 #include "TerrainGenerator.hpp"
+#include "NovelGameSystem.hpp"
 
 class TestScene :public Scene {
 public:
@@ -50,6 +51,5 @@ private:
 	TerrainGenerator prov;
 
 	int terrainListSize, terrainMaskSize, particleListSize, entityListSize, totalVertSize;
-
 };
 

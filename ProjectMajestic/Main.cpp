@@ -161,11 +161,6 @@ int main(int argc, char* argv[]) {
 	SetConsoleCtrlHandler((PHANDLER_ROUTINE)systemExitEventHandler, true);
 #endif // SFML_SYSTEM_WINDOWS
 
-	app = new App();
-	app->initalaizePreWindow();
-
-	mlog << "[Main] Done in " << loadTimeClock.restart().asMilliseconds() << "ms." << dlog;
-
 	mlog << "[Main] Initalaizing ImGui..." << dlog;
 	ImGui::SFML::Init();
 	ImGui::StyleColorsClassic();
@@ -173,6 +168,12 @@ int main(int argc, char* argv[]) {
 	style.FrameBorderSize = 1.0f;
 	style.ScrollbarRounding = 2.0;
 	style.WindowRounding = 2.0;
+
+	mlog << "[Main] Initalaizing App..." << dlog;
+	app = new App();
+	app->initalaizePreWindow();
+
+	mlog << "[Main] Done in " << loadTimeClock.restart().asMilliseconds() << "ms." << dlog;
 
 	mlog << "[Main] Bringing up the window..." << dlog;
 	initRenderWindow();

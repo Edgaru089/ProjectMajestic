@@ -79,6 +79,9 @@
     <Filter Include="Game\GameGUI\Base">
       <UniqueIdentifier>{8fa7125d-3d0b-4731-9799-5dc3dc5c2cbe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\NovelGame">
+      <UniqueIdentifier>{334f1567-6cdb-4cdc-a0d3-3c162ca75907}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imconfig.h">
@@ -416,6 +419,9 @@
     </ClInclude>
     <ClInclude Include="TerrainManager.Impl.hpp">
       <Filter>Game\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="NovelGameSystem.hpp">
+      <Filter>Game\NovelGame</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
