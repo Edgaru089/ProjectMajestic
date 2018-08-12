@@ -21,7 +21,7 @@ namespace ImGui
 {
 namespace SFML
 {
-    void Init(sf::RenderTarget& target, bool loadDefaultFont = true);
+    void Init(bool loadDefaultFont = true);
 
     void ProcessEvent(const sf::Event& event);
 

@@ -84,15 +84,10 @@ bool AssetManager::loadListFile(string filename) {
 					i++;
 				}
 				rect = IntRect(StringParser::toInt(left), StringParser::toInt(top),
-					StringParser::toInt(width), StringParser::toInt(height));
+							   StringParser::toInt(width), StringParser::toInt(height));
 			}
 
-			//LogMessage m;
-			//m << "               Loaded " << assetType << " asset: " << id << "@" << file;
-			//if (rect != IntRect(0, 0, 0, 0))
-			//	m << StringParser::toStringF(" Off[%d, %d] %dx%d]", rect.left, rect.top, rect.width, rect.height);
-			//m.logout(dlog);
-
+			mlog << "[AssetManager] Loaded " << assetType << " asset " << id << dlog;
 			assets.insert(make_pair(id, Asset(id, file, assetType, rect)));
 		}
 	}
@@ -106,7 +101,7 @@ bool AssetManager::loadListFile(string filename) {
 				textureManager.addImage(i.second.strid, i.second.filename, i.second.textureRect);
 	}
 
-	mlog << "               Asset file loaded." << dlog;
+	mlog << "[AssetManager] Asset file loaded." << dlog;
 
 	return true;
 
@@ -121,16 +116,4 @@ string AssetManager::getAssetFilename(string id) {
 	else
 		return "";
 }
-
-
-////////////////////////////////////////
-
-
-
-////////////////////////////////////////
-
-
-
-////////////////////////////////////////
-
 

@@ -4,7 +4,7 @@
 #include "TerrainManager.hpp"
 
 
-class TerrainProvider {
+class TerrainGenerator {
 public:
 
 	void setup(Vector2u chunkCount, int spawnCount);

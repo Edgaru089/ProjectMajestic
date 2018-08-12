@@ -170,12 +170,18 @@ void TerrainManager::getLightMask(VertexArray& array) {
 
 
 ////////////////////////////////////////
-void TerrainManager::loadChunk(Vector2i id, ChunkProvider& provider) {
+shared_ptr<Chunk> TerrainManager::loadEmptyChunk(Vector2i id) {
 	AUTOLOCKABLE(*this);
 	auto i = chunks.insert(make_pair(id, make_shared<Chunk>())).first;
 	i->second->id = id;
 	i->second->setChunkId(id.x, id.y);
-	provider.loadChunk(id, *chunks[id]);
+	i->second->blocks.resize(chunkSize);
+	i->second->lightLevel.resize(chunkSize);
+	for (int j = 0; j < chunkSize; j++) {
+		i->second->blocks[j].resize(chunkSize, nullptr);
+		i->second->lightLevel[j].resize(chunkSize, 0);
+	}
+	return i->second;
 }
 
 
@@ -250,16 +256,16 @@ void TerrainManager::breakBlock(Vector2i pos, Entity * breaker) {
 ////////////////////////////////////////
 void TerrainManager::placeBlock(Vector2i pos, string blockId, Entity * placer, bool isForced) {
 	AUTOLOCKABLE(*this);
-		map<Vector2i, shared_ptr<Chunk>, Vector2Less<int>>::iterator i = chunks.find(convertWorldCoordToChunkId(pos));
-		if (i == chunks.end() || i->second == nullptr)
-			return;
-		if (i->second->getBlock(convertWorldCoordToInChunkCoord(pos)) == nullptr) {
-			shared_ptr<Block> b = blockAllocator.allocate(blockId);
-			i->second->setBlock(convertWorldCoordToInChunkCoord(pos), b);
-			b->_onPlaced(placer);
-			if (b->getLightStrength() > 0)
-				wantUpdateLight = true;
-		}
+	map<Vector2i, shared_ptr<Chunk>, Vector2Less<int>>::iterator i = chunks.find(convertWorldCoordToChunkId(pos));
+	if (i == chunks.end() || i->second == nullptr)
+		return;
+	if (i->second->getBlock(convertWorldCoordToInChunkCoord(pos)) == nullptr) {
+		shared_ptr<Block> b = blockAllocator.allocate(blockId);
+		i->second->setBlock(convertWorldCoordToInChunkCoord(pos), b);
+		b->_onPlaced(placer);
+		if (b->getLightStrength() > 0)
+			wantUpdateLight = true;
+	}
 }
 
 
@@ -276,7 +282,7 @@ void TerrainManager::_updateLighting() {
 				if (c->getBlock(Vector2i(i, j)) != nullptr &&
 					c->getBlock(Vector2i(i, j))->getLightStrength() > 0)
 					lights.push_back(make_pair(convertChunkToWorldCoord(k.first, Vector2i(i, j)),
-											   c->getBlock(Vector2i(i, j))->getLightStrength()));
+						c->getBlock(Vector2i(i, j))->getLightStrength()));
 	}
 
 	for (auto& l : chunks) {

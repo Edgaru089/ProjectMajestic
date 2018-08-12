@@ -4,7 +4,6 @@
 #include "Main.hpp"
 #include "Chunk.hpp"
 #include "EntityManager.hpp"
-#include "ChunkProvider.hpp"
 
 
 class TerrainManager : public Lockable {
@@ -26,7 +25,7 @@ public:
 	void getRenderList(VertexArray& array); // Triangles
 	void getLightMask(VertexArray& array); // Triangles
 
-	void loadChunk(Vector2i id, ChunkProvider& provider);
+	shared_ptr<Chunk> loadEmptyChunk(Vector2i id);
 
 	void unloadChunk(Vector2i id);
 

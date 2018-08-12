@@ -1,7 +1,6 @@
 
 #include "TestScene.hpp"
 
-#include "ChunkProvider.hpp"
 #include "TerrainManager.hpp"
 #include "Uuid.hpp"
 #include "Entity.hpp"
@@ -16,8 +15,7 @@
 
 ////////////////////////////////////////
 void TestScene::preWindowInitalaize() {
-
-	mlog << "PREWindowInitalaize" << dlog;
+	mlog << "[TestScene] PreWindowInitalaize Calling..." << dlog;
 
 	assetManager.loadListFile();
 
@@ -30,72 +28,55 @@ void TestScene::preWindowInitalaize() {
 	background.loadFromFile(assetManager.getAssetFilename("background_stone"));
 	background.setRepeated(true);
 
-	renderIO.gameScaleFactor = 24.0;
-	renderIO.gameScenePosOffset = Vector2d(0, 0);
-
-	localPlayer = nullptr;
-
-	//terrainManager.loadChunk(Vector2i(0, 0), EmptyChunkProvider());
-	//terrainManager.loadChunk(Vector2i(0, 1), EmptyChunkProvider());
-	//terrainManager.loadChunk(Vector2i(1, 0), EmptyChunkProvider());
-	//terrainManager.loadChunk(Vector2i(1, 1), EmptyChunkProvider());
-	//terrainManager.loadChunk(Vector2i(0, 2), EmptyChunkProvider());
-	//terrainManager.loadChunk(Vector2i(1, 2), EmptyChunkProvider());
-	//terrainManager.loadChunk(Vector2i(2, 2), EmptyChunkProvider());
-	//terrainManager.loadChunk(Vector2i(2, 1), EmptyChunkProvider());
-	//terrainManager.loadChunk(Vector2i(2, 0), EmptyChunkProvider());
-
-	//	terrainManager.poseLight(Vector2i(12, 12), 11);
-	//	terrainManager.poseLight(Vector2i(19, 19), 8);
-
-	//	terrainManager.poseLight(Vector2i(1, 3), 11);
-
 	Uuid::seed(time(nullptr));
 
 	win.setKeyRepeatEnabled(false);
 
-	blocks.push_back("torch");
-	blocks.push_back("stone");
-	blocks.push_back("log");
-	blocks.push_back("gravel");
-	blocks.push_back("bedrock");
-
-	curBlock = blocks[0];
-
+	mlog << "[TestScene] PreWindowInitalaize Done." << dlog;
 }
 
 
+////////////////////////////////////////
 void TestScene::postWindowInitalaize(RenderWindow& win) {
-	imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("font_minecraft").c_str(),
-		16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
-	imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("courier_new").c_str(),
-		13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
-	imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("courier_new_bold").c_str(),
-		13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
+	mlog << "[TestScene] PostWindowInitalaize Calling..." << dlog;
+
+	mlog << "[TestScene] Loading Fonts..." << dlog;
+	//imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("font_minecraft").c_str(),
+	//	16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
+	//imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("courier_new").c_str(),
+	//	13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
+	//imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("courier_new_bold").c_str(),
+	//	13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesDefault());
 	//imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("source_han_sans").c_str(),
-		//16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
+	//	16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
 	imgui::GetIO().Fonts->AddFontFromFileTTF("C:/Windows/Fonts/Dengb.ttf",
-		13, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
+		16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
+	mlog << "[TestScene] Updating Font Textures..." << dlog;
 	imgui::SFML::UpdateFontTexture();
 
-	prov.setup(Vector2u(3, 2), 5);
+	mlog << "[TestScene] PostWindowInitalaize Done." << dlog;
 }
 
 
 ////////////////////////////////////////
 void TestScene::start(RenderWindow & win) {
+	mlog << "[TestScene] Scene Starting..." << dlog;
 	testEntity = Uuid::nil();
+
+	prov.setup(Vector2u(3, 2), 5);
 
 	localPlayer = make_shared<PlayerEntity>();
 	localPlayer->setIsLocalPlayer(true);
 	localPlayer->setHealth(localPlayer->getMaxHealth());
 	entityManager.insert(localPlayer, Vector2d(prov.getSpawnPoints()[0]) + Vector2d(0.5, 1 - 1e-7));
 
+	renderIO.gameScaleFactor = 48.0;
 	gameIO.ruleExplosionDamagesTerrain = true;
 	showDebugInfo = false;
-	showExtraImGuiWindows = true;
-
-	role = Server;
+	showExtraImGuiWindows = false;
+	
+	uiManager.changeUI(nullptr);
+	mlog << "[TestScene] Scene Started!" << dlog;
 }
 
 

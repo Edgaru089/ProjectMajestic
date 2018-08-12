@@ -42,58 +42,6 @@ protected:
 
 };
 
-struct ParticleEmitTrace {
-
-	ParticleEmitTrace() {}
-	ParticleEmitTrace(Vector2d position,
-					  string textureId,
-					  double sizeDivisor,
-					  double speed,
-					  int count,
-					  double angleBegin, double angleEnd,
-					  Time liveTimeBegin, Time liveTimeEnd,
-					  Vector2d size, double gravity) :
-		range(position.x, position.y, 0.0, 0.0), textureId(textureId), sizeDivisor(sizeDivisor), speed(speed), count(count),
-		angleBegin(angleBegin), angleEnd(angleEnd), liveTimeBegin(liveTimeBegin), liveTimeEnd(liveTimeEnd), size(size), gravity(gravity) {}
-	ParticleEmitTrace(DoubleRect range,
-					  string textureId,
-					  double sizeDivisor,
-					  double speed,
-					  int count,
-					  double angleBegin, double angleEnd,
-					  Time liveTimeBegin, Time liveTimeEnd,
-					  Vector2d size, double gravity) :
-		range(range), textureId(textureId), sizeDivisor(sizeDivisor), speed(speed), count(count),
-		angleBegin(angleBegin), angleEnd(angleEnd), liveTimeBegin(liveTimeBegin), liveTimeEnd(liveTimeEnd),
-		size(size), gravity(gravity) {}
-
-	DoubleRect range;
-	string textureId;
-	double sizeDivisor;
-	double speed;
-	int count;
-	double angleBegin, angleEnd;
-	Time liveTimeBegin, liveTimeEnd;
-	Vector2d size;
-	double gravity;
-
-};
-
-Packet& operator << (Packet& pack, const ParticleEmitTrace& log) {
-	return pack << log.range.left << log.range.top << log.range.width << log.range.height << log.textureId << log.sizeDivisor <<
-		log.speed << log.count << log.angleBegin << log.angleEnd << log.liveTimeBegin.asMicroseconds() <<
-		log.liveTimeEnd.asMicroseconds() << log.size.x << log.size.y << log.gravity;
-}
-
-Packet& operator >> (Packet& pack, ParticleEmitTrace& log) {
-	Int64 microBegin, microEnd;
-	pack >> log.range.left >> log.range.top >> log.range.width >> log.range.height >> log.textureId >> log.sizeDivisor >>
-		log.speed >> log.count >> log.angleBegin >> log.angleEnd >> microBegin >> microEnd >> log.size.x >> log.size.y >> log.gravity;
-	log.liveTimeBegin = microseconds(microBegin);
-	log.liveTimeEnd = microseconds(microEnd);
-	return pack;
-}
-
 
 class PartlcleSystem : public Lockable {
 public:

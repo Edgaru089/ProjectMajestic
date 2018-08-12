@@ -12,6 +12,8 @@ const int chunkSize = 16;
 class Chunk {
 public:
 
+	friend class TerrainManager;
+
 	~Chunk();
 
 	void updateLogic();

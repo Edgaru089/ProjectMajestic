@@ -1,12 +1,12 @@
 #pragma once
 
-#include "TerrainProvider.hpp"
-#include "ChunkProvider.hpp"
+#include "TerrainGenerator.hpp"
 #include "TerrainManager.hpp"
+#include "Stone.hpp"
 
 
 ////////////////////////////////////////
-void TerrainProvider::setup(Vector2u chunkCount, int spawnCount) {
+void TerrainGenerator::setup(Vector2u chunkCount, int spawnCount) {
 	terrainManager.clearChunks();
 
 	this->chunkCount = chunkCount;
@@ -19,8 +19,10 @@ void TerrainProvider::setup(Vector2u chunkCount, int spawnCount) {
 	// Start out with filled stones
 	for (int i = 0; i < chunkCount.x; i++) {
 		for (int j = 0; j < chunkCount.y; j++) {
-			EmptyChunkProvider prov;
-			terrainManager.loadChunk(Vector2i(i, j), prov);
+			auto c = terrainManager.loadEmptyChunk(Vector2i(i, j));
+			for (int i = 0; i < chunkSize; i++)
+				for (int j = 0; j < chunkSize; j++)
+					c->setBlock(Vector2i(i, j), make_shared<Stone>());
 		}
 	}
 

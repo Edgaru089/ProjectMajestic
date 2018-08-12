@@ -169,7 +169,7 @@ namespace ImGui
 namespace SFML
 {
 
-void Init(sf::RenderTarget& target, bool loadDefaultFont)
+void Init(bool loadDefaultFont)
 {
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
@@ -211,7 +211,6 @@ void Init(sf::RenderTarget& target, bool loadDefaultFont)
     initDefaultJoystickMapping();
 
     // init rendering
-    io.DisplaySize = static_cast<sf::Vector2f>(target.getSize());
     io.RenderDrawListsFn = RenderDrawLists; // set render callback
 
     if (s_fontTexture) { // delete previously created texture

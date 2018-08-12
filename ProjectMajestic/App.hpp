@@ -7,9 +7,11 @@ class App {
 
 public:
 
-	void initalaize();
+	void initalaizePreWindow();
 
 	void initalaizePostWindow(RenderWindow& win);
+
+	void start(RenderWindow& win);
 
 	void onRender(sf::RenderWindow& win);
 

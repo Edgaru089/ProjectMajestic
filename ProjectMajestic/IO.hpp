@@ -37,7 +37,7 @@ struct LogicIO {
 
 	// State of all the keys (pressed or released) in the last frame
 	// Set by SFML coding (Keyboard::Key or Mouse::Button)
-	// HACK Handled by game scene for pausing issues
+	// HACK Handled by game scene for pausing game issues
 	KeyState keyboardState[Keyboard::KeyCount];
 	KeyState mouseState[Mouse::ButtonCount];
 

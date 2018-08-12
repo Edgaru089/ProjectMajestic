@@ -29,9 +29,6 @@ public:
 	static void switchScene(Scene* newScene);
 	static void updateScene(RenderWindow& win);
 
-private:
-
-
 };
 
 

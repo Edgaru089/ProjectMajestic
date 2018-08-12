@@ -142,8 +142,6 @@ int main(int argc, char* argv[]) {
 
 	//system("PAUSE>nul");
 
-	cout << "Pre-Initalaizing..." << flush;
-
 	srand(time(NULL));
 
 #ifdef OUTPUT_LOG_TO_STDOUT
@@ -154,32 +152,41 @@ int main(int argc, char* argv[]) {
 #endif
 	dlog.ignore(LOG_IGNORE_LEVEL);
 
-	app = new App();
-	app->initalaize();
+	Clock loadTimeClock;
+	mlog << "[Main] Pre-Initalaizing..." << dlog;
 
-	cout << "Done." << endl;
-
-	mlog << Log::Info << "Initalaizing..." << dlog;
 	bool isFullscreen = false;
 
 #ifdef SFML_SYSTEM_WINDOWS
 	SetConsoleCtrlHandler((PHANDLER_ROUTINE)systemExitEventHandler, true);
 #endif // SFML_SYSTEM_WINDOWS
 
-	mlog << "Done." << dlog;
+	app = new App();
+	app->initalaizePreWindow();
 
-	initRenderWindow();
+	mlog << "[Main] Done in " << loadTimeClock.restart().asMilliseconds() << "ms." << dlog;
 
-	isReady = true;
-
-	ImGui::SFML::Init(win);
+	mlog << "[Main] Initalaizing ImGui..." << dlog;
+	ImGui::SFML::Init();
 	ImGui::StyleColorsClassic();
 	ImGuiStyle& style = ImGui::GetStyle();
 	style.FrameBorderSize = 1.0f;
 	style.ScrollbarRounding = 2.0;
 	style.WindowRounding = 2.0;
 
+	mlog << "[Main] Bringing up the window..." << dlog;
+	initRenderWindow();
+
+	mlog << Log::Info << "[Main] Post-Initalaizing..." << dlog;
+
+	isReady = true;
 	app->initalaizePostWindow(win);
+
+	mlog << "[Main] Done in " << loadTimeClock.restart().asMilliseconds() << "ms." << dlog;
+
+	mlog << "[Main] Starting App..." << dlog;
+	app->start(win);
+	mlog << "[Main] App Started in " << loadTimeClock.restart().asMilliseconds() << "ms." << dlog;
 
 #ifdef USE_ASYNC_RENDERING
 	mlog << Log::Warning << "Async Rendering/Logic Update Enabled. Unstable. Aware." << dlog << Log::Info;
@@ -288,7 +295,7 @@ int main(int argc, char* argv[]) {
 #endif
 		eventCycleClock.restart();
 
-		}
+	}
 	win.close();
 	mlog << "Shutdown In Progress..." << dlog;
 	app->onStop();
@@ -305,7 +312,7 @@ int main(int argc, char* argv[]) {
 	isProgramRunning = false;
 
 	return EXIT_SUCCESS;
-	}
+}
 
 
 #include "ImplList.hpp"

@@ -13,17 +13,7 @@
 
 
 ////////////////////////////////////////
-void App::initalaizePostWindow(RenderWindow& win) {
-	for (pair<const string, Scene*>& i : sceneMapper)
-		i.second->postWindowInitalaize(win);
-
-	currentScene->start(win);
-	logicDeltaClock.restart();
-}
-
-
-////////////////////////////////////////
-void App::initalaize() {
+void App::initalaizePreWindow() {
 
 	sceneMapper["GameScene"] = new GameScene();
 	sceneMapper["TestScene"] = new TestScene();
@@ -36,6 +26,20 @@ void App::initalaize() {
 	text.loadFromFile("lang.list");
 
 	hasLog = false;
+}
+
+
+////////////////////////////////////////
+void App::initalaizePostWindow(RenderWindow& win) {
+	for (pair<const string, Scene*>& i : sceneMapper)
+		i.second->postWindowInitalaize(win);
+}
+
+
+////////////////////////////////////////
+void App::start(RenderWindow& win) {
+	currentScene->start(win);
+	logicDeltaClock.restart();
 }
 
 

@@ -196,7 +196,6 @@
     <ClInclude Include="ChestInventory.hpp" />
     <ClInclude Include="ChestInventory.Impl.hpp" />
     <ClInclude Include="Chunk.hpp" />
-    <ClInclude Include="ChunkProvider.hpp" />
     <ClInclude Include="Data.hpp" />
     <ClInclude Include="EMX3.hpp" />
     <ClInclude Include="Entity.hpp" />
@@ -270,8 +269,8 @@
     <ClInclude Include="Stone.hpp" />
     <ClInclude Include="StringParser.hpp" />
     <ClInclude Include="TerrainManager.hpp" />
-    <ClInclude Include="TerrainProvider.hpp" />
-    <ClInclude Include="TerrainProvider.Impl.hpp" />
+    <ClInclude Include="TerrainGenerator.hpp" />
+    <ClInclude Include="TerrainGenerator.Impl.hpp" />
     <ClInclude Include="TestEntity.hpp" />
     <ClInclude Include="TestScene.hpp" />
     <ClInclude Include="TextSystem.hpp" />
@@ -295,9 +294,6 @@
     <ClInclude Include="TerrainManager.Impl.hpp" />
     <ClInclude Include="TestScene.Impl.hpp" />
     <ClInclude Include="TextureManager.Impl.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ChunkProvider.Impl.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

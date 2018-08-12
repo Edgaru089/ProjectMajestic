@@ -8,7 +8,7 @@
 #include "AssetManager.hpp"
 #include "TestEntity.hpp"
 #include "PlayerEntity.hpp"
-#include "TerrainProvider.hpp"
+#include "TerrainGenerator.hpp"
 
 class TestScene :public Scene {
 public:
@@ -47,10 +47,7 @@ private:
 
 	Texture background;
 
-	vector<string> blocks;
-	string curBlock;
-
-	TerrainProvider prov;
+	TerrainGenerator prov;
 
 	int terrainListSize, terrainMaskSize, particleListSize, entityListSize, totalVertSize;
 
