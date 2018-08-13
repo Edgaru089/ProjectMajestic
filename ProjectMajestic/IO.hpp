@@ -35,19 +35,26 @@ struct LogicIO {
 	// Error message returned by last failed operation
 	string lastError;
 
+	// Size of the render window area
+	Vector2i renderSize;
+
+	// Does the window have focus?
+	bool hasFocus;
+
+
 	// State of all the keys (pressed or released) in the last frame
 	// Set by SFML coding (Keyboard::Key or Mouse::Button)
 	// HACK Handled by game scene for pausing game issues
 	KeyState keyboardState[Keyboard::KeyCount];
 	KeyState mouseState[Mouse::ButtonCount];
 
+	// On-screen position of the mouse cursor
+	// HACK Also handled by game scene for pausing game
+	Vector2i mousePos;
 };
 
 // Handled by game scene (GameScene or TestScene)
 struct GameIO {
-
-	// On-screen position of the mouse cursor
-	Vector2i mouse;
 
 	// Offset angle from the X-axis to the line between the player and the cursor
 	// in clockwise pattern
@@ -59,14 +66,7 @@ struct GameIO {
 
 };
 
-// Enum representing the networking role of the local game
-enum NetworkRole {
-	Server,  // Server / Local Game (logic processor)
-	Client   // Client (sends commands to the server for processing)
-};
-
 RenderIO renderIO;
 LogicIO logicIO;
 GameIO gameIO;
 
-NetworkRole role;

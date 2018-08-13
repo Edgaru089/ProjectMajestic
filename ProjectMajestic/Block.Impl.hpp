@@ -22,8 +22,7 @@ DoubleRect Block::getHitbox() {
 
 ////////////////////////////////////////
 void Block::updateLogic() {
-	if (role == Server)
-		_updateLogic();
+	_updateLogic();
 }
 
 
@@ -44,6 +43,5 @@ void Block::onDestroy(Entity * destoryer, bool drop) {
 
 		entityManager.insert(e, Vector2d(TerrainManager::convertChunkToWorldCoord(chunk, inChunkPos)) + Vector2d(0.5, 0.8));
 	}
-	if (role == Server)
-		_onDestroy(destoryer);
+	_onDestroy(destoryer);
 }

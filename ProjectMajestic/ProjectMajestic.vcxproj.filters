@@ -423,6 +423,9 @@
     <ClInclude Include="NovelGameSystem.hpp">
       <Filter>Game\NovelGame</Filter>
     </ClInclude>
+    <ClInclude Include="NovelGameSystem.Impl.hpp">
+      <Filter>Game\NovelGame</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImGui\imgui.cpp">

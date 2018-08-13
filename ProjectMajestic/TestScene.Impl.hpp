@@ -17,9 +17,16 @@
 void TestScene::preWindowInitalaize() {
 	mlog << "[TestScene] PreWindowInitalaize Calling..." << dlog;
 
+	mlog << "[TestScene] Initalaizing Systems..." << dlog;
+	assetManager.loadListFile();
+	textureManager.bindTexture();
+
+	blockAllocator.initalaize();
+	entityAllocator.initalaize();
+	itemAllocator.initalaize();
+
 	mlog << "[TestScene] Initalazing NovelGame..." << dlog;
 	novelGameSystem.preInitalaize();
-	novelGameSystem.loadScriptFromFile("novel_script.txt", "default");
 
 	mlog << "[TestScene] Loading Fonts..." << dlog;
 	//imgui::GetIO().Fonts->AddFontFromFileTTF(assetManager.getAssetFilename("font_minecraft").c_str(),
@@ -34,14 +41,6 @@ void TestScene::preWindowInitalaize() {
 	//										 16, nullptr, imgui::GetIO().Fonts->GetGlyphRangesChinese());
 	mlog << "[TestScene] Updating Font Textures..." << dlog;
 	imgui::SFML::UpdateFontTexture();
-
-	mlog << "[TestScene] Initalaizing Systems..." << dlog;
-	assetManager.loadListFile();
-	textureManager.bindTexture();
-
-	blockAllocator.initalaize();
-	entityAllocator.initalaize();
-	itemAllocator.initalaize();
 
 	background.loadFromFile(assetManager.getAssetFilename("background_stone"));
 	background.setRepeated(true);
@@ -92,7 +91,7 @@ void TestScene::onRender(RenderWindow & win) {
 	// Place screen offset calculations here to obtain maxinum synchronization
 	if (localPlayer != nullptr) {
 		Vector2d onScrPlayer = localPlayer->getPosition()*renderIO.gameScaleFactor;
-		renderIO.gameScenePosOffset = Vector2d(win.getSize()) / 2.0 - onScrPlayer;
+		renderIO.gameScenePosOffset = Vector2d(logicIO.renderSize) / 2.0 - onScrPlayer;
 	}
 
 	Clock drawTime;
@@ -106,7 +105,7 @@ void TestScene::onRender(RenderWindow & win) {
 		fmod(renderIO.gameScenePosOffset.y, renderIO.gameScaleFactor * 1.5) - renderIO.gameScaleFactor * 1.5);
 	win.draw(sp);
 
-	renderIO.viewRect = FloatRect(-renderIO.gameScenePosOffset.x, -renderIO.gameScenePosOffset.y, win.getSize().x, win.getSize().y);
+	renderIO.viewRect = FloatRect(-renderIO.gameScenePosOffset.x, -renderIO.gameScenePosOffset.y, logicIO.renderSize.x, logicIO.renderSize.y);
 	renderIO.viewRectBlock = DoubleRect(
 		renderIO.viewRect.left / renderIO.gameScaleFactor,
 		renderIO.viewRect.top / renderIO.gameScaleFactor,
@@ -132,7 +131,7 @@ void TestScene::onRender(RenderWindow & win) {
 		if (i.second != nullptr)
 			win.draw(renderRect(i.second->getHitbox()*renderIO.gameScaleFactor));
 
-	Vector2i mousePos = TerrainManager::convertScreenPixelToWorldBlockCoord(gameIO.mouse);
+	Vector2i mousePos = TerrainManager::convertScreenPixelToWorldBlockCoord(logicIO.mousePos);
 	shared_ptr<Block> b = terrainManager.getBlock(mousePos);
 	if (b == nullptr) {
 		Vector2d center = Vector2d(mousePos.x + 0.5, mousePos.y + 0.5)*renderIO.gameScaleFactor;
@@ -158,19 +157,19 @@ void TestScene::onRender(RenderWindow & win) {
 	if (localPlayer != nullptr) {
 		VertexArray verts;
 		Vector2d eye = localPlayer->getEyePosition();
-		//verts.append(Vertex(Vector2f(eye.x, eye.y - win.getSize().y / (float)renderIO.gameScaleFactor / 2.0f) * (float)renderIO.gameScaleFactor, Color::White));
-		//verts.append(Vertex(Vector2f(eye.x, eye.y + win.getSize().y / (float)renderIO.gameScaleFactor / 2.0f) * (float)renderIO.gameScaleFactor, Color::White));
-		//verts.append(Vertex(Vector2f(eye.x - win.getSize().x / (float)renderIO.gameScaleFactor / 2.0f, eye.y) * (float)renderIO.gameScaleFactor, Color::White));
-		//verts.append(Vertex(Vector2f(eye.x + win.getSize().x / (float)renderIO.gameScaleFactor / 2.0f, eye.y) * (float)renderIO.gameScaleFactor, Color::White));
+		//verts.append(Vertex(Vector2f(eye.x, eye.y - logicIO.renderSize.y / (float)renderIO.gameScaleFactor / 2.0f) * (float)renderIO.gameScaleFactor, Color::White));
+		//verts.append(Vertex(Vector2f(eye.x, eye.y + logicIO.renderSize.y / (float)renderIO.gameScaleFactor / 2.0f) * (float)renderIO.gameScaleFactor, Color::White));
+		//verts.append(Vertex(Vector2f(eye.x - logicIO.renderSize.x / (float)renderIO.gameScaleFactor / 2.0f, eye.y) * (float)renderIO.gameScaleFactor, Color::White));
+		//verts.append(Vertex(Vector2f(eye.x + logicIO.renderSize.x / (float)renderIO.gameScaleFactor / 2.0f, eye.y) * (float)renderIO.gameScaleFactor, Color::White));
 		verts.append(Vertex(Vector2f(eye) * (float)renderIO.gameScaleFactor, Color::White));
-		verts.append(Vertex(Vector2f(TerrainManager::convertScreenPixelToWorldCoord(gameIO.mouse)) * (float)renderIO.gameScaleFactor, Color::White));
+		verts.append(Vertex(Vector2f(TerrainManager::convertScreenPixelToWorldCoord(logicIO.mousePos)) * (float)renderIO.gameScaleFactor, Color::White));
 		verts.setPrimitiveType(PrimitiveType::Lines);
 		win.draw(verts);
 	}
 
-	win.setView(View(FloatRect(0, 0, win.getSize().x, win.getSize().y)));
+	win.setView(View(FloatRect(0, 0, logicIO.renderSize.x, logicIO.renderSize.y)));
 	VertexArray verts;
-	Vector2i pos = gameIO.mouse;
+	Vector2i pos = logicIO.mousePos;
 	//verts.append(Vertex(Vector2f(pos.x, 0)));
 	//verts.append(Vertex(Vector2f(pos.x, win.getView().getSize().y)));
 	//verts.append(Vertex(Vector2f(0, pos.y)));
@@ -241,10 +240,10 @@ void TestScene::updateLogic(RenderWindow & win) {
 		for (int i = 0; i < Mouse::ButtonCount; i++)
 			handleKeyState(logicIO.mouseState[i], Mouse::isButtonPressed((Mouse::Button)i));
 
-		gameIO.mouse = Mouse::getPosition(win);
+		logicIO.mousePos = Mouse::getPosition(win);
 
 		if (localPlayer != nullptr) {
-			Vector2d mouseBlock = TerrainManager::convertScreenPixelToWorldCoord(gameIO.mouse);
+			Vector2d mouseBlock = TerrainManager::convertScreenPixelToWorldCoord(logicIO.mousePos);
 			Vector2d eyePos = localPlayer->getEyePosition();
 			gameIO.degreeAngle = atan((mouseBlock.y - eyePos.y) / (mouseBlock.x - eyePos.x)) * 180.0 / PI;
 			if (mouseBlock.x - eyePos.x < 0)
@@ -257,15 +256,15 @@ void TestScene::updateLogic(RenderWindow & win) {
 
 		// Manage keys and game/player controls
 		// Mouse controls
-		if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Left] == LogicIO::JustPressed))
+		if (!imgui::GetIO().WantCaptureMouse && logicIO.hasFocus && (logicIO.mouseState[Mouse::Left] == LogicIO::JustPressed))
 			if (!_sendMousePressedToHandItem(Mouse::Left))
-				terrainManager.breakBlock(TerrainManager::convertScreenPixelToWorldBlockCoord(gameIO.mouse));
+				terrainManager.breakBlock(TerrainManager::convertScreenPixelToWorldBlockCoord(logicIO.mousePos));
 		if (logicIO.mouseState[Mouse::Left] == LogicIO::JustReleased)
 			_sendMouseReleasedToHandItem(Mouse::Left);
-		if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Right] == LogicIO::JustPressed)) {
+		if (!imgui::GetIO().WantCaptureMouse && logicIO.hasFocus && (logicIO.mouseState[Mouse::Right] == LogicIO::JustPressed)) {
 			const string& str = playerInventory.slots[0][playerInventory.cursorId]["item_name"].getDataString();
 			bool sendRightClick = true;
-			Vector2i coord = TerrainManager::convertScreenPixelToWorldBlockCoord(gameIO.mouse);
+			Vector2i coord = TerrainManager::convertScreenPixelToWorldBlockCoord(logicIO.mousePos);
 			shared_ptr<Block> b = terrainManager.getBlock(coord);
 			if (str != "") {
 				if (str.substr(0, 6) == "block_")
@@ -283,71 +282,71 @@ void TestScene::updateLogic(RenderWindow & win) {
 		}
 		if (logicIO.mouseState[Mouse::Right] == LogicIO::JustReleased)
 			_sendMouseReleasedToHandItem(Mouse::Right);
-		if (!imgui::GetIO().WantCaptureMouse && (logicIO.mouseState[Mouse::Middle] == LogicIO::JustPressed)) {
+		if (!imgui::GetIO().WantCaptureMouse && logicIO.hasFocus && (logicIO.mouseState[Mouse::Middle] == LogicIO::JustPressed)) {
 			if (!localPlayer->isAlive()) {
 				localPlayer = make_shared<PlayerEntity>();
 				localPlayer->setHealth(localPlayer->getMaxHealth());
 				localPlayer->setIsLocalPlayer(true);
-				entityManager.insert(localPlayer, TerrainManager::convertScreenPixelToWorldCoord(gameIO.mouse));
+				entityManager.insert(localPlayer, TerrainManager::convertScreenPixelToWorldCoord(logicIO.mousePos));
 			}
 			else {
 				if (testEntity == Uuid()) {
 					shared_ptr<TestEntity> te = make_shared<TestEntity>();
 					te->setHealth(te->getMaxHealth());
-					testEntity = entityManager.insert(te, TerrainManager::convertScreenPixelToWorldCoord(gameIO.mouse));
+					testEntity = entityManager.insert(te, TerrainManager::convertScreenPixelToWorldCoord(logicIO.mousePos));
 				}
 				else {
 					shared_ptr<TestEntity> te = make_shared<TestEntity>();
 					te->setHealth(te->getMaxHealth());
-					entityManager.insert(te, TerrainManager::convertScreenPixelToWorldCoord(gameIO.mouse));
+					entityManager.insert(te, TerrainManager::convertScreenPixelToWorldCoord(logicIO.mousePos));
 				}
-				//entityManager.explode(TerrainManager::convertScreenPixelToWorldCoord(gameIO.mouse),
+				//entityManager.explode(TerrainManager::convertScreenPixelToWorldCoord(logicIO.mousePos),
 				//					  12.0, false);
-			//particleSystem.emitSmoke(TerrainManager::convertScreenPixelToWorldCoord(gameIO.mouse));
+			//particleSystem.emitSmoke(TerrainManager::convertScreenPixelToWorldCoord(logicIO.mousePos));
 			//for (int i = 1; i <= 1000; i++) {
 			//	// Tile Drop
 			//	ItemEntity* e = new ItemEntity("block_stone");
 			//	// Give a random velocity
 			//	e->accelerateVector(1.0, 180 + rand() % 180);
 
-			//	entityManager.insert(e, Vector2d(TerrainManager::convertScreenPixelToWorldCoord(gameIO.mouse)) + Vector2d(0.5, 0.8));
+			//	entityManager.insert(e, Vector2d(TerrainManager::convertScreenPixelToWorldCoord(logicIO.mousePos)) + Vector2d(0.5, 0.8));
 			//}
 			}
 		}
 
 		// Keyboard controls
-		if (!imgui::GetIO().WantCaptureKeyboard &&
+		if (!imgui::GetIO().WantCaptureKeyboard && logicIO.hasFocus && logicIO.hasFocus &&
 			logicIO.keyboardState[Keyboard::F1] == LogicIO::JustPressed)
 			showExtraImGuiWindows = !showExtraImGuiWindows;
-		if (!imgui::GetIO().WantCaptureKeyboard &&
+		if (!imgui::GetIO().WantCaptureKeyboard && logicIO.hasFocus &&
 			logicIO.keyboardState[Keyboard::F3] == LogicIO::JustPressed)
 			app->hasLog = showDebugInfo = !showDebugInfo;
-		if (!imgui::GetIO().WantCaptureKeyboard &&
+		if (!imgui::GetIO().WantCaptureKeyboard && logicIO.hasFocus &&
 			(logicIO.keyboardState[Keyboard::A] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustPressed))
 			localPlayer->moveLeft(true);
 		if (logicIO.keyboardState[Keyboard::A] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Left] == LogicIO::JustReleased)
 			localPlayer->moveLeft(false);
-		if (!imgui::GetIO().WantCaptureKeyboard &&
+		if (!imgui::GetIO().WantCaptureKeyboard && logicIO.hasFocus &&
 			(logicIO.keyboardState[Keyboard::D] == LogicIO::JustPressed || logicIO.keyboardState[Keyboard::Right] == LogicIO::JustPressed))
 			localPlayer->moveRight(true);
 		if (logicIO.keyboardState[Keyboard::D] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Right] == LogicIO::JustReleased)
 			localPlayer->moveRight(false);
-		if (!imgui::GetIO().WantCaptureKeyboard &&
+		if (!imgui::GetIO().WantCaptureKeyboard && logicIO.hasFocus &&
 			(Keyboard::isKeyPressed(Keyboard::W) || Keyboard::isKeyPressed(Keyboard::Up)))
 			localPlayer->ascendLadder(true);
 		if (logicIO.keyboardState[Keyboard::W] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Up] == LogicIO::JustReleased)
 			localPlayer->ascendLadder(false);
-		if (!imgui::GetIO().WantCaptureKeyboard &&
+		if (!imgui::GetIO().WantCaptureKeyboard && logicIO.hasFocus &&
 			(Keyboard::isKeyPressed(Keyboard::S) || Keyboard::isKeyPressed(Keyboard::Down)))
 			localPlayer->decendLadder(true);
 		if (logicIO.keyboardState[Keyboard::S] == LogicIO::JustReleased || logicIO.keyboardState[Keyboard::Down] == LogicIO::JustReleased)
 			localPlayer->decendLadder(false);
-		if (!imgui::GetIO().WantCaptureKeyboard &&
+		if (!imgui::GetIO().WantCaptureKeyboard && logicIO.hasFocus &&
 			(logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustPressed))
 			localPlayer->crouch(true);
 		if (logicIO.keyboardState[Keyboard::LControl] == LogicIO::JustReleased)
 			localPlayer->crouch(false);
-		if (!imgui::GetIO().WantCaptureKeyboard &&
+		if (!imgui::GetIO().WantCaptureKeyboard && logicIO.hasFocus &&
 			Keyboard::isKeyPressed(Keyboard::Space))
 			localPlayer->jump();
 
@@ -362,9 +361,9 @@ void TestScene::updateLogic(RenderWindow & win) {
 		handleKeyState(logicIO.keyboardState[Keyboard::Escape], Keyboard::isKeyPressed(Keyboard::Escape));
 
 	uiManager.updateLogic();
-	if (logicIO.keyboardState[Keyboard::E] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard)
+	if (logicIO.keyboardState[Keyboard::E] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard && logicIO.hasFocus)
 		uiManager.changeUI(make_shared<PlayerInventoryUI>());
-	if (logicIO.keyboardState[Keyboard::Escape] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard)
+	if (logicIO.keyboardState[Keyboard::Escape] == LogicIO::JustPressed && !imgui::GetIO().WantCaptureKeyboard && logicIO.hasFocus)
 		uiManager.changeUI(make_shared<GamePausedUI>());
 }
 
@@ -445,6 +444,17 @@ void TestScene::runImGui() {
 	if (showDebugInfo) {
 		ENTER_IMGUI_DEBUG;
 
+		auto pushBoolText = [](bool value, bool sameLine = true) {
+			if (sameLine)
+				imgui::SameLine();
+			if (value)
+				imgui::PushStyleColor(ImGuiCol_Text, Color::Green);
+			else
+				imgui::PushStyleColor(ImGuiCol_Text, Color::Red);
+			imgui::Text("%s", value ? "True" : "False");
+			imgui::PopStyleColor();
+		};
+
 		imgui::Text("%s %s / Version %d.%d.%d %s / Compile Time %s",
 			projectCode.c_str(), projectSuffix.c_str(), majorVersion, minorVersion, patchVersion, releaseStage.c_str(), compileTime.c_str());
 #ifdef USE_ASYNC_RENDERING
@@ -452,7 +462,6 @@ void TestScene::runImGui() {
 #else
 		imgui::Text("State: Mono-Thread, FPS: %d", eventTickPerSecond);
 #endif // USE_ASYNC_RENDERING
-		imgui::Text("Local Role: %s", role == Server ? "Server" : "Client");
 		imgui::Text("Entity Count: %d", entityManager.getEntityMapList().size());
 		imgui::Text("Particle Count: %d", particleSystem.getParticleList().size());
 
@@ -462,16 +471,16 @@ void TestScene::runImGui() {
 			imgui::Text("  Position: (%.3lf, %.3lf)", localPlayer->getPosition().x, localPlayer->getPosition().y);
 			imgui::Text("  Velocity: (%.3lf, %.3lf)", localPlayer->getVelocity().x, localPlayer->getVelocity().y);
 			imgui::Text("  EyePosition: (%.3lf, %.3lf)", localPlayer->getEyePosition().x, localPlayer->getEyePosition().y);
-			imgui::Text("  IsOnGround: %s", localPlayer->isOnGround() ? "True" : "False");
-			imgui::Text("  IsOnLadder: %s", localPlayer->isOnLadder() ? "True" : "False");
-			imgui::Text("  IsCrouched: %s", localPlayer->isCrouched() ? "True" : "False");
-			imgui::Text("  WantStandup: %s", localPlayer->isStuck() ? "True" : "False");
+			imgui::Text("  IsOnGround: "); pushBoolText(localPlayer->isOnGround());
+			imgui::Text("  IsOnLadder: "); pushBoolText(localPlayer->isOnLadder());
+			imgui::Text("  IsCrouched: "); pushBoolText(localPlayer->isCrouched());
+			imgui::Text("  IsStuck(WantStandup): "); pushBoolText(localPlayer->isStuck());
 		}
 		else
 			imgui::Text("  localPlayer == nullptr");
 
 		imgui::Text("Mouse Cursor Info");
-		Vector2i pos = gameIO.mouse;
+		Vector2i pos = logicIO.mousePos;
 		Vector2i posB = TerrainManager::convertScreenPixelToWorldBlockCoord(pos);
 		Vector2d posC = TerrainManager::convertScreenPixelToWorldCoord(pos);
 		Vector2i chunkId = TerrainManager::convertWorldCoordToChunkId(posB);
@@ -493,14 +502,8 @@ void TestScene::runImGui() {
 					imgui::Text("%d", i.second.getDataInt());
 				else if (i.second.getType() == Data::String)
 					imgui::Text("%s", i.second.getDataString().c_str());
-				else if (i.second.getType() == Data::Bool) {
-					if (i.second.getDataBool())
-						imgui::PushStyleColor(ImGuiCol_Text, Color::Green);
-					else
-						imgui::PushStyleColor(ImGuiCol_Text, Color::Red);
-					imgui::Text("%s", i.second.getDataBool() ? "true" : "false");
-					imgui::PopStyleColor();
-				}
+				else if (i.second.getType() == Data::Bool)
+					pushBoolText(i.second.getDataBool(), false);
 				else if (i.second.getType() == Data::Uuid)
 					imgui::Text("{%s}", i.second.getDataUuid().toString());
 			}
@@ -515,14 +518,8 @@ void TestScene::runImGui() {
 				imgui::Text("%d", i.second.getDataInt());
 			else if (i.second.getType() == Data::String)
 				imgui::Text("%s", i.second.getDataString().c_str());
-			else if (i.second.getType() == Data::Bool) {
-				if (i.second.getDataBool())
-					imgui::PushStyleColor(ImGuiCol_Text, Color::Green);
-				else
-					imgui::PushStyleColor(ImGuiCol_Text, Color::Red);
-				imgui::Text("%s", i.second.getDataBool() ? "true" : "false");
-				imgui::PopStyleColor();
-			}
+			else if (i.second.getType() == Data::Bool)
+				pushBoolText(i.second.getDataBool(), false);
 			else if (i.second.getType() == Data::Uuid)
 				imgui::Text("{%s}", i.second.getDataUuid().toString());
 		}

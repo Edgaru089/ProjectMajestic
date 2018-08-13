@@ -101,6 +101,7 @@ bool AssetManager::loadListFile(string filename) {
 				textureManager.addImage(i.second.strid, i.second.filename, i.second.textureRect);
 	}
 
+
 	mlog << "[AssetManager] Asset file loaded." << dlog;
 
 	return true;

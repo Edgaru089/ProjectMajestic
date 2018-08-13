@@ -264,6 +264,5 @@ void Entity::updateLogic() {
 	_moveX(vecX * logicIO.deltaTime.asSeconds());
 	_moveY(vecY * logicIO.deltaTime.asSeconds());
 
-	if (role == Server /* || getEntityId() == "player" */)
-		_updateLogic();
+	_updateLogic();
 }

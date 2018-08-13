@@ -96,8 +96,10 @@ void App::runImGui() {
 void App::updateLogic(RenderWindow& win) {
 
 	logicIO.deltaTime = logicDeltaClock.restart();
+	logicIO.renderSize = Vector2i(win.getSize());
+	logicIO.hasFocus = win.hasFocus();
 
-	// Keystate handled by game scene for pausing game issues
+	// Keystate and mouse position handled by game scene for pausing game issues
 
 	currentScene->updateLogic(win);
 

@@ -60,7 +60,7 @@ void InGameUIManager::runImGui() {
 		ImVec2(0.5f, 0.5f));
 	if (curUI->showInventory()) {
 		if (imgui::BeginPopupModal(curUI->windowTitle().c_str(), nullptr,
-			ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove)) {
+								   ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove)) {
 
 			_runInventoryUI();
 
@@ -71,7 +71,7 @@ void InGameUIManager::runImGui() {
 				imgui::GetOverlayDrawList()->AddImage((ImTextureID)info.texture->getNativeHandle(),
 					ImVec2(pos.x - 16, pos.y - 16), ImVec2(pos.x + 16, pos.y + 16),
 					ImVec2(info.textureRect.left / (float)info.texture->getSize().x,
-						info.textureRect.top / (float)info.texture->getSize().y),
+						   info.textureRect.top / (float)info.texture->getSize().y),
 					ImVec2((info.textureRect.left + info.textureRect.width) / (float)info.texture->getSize().x, (
 						info.textureRect.top + info.textureRect.height) / (float)info.texture->getSize().y));
 				pos.x -= 16 + 3 - 2; pos.y -= 16 + 3;
@@ -148,7 +148,7 @@ void PlayerInventoryUI::ImGuiInventorySlot(Dataset& slotData, int pushId) {
 	}
 
 	if (info.id != "ui_transparent_32px") {
-		if (FloatRect(imgui::GetItemRectMin(), imgui::GetItemRectSize()).contains(Vector2f(gameIO.mouse))) {
+		if (FloatRect(imgui::GetItemRectMin(), imgui::GetItemRectSize()).contains(Vector2f(logicIO.mousePos))) {
 			if (logicIO.mouseState[Mouse::Right] == LogicIO::JustPressed) {
 				if (cursorName == "") {
 					// Spilt half

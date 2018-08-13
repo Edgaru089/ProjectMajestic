@@ -22,6 +22,8 @@ public:
 
 	string getAssetFilename(string id);
 
+	map<string, Asset>& getAssetMapper() { return assets; }
+
 private:
 
 	map<string, Asset> assets;

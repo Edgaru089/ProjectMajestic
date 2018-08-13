@@ -144,21 +144,6 @@ Uuid EntityManager::insert(shared_ptr<Entity> entity, Vector2d position) {
 
 
 ////////////////////////////////////////
-void EntityManager::insert(Uuid id, shared_ptr<Entity> entity) {
-	entity->setUuid(id);
-	lock();
-	auto i = entities.find(id);
-	if (i != entities.end())
-		entities.insert(make_pair(id, entity));
-	else
-		i->second = entity;
-	unlock();
-	if (role == Server)
-		entity->onCreate();
-}
-
-
-////////////////////////////////////////
 shared_ptr<Entity> EntityManager::getEntity(Uuid id) {
 	AUTOLOCKABLE(*this);
 	auto i = entities.find(id);

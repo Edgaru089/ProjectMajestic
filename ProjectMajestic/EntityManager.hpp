@@ -21,9 +21,6 @@ public:
 
 	Uuid insert(shared_ptr<Entity> entitiy, Vector2d position);
 
-	// Does not call Entity::onCreate()
-	void insert(Uuid id, shared_ptr<Entity> entity);
-
 	shared_ptr<Entity> getEntity(Uuid id);
 
 	map<Uuid, shared_ptr<Entity>>& getEntityMapList() { return entities; }

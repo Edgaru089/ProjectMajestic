@@ -102,10 +102,8 @@ TerrainManager::~TerrainManager() {
 ////////////////////////////////////////
 void TerrainManager::updateLogic() {
 	AUTOLOCKABLE(*this);
-	if (role == Server)
-		for (auto&i : chunks) {
-			i.second->updateLogic();
-		}
+	for (auto&i : chunks)
+		i.second->updateLogic();
 	if (wantUpdateLight) {
 		_updateLighting();
 		wantUpdateLight = false;
@@ -282,7 +280,7 @@ void TerrainManager::_updateLighting() {
 				if (c->getBlock(Vector2i(i, j)) != nullptr &&
 					c->getBlock(Vector2i(i, j))->getLightStrength() > 0)
 					lights.push_back(make_pair(convertChunkToWorldCoord(k.first, Vector2i(i, j)),
-						c->getBlock(Vector2i(i, j))->getLightStrength()));
+											   c->getBlock(Vector2i(i, j))->getLightStrength()));
 	}
 
 	for (auto& l : chunks) {
