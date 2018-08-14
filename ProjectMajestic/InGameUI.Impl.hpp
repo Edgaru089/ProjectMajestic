@@ -119,7 +119,7 @@ void PlayerInventoryUI::ImGuiInventorySlot(Dataset& slotData, int pushId) {
 
 	TextureInfo info = textureManager.getTextureInfo(slotData["item_name"].getDataString());
 	if (!info.vaild)
-		info = textureManager.getTextureInfo("ui_transparent_32px");
+		info = textureManager.getTextureInfo("none");
 	shared_ptr<Item> item = nullptr;
 	if (slotName.size() > 5)
 		item = itemAllocator.allocate(slotName.substr(5), slotData);
@@ -147,7 +147,7 @@ void PlayerInventoryUI::ImGuiInventorySlot(Dataset& slotData, int pushId) {
 		}
 	}
 
-	if (info.id != "ui_transparent_32px") {
+	if (info.id != "none") {
 		if (FloatRect(imgui::GetItemRectMin(), imgui::GetItemRectSize()).contains(Vector2f(logicIO.mousePos))) {
 			if (logicIO.mouseState[Mouse::Right] == LogicIO::JustPressed) {
 				if (cursorName == "") {

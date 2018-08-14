@@ -49,7 +49,7 @@ private:
 	// cannot use shared_ptr because of sf::RenderStates requirements
 	Texture * texture;
 
-	map<string, Image> images;
+	vector<pair<string, Image>> images;
 	map<string, IntRect> rects;
 
 };

@@ -4,13 +4,14 @@
 
 ////////////////////////////////////////
 void TextureManager::addImage(string id, Image & image) {
-	images[id] = image;
+	images.push_back(make_pair(id, image));
 }
 
 
 ////////////////////////////////////////
 void TextureManager::addImage(string id, string filename) {
-	images[id].loadFromFile(filename);
+	images.push_back(make_pair(id, Image()));
+	images.back().second.loadFromFile(filename);
 }
 
 
@@ -18,10 +19,11 @@ void TextureManager::addImage(string id, string filename) {
 void TextureManager::addImage(string id, string filename, IntRect textureRect) {
 	Image tmp; // TODO FIXME Speed this up!
 	tmp.loadFromFile(filename);
-	images[id].create(textureRect.width, textureRect.height);
+	images.push_back(make_pair(id, Image()));
+	images.back().second.create(textureRect.width, textureRect.height);
 	for (int i = 0; i < textureRect.width; i++)
 		for (int j = 0; j < textureRect.height; j++)
-			images[id].setPixel(i, j, tmp.getPixel(i + textureRect.left, j + textureRect.top));
+			images.back().second.setPixel(i, j, tmp.getPixel(i + textureRect.left, j + textureRect.top));
 }
 
 
@@ -34,10 +36,29 @@ void TextureManager::bindTexture() {
 
 	int offX, offY, sizeX, sizeY;
 	int maxHeight;
-
 	offX = offY = sizeX = sizeY = maxHeight = 0;
 
-	for (pair<const string, Image>& i : images) {
+	// HACK Add a dummy solid image to prevent skipping LightMask rendering
+	// because of a transparent pixel
+	Image dummy;
+	dummy.create(1, 1);
+	dummy.setPixel(0, 0, Color::Black);
+	images.push_back(make_pair("dummy_transparent", dummy));
+
+	sort(images.begin(), images.end(), [](const pair<string, Image>& x, const pair<string, Image>& y) {
+		if (x.first == "dummy_transparent")
+			return true;
+		else if (y.first == "dummy_transparent")
+			return false;
+		else if (x.second.getSize().y < y.second.getSize().y)
+			return true;
+		else if (x.second.getSize().y == y.second.getSize().y&&x.second.getSize().x < y.second.getSize().x)
+			return true;
+		else
+			return false;
+	});
+
+	for (auto& i : images) {
 
 		// New line
 		if (offX + i.second.getSize().x > maxImageWidth) {
@@ -46,7 +67,7 @@ void TextureManager::bindTexture() {
 			maxHeight = 0;
 		}
 
-		rects.insert(pair<string, IntRect>(i.first, IntRect(offX, offY, i.second.getSize().x, i.second.getSize().y)));
+		rects.insert(make_pair(i.first, IntRect(offX, offY, i.second.getSize().x, i.second.getSize().y)));
 
 		sizeX = max(sizeX, (int)(offX + i.second.getSize().x));
 		sizeY = max(sizeY, (int)(offY + i.second.getSize().y));
@@ -62,7 +83,7 @@ void TextureManager::bindTexture() {
 	Image* image = new Image();
 	image->create(sizeX, sizeY, Color::Transparent);
 
-	for (pair<const string, Image>& i : images) {
+	for (auto& i : images) {
 		const IntRect& rect = rects[i.first];
 		for (int x = 0; x < rect.width; x++) {
 			for (int y = 0; y < rect.height; y++) {

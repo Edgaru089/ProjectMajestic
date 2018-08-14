@@ -65,7 +65,8 @@ void EntityManager::explode(Vector2d position, double force, bool damageTerrain)
 
 	// Particles
 	particleSystem.emitSmoke(position, 1.2 * force, -4.0, 0.002, 0.0, 360.0, 7 * force);
-	particleSystem.emitSmoke(position, 1.7 * force, -4.0, 0.002, 0.0, 360.0, 0.5 * force);
+	particleSystem.emitSmoke(position, 1.9 * force, -4.0, 0.002, 0.0, 360.0, 1.0 * force);
+	particleSystem.emitSmoke(position, 2.8 * force, -4.0, 0.01, 0.0, 360.0, 0.5 * force);
 }
 
 

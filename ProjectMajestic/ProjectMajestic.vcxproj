@@ -138,7 +138,6 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <EnableModules>false</EnableModules>
       <DisableLanguageExtensions>
       </DisableLanguageExtensions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>

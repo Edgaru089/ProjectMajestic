@@ -58,7 +58,7 @@ void PlayerEntity::_pushTriangleVertexes(VertexArray & verts) {
 	//			tex = i->getTextureInfo(); delete i;
 	//		}
 	//		else
-	//			tex = textureManager.getTextureInfo("ui_transparent_32px");
+	//			tex = textureManager.getTextureInfo("none");
 
 	//		double offset = 0.2, itemSize = 1.2;
 	//		Transform trans;

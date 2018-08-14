@@ -471,10 +471,10 @@ void TestScene::runImGui() {
 			imgui::Text("  Position: (%.3lf, %.3lf)", localPlayer->getPosition().x, localPlayer->getPosition().y);
 			imgui::Text("  Velocity: (%.3lf, %.3lf)", localPlayer->getVelocity().x, localPlayer->getVelocity().y);
 			imgui::Text("  EyePosition: (%.3lf, %.3lf)", localPlayer->getEyePosition().x, localPlayer->getEyePosition().y);
-			imgui::Text("  IsOnGround: "); pushBoolText(localPlayer->isOnGround());
-			imgui::Text("  IsOnLadder: "); pushBoolText(localPlayer->isOnLadder());
-			imgui::Text("  IsCrouched: "); pushBoolText(localPlayer->isCrouched());
-			imgui::Text("  IsStuck(WantStandup): "); pushBoolText(localPlayer->isStuck());
+			imgui::Text("  IsOnGround:"); pushBoolText(localPlayer->isOnGround());
+			imgui::Text("  IsOnLadder:"); pushBoolText(localPlayer->isOnLadder());
+			imgui::Text("  IsCrouched:"); pushBoolText(localPlayer->isCrouched());
+			imgui::Text("  IsStuck(WantStandup):"); pushBoolText(localPlayer->isStuck());
 		}
 		else
 			imgui::Text("  localPlayer == nullptr");

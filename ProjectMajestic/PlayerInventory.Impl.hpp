@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Main.hpp"
 #include "PlayerInventory.hpp"
 #include "TextureManager.hpp"
 #include "TextSystem.hpp"
+#include "PlayerEntity.hpp"
 
 
 ////////////////////////////////////////
@@ -119,7 +121,7 @@ void PlayerInventory::runImGui() {
 		else
 			info = textureManager.getTextureInfo(slots[0][j]["item_name"].getDataString());
 		if (!info.vaild)
-			info = textureManager.getTextureInfo("ui_transparent_32px");
+			info = textureManager.getTextureInfo("none");
 
 		if (imgui::ImageButton(info.getSprite(), Vector2f(32, 32), 3)) {
 			cursorId = j;
@@ -127,7 +129,7 @@ void PlayerInventory::runImGui() {
 			imgui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.5);
 		}
 
-		if (info.id != "ui_transparent_32px") {
+		if (info.id != "none") {
 			ImVec2 pos = imgui::GetItemRectMin(); pos.x += 2.0;
 			if (slots[0][j]["count"].getDataInt() != 1)
 				imgui::GetCurrentWindow()->DrawList->AddText(pos, ImU32(0xFFFFFFFF), StringParser::toString(slots[0][j]["count"].getDataInt()).c_str());
@@ -150,12 +152,17 @@ void PlayerInventory::runImGui() {
 				 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings);
 
 	const string& name = slots[0][cursorId]["item_name"].getDataString();
-	imgui::Text(text.get(name + ".name"));
 	if (name != "") {
+		imgui::Text(text.get(name + ".name"));
 		shared_ptr<Item> item = itemAllocator.allocate(name.substr(5), slots[0][cursorId], true);
 		if (item != nullptr)
 			item->_pushExtraImguiItemsToDashboard();
 	}
+
+	// Player Health
+	imgui::PushStyleColor(ImGuiCol_PlotHistogram, Color(160, 0, 0));
+	imgui::ProgressBar((float)localPlayer->getHealth() / localPlayer->getMaxHealth(), ImVec2(-1, 16), ("Health: " + to_string(localPlayer->getHealth()) + " / " + to_string(localPlayer->getMaxHealth())).c_str());
+	imgui::PopStyleColor();
 
 	imgui::End();
 
